@@ -1,5 +1,5 @@
-export type LabId = 'ML01' | 'ML02' | 'ML03';
-export type ReferenceId = 'MIC-MIT' | 'MIC-CORE';
+export type LabId = "ML01" | "ML02" | "ML03";
+export type ReferenceId = "MIC-MIT" | "MIC-CORE";
 export interface Section {
   id: string;
   title: string;
@@ -14,23 +14,30 @@ interface QuestionBase {
   feedback: string;
 }
 export interface ChoiceQuestion extends QuestionBase {
-  kind: 'choice';
+  kind: "choice";
   options: { id: string; text: string; feedback: string }[];
   answer: string;
 }
-export type CalculationId = 'time-excess' | 'budget-balance' | 'utility-square' | 'mrs-cd' | 'choice-cd-x' | 'demand-cd-x';
+export type CalculationId =
+  | "time-excess"
+  | "budget-balance"
+  | "utility-square"
+  | "mrs-cd"
+  | "choice-cd-x"
+  | "demand-cd-x";
 export interface NumericQuestion extends QuestionBase {
-  kind: 'numeric';
+  kind: "numeric";
   calculation: CalculationId;
   unit: string;
   tolerance: number;
 }
 export interface SelfExplanationQuestion extends QuestionBase {
-  kind: 'self-explanation';
+  kind: "self-explanation";
   referenceAnswer: string;
   rubric: string[];
 }
-export type Question = ChoiceQuestion | NumericQuestion | SelfExplanationQuestion;
+export type Question =
+  ChoiceQuestion | NumericQuestion | SelfExplanationQuestion;
 export interface Lesson {
   id: string;
   moduleId: string;
@@ -46,15 +53,19 @@ export interface Lesson {
   counterexample: string[];
   recap: string[];
   references: { id: ReferenceId; topic: string }[];
-  status: 'available';
-  knowledge: { mustUnderstand: string[]; acceptedForNow: string[]; returnLater: string[] };
+  status: "available";
+  knowledge: {
+    mustUnderstand: string[];
+    acceptedForNow: string[];
+    returnLater: string[];
+  };
 }
 export interface CatalogLesson {
   id: string;
   moduleId: string;
   title: string;
   summary: string;
-  status: 'available' | 'planned';
+  status: "available" | "planned";
 }
 export interface CourseModule {
   id: string;

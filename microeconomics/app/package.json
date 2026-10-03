@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "engines": { "node": "^24.0.0 || >=26.0.0" },
+  "engines": {
+    "node": "^24.0.0 || >=26.0.0"
+  },
   "scripts": {
     "dev": "vite",
     "typecheck": "tsc --noEmit",
@@ -13,7 +15,10 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "dependencies": { "react": "19.3.0", "react-dom": "19.3.0" },
+  "dependencies": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
   "devDependencies": {
     "@playwright/test": "1.63.0",
     "@types/node": "24.19.1",
