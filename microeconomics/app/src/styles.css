@@ -662,3 +662,10 @@ footer {
     scroll-behavior: auto !important;
   }
 }
+
+.experiment-snapshot { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .85rem; padding: 16px; background: #eef2eb; }
+@media (max-width: 760px) {
+  header { height: auto; flex-wrap: wrap; gap: 12px; }
+  header nav { flex-wrap: wrap; gap: 10px 18px; }
+  .workbench { grid-template-rows: auto 1fr; }
+}

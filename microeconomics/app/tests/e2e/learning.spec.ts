@@ -59,9 +59,10 @@ async function takeScreenshot(page: Page, name: string) {
   });
 }
 
-test("从第一课顺序进入六节完整课程，自动请求仅使用本地资源", async ({
+test("从第一课顺序进入全部完整课程，自动请求仅使用本地资源", async ({
   page,
 }) => {
+  test.setTimeout(120_000);
   const externalRequests: string[] = [];
   page.on("request", (request) => {
     if (
@@ -72,7 +73,8 @@ test("从第一课顺序进入六节完整课程，自动请求仅使用本地�
   });
   await page.goto("/");
   await page.getByRole("link", { name: /开始第一课 M01-A/ }).click();
-  const lessonIds = ["M01-A", "M01-B", "M02-A", "M02-B", "M03-A", "M03-B"];
+  const lessonIds = Array.from({ length: 12 }, (_, index) => `M${String(index + 1).padStart(2, "0")}`).flatMap((id) => [`${id}-A`, `${id}-B`]);
+  const labIds = ["ML01", "ML01", "ML02", "ML02", "ML03", "ML03", "ML04", "ML04", "ML04", "ML04", "ML05", "ML05", "ML06", "ML06", "ML07", "ML07", "ML08", "ML08", "ML10", "ML09", "ML10", "ML10", "ML11", "ML11"];
   for (const [index, lesson] of lessonIds.entries()) {
     await expect(page).toHaveURL(new RegExp(`#/lesson/${lesson}$`));
     await expect(page.locator("article h1")).not.toBeEmpty();
@@ -89,11 +91,11 @@ test("从第一课顺序进入六节完整课程，自动请求仅使用本地�
       page.getByRole("heading", { name: "反例与失效边界", exact: true }),
     ).toBeVisible();
     await expect(page.locator(".checks .check")).toHaveCount(4);
-    const lab = page.getByTestId(`ML0${Math.floor(index / 2) + 1}`);
+    const lab = page.getByTestId(labIds[index]);
     await expect(lab).toBeVisible();
     if (await lab.getByRole("button", { name: "跳过预测并运行" }).count())
       await lab.getByRole("button", { name: "跳过预测并运行" }).click();
-    await expect(lab.getByRole("img").first()).toBeVisible();
+    if (labIds[index] !== "ML07") await expect(lab.getByRole("img").first()).toBeVisible();
     await expect(lab.getByRole("table").first()).toBeVisible();
     if (index < lessonIds.length - 1)
       await page
@@ -104,7 +106,7 @@ test("从第一课顺序进入六节完整课程，自动请求仅使用本地�
   }
   await expect(
     page.getByRole("link", {
-      name: "返回工作台 · Phase 1 到这里",
+      name: "完成 M12-B · 进入终课作品 →",
       exact: true,
     }),
   ).toBeVisible();
@@ -581,10 +583,10 @@ test("390px 正文不溢出、图形有替代表格；1440px 公式/目录/空�
   await expect(page.getByRole("alert")).toContainText("JSON 无法解析");
   await page.goto("/");
   await page.getByText("M04 ·", { exact: false }).first().click();
-  await expect(page.locator("aside .planned")).toHaveCount(18);
+  await expect(page.locator("aside .planned")).toHaveCount(0);
   await expect(page.locator("aside .planned a")).toHaveCount(0);
   await page.goto(lessonUrl("M04-A"));
   await expect(
-    page.getByRole("heading", { name: "没有可学习的这节课" }),
+    page.locator("article h1"),
   ).toBeVisible();
 });

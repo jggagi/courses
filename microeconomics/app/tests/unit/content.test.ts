@@ -10,35 +10,15 @@ import {
   references,
 } from "../../src/content";
 
-describe("Phase 1 content contract", () => {
-  it("provides exactly six learnable lessons and eighteen honest planned entries", () => {
-    const expected = ["M01-A", "M01-B", "M02-A", "M02-B", "M03-A", "M03-B"];
+describe("Complete course content contract", () => {
+  it("provides all twenty-four designed lessons, with stable IDs and no planned placeholders", () => {
+    const expected = Array.from({ length: 12 }, (_, index) => `M${String(index + 1).padStart(2, "0")}`).flatMap((id) => [`${id}-A`, `${id}-B`]);
     expect(lessons.map((lesson) => lesson.id)).toEqual(expected);
     expect(catalog).toHaveLength(24);
-    expect(new Set(catalog.map((lesson) => lesson.id)).size).toBe(24);
-    expect(
-      catalog
-        .filter((lesson) => lesson.status === "available")
-        .map((lesson) => lesson.id),
-    ).toEqual(expected);
-    const planned = catalog.filter((lesson) => lesson.status === "planned");
-    expect(planned).toHaveLength(18);
-    for (const item of planned) {
-      expect(item.summary).toContain("规划中");
-      expect(getLesson(item.id)).toBeUndefined();
-      expect(item).not.toHaveProperty("sections");
-      expect(item).not.toHaveProperty("checks");
-    }
-    for (let module = 1; module <= 12; module += 1) {
-      for (const suffix of ["A", "B"]) {
-        expect(
-          catalog.some(
-            (lesson) =>
-              lesson.id === `M${String(module).padStart(2, "0")}-${suffix}`,
-          ),
-        ).toBe(true);
-      }
-    }
+    expect(catalog.map((lesson) => lesson.id)).toEqual(expected);
+    expect(catalog.every((lesson) => lesson.status === "available")).toBe(true);
+    expect(labIds).toHaveLength(11);
+    for (const item of catalog) expect(getLesson(item.id)).toBeDefined();
   });
 
   it.each(lessons.map((lesson) => [lesson.id, lesson] as const))(
@@ -211,7 +191,7 @@ describe("Phase 1 content contract", () => {
 
   it("computes the six numerical exercise answers using the lab kernel", () => {
     const expected = [1, 50, 144, 0.25, 20, 10];
-    const numerical = lessons.flatMap((lesson) =>
+    const numerical = lessons.slice(0, 6).flatMap((lesson) =>
       lesson.checks.filter((question) => question.kind === "numeric"),
     );
     expect(numerical).toHaveLength(expected.length);
@@ -222,8 +202,8 @@ describe("Phase 1 content contract", () => {
     });
   });
 
-  it("provides distinct model cards for all three implemented modules", () => {
-    for (const module of modules.slice(0, 3)) {
+  it("provides distinct model cards for all twelve implemented modules", () => {
+    for (const module of modules) {
       expect(module.modelCard.object.length).toBeGreaterThan(10);
       for (const field of [
         "known",
@@ -239,10 +219,22 @@ describe("Phase 1 content contract", () => {
     expect(
       new Set(
         modules
-          .slice(0, 3)
           .map((module) => module.modelCard.relations.join("")),
       ).size,
-    ).toBe(3);
+    ).toBe(12);
+  });
+
+  it("derives all eighteen new numerical answers from reproducible experiment inputs", () => {
+    const questions = lessons.slice(6).flatMap((lesson) => lesson.checks.filter((question) => question.kind === "numeric"));
+    expect(questions).toHaveLength(18);
+    const expected = [8, -2, 8, 10, -1.5, 100, 40, 225, 1, 2, 20, 40, 25, 4, 10, 20, 30, 20];
+    for (const [index, question] of questions.entries()) {
+      expect(getNumericAnswer(question)).toBeCloseTo(expected[index], 8);
+      expect(question.calculation).toBe("advanced-lab");
+      expect(question.model).toBeDefined();
+      expect(labIds).toContain(question.model!.labId);
+      expect(Number.isFinite(getNumericAnswer(question))).toBe(true);
+    }
   });
 
   it("keeps original content and explicit reference reading routes", () => {

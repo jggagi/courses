@@ -18,6 +18,9 @@ import {
   type StoreResult,
 } from "./persistence/store";
 import { Lab } from "./components/Lab";
+import { AdvancedLab } from "./components/AdvancedLab";
+import { CapstonePage, ReviewPage } from "./components/CourseCompletion";
+import type { AdvancedLabId } from "./models/advanced";
 import { Plot, fmt } from "./components/Charts";
 import { budgetGeometry, evaluateBundle } from "./models/economics";
 
@@ -124,27 +127,29 @@ export default function App() {
       </a>
       <header>
         <a className="brand" href="#/">
-          微观经济学<span>从可行世界，到有条件的选择</span>
+          微观经济学<span>从选择，到市场与制度</span>
         </a>
         <nav aria-label="工具导航">
           <a href="#/glossary">概念词条</a>
           <a href="#/references">参考资料</a>
+          <a href="#/review">跨模块复习</a>
+          <a href="#/capstone">终课作品</a>
           <a href="#/records">本地记录</a>
         </nav>
       </header>
       <aside aria-label="课程目录">
         <a className="course-home" href="#/">
-          学习工作台 · Phase 1
+          学习工作台 · 完整课程
         </a>
         <p className="small">
-          6 节课程可学习 / 18 节规划中
+          24 节课程 / 11 个可复现实验
           <br />
           无强制解锁，允许跳读
         </p>
         {modules.map((module) => (
           <details
             key={module.id}
-            open={["M01", "M02", "M03"].includes(module.id)}
+            open={module.id === lesson?.moduleId || ["M01", "M02", "M03"].includes(module.id)}
           >
             <summary>
               {module.id} · {module.title}
@@ -226,9 +231,9 @@ export default function App() {
         ) : route === "/" ? (
           <>
             <div className="eyebrow">学习工作台 · 先看对象，再写公式</div>
-            <h1>选择，从约束开始。</h1>
+            <h1>从选择，到市场与制度。</h1>
             <p className="lead">
-              用六节课与三个可复现实验，分清能选什么、怎样比较，以及最优选择如何随价格改变。
+              用 24 节课程与 11 个可复现实验，从约束和偏好推导选择，分析企业、市场、策略、制度与证据。
             </p>
             <a
               className="button"
@@ -239,9 +244,9 @@ export default function App() {
                 : "开始第一课 M01-A"}{" "}
               →
             </a>
-            <Panel title="这一次要建立的三张模型卡">
+            <Panel title="十二个模块，十二张模型卡">
               <div className="module-grid">
-                {modules.slice(0, 3).map((module) => (
+                {modules.map((module) => (
                   <a
                     className="module-card"
                     key={module.id}
@@ -255,7 +260,7 @@ export default function App() {
                 ))}
               </div>
             </Panel>
-            <Panel title="局部概念地图">
+            <Panel title="概念依赖地图">
               <div className="concept-map">
                 <a href="#/glossary/feasible-set">资源与可行集</a>
                 <span>→</span>
@@ -264,8 +269,14 @@ export default function App() {
                 <a href="#/glossary/demand">最优选择与需求</a>
               </div>
               <p>
-                约束决定哪些组合可行；偏好给这些组合排序；优化把两者连接起来。价格变化之后，要重新求解才能得到需求。
+                约束决定可行方案，偏好与技术推出个体选择；市场检查计划是否兼容，制度改变激励与信息，最后用证据审查机制。
               </p>
+            </Panel>
+            <Panel title="把选择连接到互动与证据">
+              <div className="concept-map"><a href="#/lesson/M04-A">技术与成本</a><span>→</span><a href="#/lesson/M05-A">市场均衡</a><span>→</span><a href="#/lesson/M06-B">税负与福利</a></div>
+              <div className="concept-map"><a href="#/lesson/M07-A">市场力量</a><span>→</span><a href="#/lesson/M08-A">策略与规则</a><span>→</span><a href="#/lesson/M09-A">外部性与制度</a></div>
+              <div className="concept-map"><a href="#/lesson/M10-A">风险与信息</a><span>→</span><a href="#/lesson/M11-B">劳动与时间</a><span>→</span><a href="#/lesson/M12-B">贸易与证据</a></div>
+              <p><a href="#/review">用新情境跨模块复习</a>，再<a href="#/capstone">编写终课作品</a>。允许按问题跳读，概念依赖以每节前置条件为准。</p>
             </Panel>
             <Panel title="记录理解，而非假装掌握">
               <p>
@@ -278,6 +289,10 @@ export default function App() {
               </p>
             </Panel>
           </>
+        ) : route === "/capstone" ? (
+          <CapstonePage state={state} save={save} />
+        ) : route === "/review" ? (
+          <ReviewPage state={state} save={save} />
         ) : route.startsWith("/glossary") ? (
           <>
             <div className="eyebrow">对象 · 例子 · 混淆 · 出现位置</div>
@@ -424,7 +439,7 @@ export default function App() {
               </tbody>
             </table>
             <p className="small">
-              支持 schemaVersion 1；其他课程、未知版本、错误
+              支持 schemaVersion 2，旧版 1 自动迁移并保留记录；其他课程、未知版本、错误
               JSON、无效字段或超出 1 MiB
               的文件会拒绝，原记录保留。损坏记录可以先备份，再明确清空。
             </p>
@@ -432,13 +447,13 @@ export default function App() {
         ) : (
           <Panel title="没有可学习的这节课">
             <p>
-              Phase 1 仅实现 M01–M03。后续课在目录中显示简介与“已规划，未实现”。
+              请从目录选择 M01-A 至 M12-B，或返回工作台查看完整课程。
             </p>
             <a href="#/">回到学习工作台</a>
           </Panel>
         )}
         <footer>
-          microeconomics · Phase 1 · 合成教学模型 · 只在本机保存学习记录
+          microeconomics · 24 节完整课程 · 合成教学模型 · 只在本机保存学习记录
         </footer>
       </main>
       {dialog && (
@@ -627,7 +642,7 @@ function LessonPage({
                 <Paragraphs items={lesson.workedExample} />
                 {id === "M01-A" && <TimeExample />}
               </Panel>
-              <Lab
+              {lesson.labId === "ML01" || lesson.labId === "ML02" || lesson.labId === "ML03" ? <Lab
                 id={lesson.labId}
                 onExplain={() => {
                   const notes = document.querySelector<HTMLTextAreaElement>(
@@ -643,7 +658,11 @@ function LessonPage({
                     labStates: { ...state.labStates, [lesson.labId]: lab },
                   })
                 }
-              />
+              /> : <AdvancedLab
+                id={lesson.labId as AdvancedLabId}
+                value={state.advancedLabStates[lesson.labId as AdvancedLabId]}
+                onChange={(lab) => save({ ...state, advancedLabStates: { ...state.advancedLabStates, [lesson.labId]: lab } })}
+              />}
             </>
           )}
         </div>
@@ -754,6 +773,7 @@ function LessonPage({
           </a>
         ))}
       </p>
+      {lesson.id === "M12-B" && <Panel title="把分析变成可审查的终课作品"><p>保存模型、两次反事实、反例和证据边界，导出时与实验参数一起保留。各评价维度独立，不合成掌握率。</p><a className="button" href="#/capstone">编写终课作品 →</a> <a href="#/review">先做跨模块复习</a></Panel>}
       <nav className="lesson-next" aria-label="课程前后导航">
         {index > 0 ? (
           <a href={`#/lesson/${lessons[index - 1].id}`}>
@@ -762,12 +782,12 @@ function LessonPage({
         ) : (
           <a href="#/">← 工作台</a>
         )}
-        {index < 5 ? (
+        {index < lessons.length - 1 ? (
           <a href={`#/lesson/${lessons[index + 1].id}`}>
             下一节 {lessons[index + 1].id} →
           </a>
         ) : (
-          <a href="#/">返回工作台 · Phase 1 到这里</a>
+          <a href="#/capstone">完成 M12-B · 进入终课作品 →</a>
         )}
       </nav>
     </article>

@@ -257,9 +257,9 @@ export const references: ReferenceEntry[] = [
     edition: "Fall 2011",
     checkedAt: "2026-10-03",
     supports:
-      "消费者约束、偏好、最优化、需求推导与弹性的理论结构。只链接课程入口，不复制讲义、图形或题库。",
+      "消费者、生产者、竞争与福利、市场力量、风险、要素市场、跨期选择及贸易的理论结构。只链接课程入口，不复制讲义、图形或题库。",
     readingRoute:
-      "M01查 Budget Constraints；M02查 Preferences and Utility / Consumer Theory；M03查 Consumer Theory / Deriving Demand Curves / Elasticity。先做本课模型卡，再按尚不确定的对象查读。",
+      "M01–M03查 Consumer Theory / Deriving Demand；M04–M06查 Producer Theory / Competition / Welfare；M07–M08查 Monopoly / Oligopoly；M09查 Welfare；M10–M12查 Uncertainty / Factor Markets / Capital / International Trade / Equity and Efficiency。先做本课模型卡，再按问题查读。",
     licenseNote:
       "外部材料用于主动点击后的阅读与核验。入口可免费阅读不等于任意再发布；本应用不复用其图片或题库。课程中的历史政策和数据不作为当前事实。",
   },
@@ -271,9 +271,9 @@ export const references: ReferenceEntry[] = [
     edition: "The Economy 2.0 在线目录",
     checkedAt: "2026-10-03",
     supports:
-      "稀缺、机会成本、消费者选择，以及将约束与偏好置于制度和现实问题中的解释。",
+      "稀缺、技术、企业与市场、策略互动、制度、信息、劳动与分配，以及将约束与偏好置于现实问题中的解释。",
     readingRoute:
-      "M01查 Units 2–3，M02–M03查 Unit 3。对实证命题继续查该section的原研究与时期；不要把不同教材强调的机制消除成无条件结论。",
+      "M01–M03查 Units 2–3；M04查 Units 2/7；M05–M06查 Units 8/10；M07查 Unit 7；M08查 Units 4–5；M09查 Units 4/10；M10–M11查 Units 3/6/9；M12查 Units 2/5/10。对实证命题继续查原研究与时期；不同教材的机制不可消除成无条件结论。",
     licenseNote:
       "本地课程文案、例题和合成参数为原创表达，不代表CORE背书；外部内容仅链接。若以后复用素材须核验当时的许可与署名要求。",
   },

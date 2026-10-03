@@ -203,7 +203,7 @@ function game(p: AdvancedParameters): AdvancedLabResult {
     const strict = p[`r${to}`] > p[`r${from}`] || p[`c${to}`] > p[`c${from}`];
     if (weak && strict) improvements.push(`${from}→${to}`);
   }
-  rows.push(row("equilibria", "全部纯策略 Nash 均衡", equilibrium.length ? equilibrium.join("、") : "不存在"), row("pareto", "全部 Pareto 改善方向", improvements.length ? improvements.join("、") : "不存在"));
+  rows.push(row("equilibriumCount", "纯策略 Nash 均衡数量", equilibrium.length, "个"), row("paretoImprovementCount", "Pareto 改善方向数量", improvements.length, "对"), row("equilibria", "全部纯策略 Nash 均衡", equilibrium.length ? equilibrium.join("、") : "不存在"), row("pareto", "全部 Pareto 改善方向", improvements.length ? improvements.join("、") : "不存在"));
   return { status: equilibrium.length ? `找到 ${equilibrium.length} 个纯策略 Nash 均衡（保留全部并列）` : "没有纯策略 Nash 均衡；未求混合策略", metrics: { equilibriumCount: equilibrium.length, paretoImprovementCount: improvements.length }, rows, curves: [], xLabel: "玩家 1 行动", yLabel: "玩家 2 行动", notes: ["每列比较玩家 1 的行收益，每行比较玩家 2 的列收益；两者同时最佳回应才是 Nash。", "Pareto 改善计数是全部行动组合之间的有向改善对，并不限于从均衡出发。单方改变是否有利另看最佳回应。", "收益相等时所有并列行动均为最佳回应。矩阵没有描述时间、重复、混合策略或承诺机制。"] };
 }
 

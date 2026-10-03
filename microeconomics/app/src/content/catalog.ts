@@ -1,4 +1,8 @@
 import type { CatalogLesson, CourseModule } from "./types";
+import { modulesM04M06, lessonsM04M06 } from "./modules04to06";
+import { modulesM07M09, lessonsM07M09 } from "./modules07to09";
+import { modulesM10M12, lessonsM10M12 } from "./modules10to12";
+import { lessons as firstLessons } from "./lessons";
 
 export const modules: CourseModule[] = [
   {
@@ -97,77 +101,9 @@ export const modules: CourseModule[] = [
         "我仍不确定：哪个前提支持这个解？是否漏了边界或多解？哪些结论来自模型，哪些需要现实证据？",
     },
   },
-  ...[
-    [
-      "M04",
-      "企业：技术、成本与供给的来源",
-      "为什么平均、边际和固定成本告诉我们不同的事？",
-      ["M01", "M03"],
-    ],
-    [
-      "M05",
-      "市场：均衡是相互兼容",
-      "许多人的计划怎样在同一个价格下兼容？",
-      ["M03", "M04"],
-    ],
-    [
-      "M06",
-      "弹性、税收与福利",
-      "向谁收税，与谁最终承担，是同一个问题吗？",
-      ["M03", "M05"],
-    ],
-    [
-      "M07",
-      "市场力量、数字产品与创新",
-      "复制成本很低时，为什么仍不能只看边际成本？",
-      ["M04", "M05", "M06"],
-    ],
-    [
-      "M08",
-      "策略互动与规则",
-      "个人最佳选择为何可能共同形成坏结果？",
-      ["M02", "M05"],
-    ],
-    [
-      "M09",
-      "外部性、公共品与制度选择",
-      "哪些影响没有进入决策者的账本？",
-      ["M06", "M08"],
-    ],
-    [
-      "M10",
-      "风险、信息与激励",
-      "结果随机与信息不对称各改变了什么？",
-      ["M02", "M03", "M08"],
-    ],
-    [
-      "M11",
-      "劳动、资本与跨期选择",
-      "现在支付价格、以后获得回报，约束怎样变化？",
-      ["M03", "M04", "M10"],
-    ],
-    [
-      "M12",
-      "贸易、整体与证据",
-      "单个市场的模型如何连接，并接受证据检验？",
-      ["M05", "M06"],
-    ],
-  ].map(([id, title, centralQuestion, prerequisites]) => ({
-    id: id as string,
-    title: title as string,
-    centralQuestion: centralQuestion as string,
-    prerequisites: prerequisites as string[],
-    modelCard: {
-      object: "本模块已规划，未实现。",
-      known: [],
-      unknown: [],
-      relations: [],
-      derivation: [],
-      counterexample: [],
-      uncertainty:
-        "Phase 1没有本模块正文、实验或学习记录；以目录简介为后续路线。",
-    },
-  })),
+  ...modulesM04M06,
+  ...modulesM07M09,
+  ...modulesM10M12,
 ];
 
 const rows: [string, string, string, string][] = [
@@ -317,12 +253,8 @@ const rows: [string, string, string, string][] = [
   ],
 ];
 
-export const catalog: CatalogLesson[] = rows.map(
-  ([id, moduleId, title, summary], i) => ({
-    id,
-    moduleId,
-    title,
-    summary,
-    status: i < 6 ? "available" : "planned",
-  }),
-);
+const completeLessons = [...firstLessons, ...lessonsM04M06, ...lessonsM07M09, ...lessonsM10M12];
+export const catalog: CatalogLesson[] = rows.map(([id, moduleId, title, summary]) => {
+  const lesson = completeLessons.find((item) => item.id === id);
+  return { id, moduleId, title: lesson?.title || title, summary: lesson?.centralQuestion || summary.replace(/^规划中：/, ""), status: lesson ? "available" : "planned" };
+});
