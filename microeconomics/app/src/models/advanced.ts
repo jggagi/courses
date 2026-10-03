@@ -263,6 +263,9 @@ function riskTimeLabor(p: AdvancedParameters): AdvancedLabResult {
   const expectedWealth = (1 - probHigh) * wLow + probHigh * wHigh;
   const expectedUtility = (1 - probHigh) * Math.sqrt(wLow) + probHigh * Math.sqrt(wHigh);
   const certaintyEquivalent = expectedUtility ** 2;
+  // EW−EU² = p(1−p)(√wHigh−√wLow)². This algebraic identity avoids
+  // cancellation that can otherwise show a tiny negative risk premium.
+  const riskPremium = probHigh * (1 - probHigh) * (Math.sqrt(wHigh) - Math.sqrt(wLow)) ** 2;
   const presentWealth = y1 + y2 / (1 + r);
   const timeDomain = presentWealth > 0 && !(noBorrow === 1 && y1 === 0);
   let c1: number | null = null, c2: number | null = null, borrowing: number | null = null, intertemporalUtility: number | null = null;
@@ -286,7 +289,7 @@ function riskTimeLabor(p: AdvancedParameters): AdvancedLabResult {
     if (leisure <= 0 || laborConsumption <= 0) throw new RangeError("劳动正消费/闲暇解超出有限精度；请使用较温和的参数。");
     laborUtility = (1 - leisureWeight) * Math.log(laborConsumption) + leisureWeight * Math.log(leisure);
   }
-  const metrics = { expectedWealth, expectedUtility, certaintyEquivalent, riskPremium: expectedWealth - certaintyEquivalent, presentWealth, c1, c2, borrowing, intertemporalUtility, leisure, labor, laborConsumption, laborUtility };
+  const metrics = { expectedWealth, expectedUtility, certaintyEquivalent, riskPremium, presentWealth, c1, c2, borrowing, intertemporalUtility, leisure, labor, laborConsumption, laborUtility };
   const riskMax = Math.max(100, wHigh);
   const curves: AdvancedLabResult["curves"] = [curve("风险：√w", riskMax, w => Math.sqrt(w))];
   if (presentWealth > 0) curves.push({ label: "跨期：预算边界（含轴端点；对数目标仅内点有效）", points: [{ x: 0, y: presentWealth * (1 + r) }, { x: presentWealth, y: 0 }] });

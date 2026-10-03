@@ -206,6 +206,7 @@ describe("ML10 separate risk, cross-period and labor models", () => {
     oracle(run("ML10", { noBorrow: 1 }), { c1: 20, c2: 180, borrowing: 0 });
     for (const probHigh of [0, 1]) close(value(run("ML10", { probHigh }), "riskPremium"), 0);
     oracle(run("ML10", { wLow: 50, wHigh: 50 }), { expectedWealth: 50, certaintyEquivalent: 50, riskPremium: 0 });
+    expect(value(run("ML10", { wLow: 30, wHigh: 30 }), "riskPremium")).toBe(0);
   });
   it("satisfies present-value budgets and does not clip the constrained second-period choice", () => {
     for (const r of [-.8, 0, .3]) for (const beta of [.2, 1, 3]) for (const noBorrow of [0, 1]) {
