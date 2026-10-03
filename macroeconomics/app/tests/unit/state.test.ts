@@ -162,7 +162,7 @@ describe('宏观学习记录的原始输入与本地恢复', () => {
 });
 
 describe('宏观导入结构与模型源记录校验', () => {
-  it.each([
+  it.each<[string, (state: LearningState) => void]>([
     ['非法事件类型', (state: LearningState) => { state.labStates.LA01.input.events = [{ id: 'evil', sequence: 1, type: 'new-loan' as 'wage', amount: 1 }]; }],
     ['负金额', (state: LearningState) => { state.labStates.LA01.input.events = [{ id: 'bad', sequence: 1, type: 'wage', amount: -1 }]; }],
     ['超余额', (state: LearningState) => { state.labStates.LA01.input.events = [{ id: 'bad', sequence: 1, type: 'wage', amount: 41 }]; }],
@@ -237,5 +237,14 @@ describe('宏观导入结构与模型源记录校验', () => {
     expect(result.periods[0].D).toBeNull();
     expect(result.periods[0].L).toBeNull();
     expect(result.periods[1].gN).toBeNull();
+  });
+
+  it('有限但极小的价格产生派生溢出时也拒绝导入，不把Infinity当结果', () => {
+    const state = initialState();
+    state.labStates.LA03.input.periods = [
+      { px: Number.MIN_VALUE, py: 1, qx: 1, qy: 0 },
+      { px: 1, py: 1, qx: 1, qy: 0 },
+    ];
+    expect(() => importState(JSON.stringify(state))).toThrow(/数值|有限|上溢/);
   });
 });
