@@ -63,3 +63,15 @@ npm run test:e2e
 每个模型界面及正文标明对象、单位、外生参数、机制、结论与失效边界。LA04零资本为吸收状态，正稳态只是基准；技术持续增长没有固定A稳态。LA05未建模期初库存下限，负库存流量须有可售库存，不能证明其现实可行。LA06局部稳定性判据适用于未触及利率下限的线性部分，有限前缀不伪造未来值。LA07银行减值不是免除客户合同债务，支付假定当期使用或转移，不增加实物资产；准备金发行方仍在边界之外。LA08省略估值、汇率、救助等调整，负净负债明确解释为净资产。LA09略去资本账户与其他调整，不估计贸易价格弹性。推导与修正详见 [IMPLEMENTATION_NOTES.md](IMPLEMENTATION_NOTES.md)。
 
 完整设计的课程与实验已实现。未加入实时数据、预测平台、AI导师、登录后台或自动上传。后续可根据学习反馈改进内容和交互，不宣称现实模型已经校准。
+
+## 原私人 Site 已更新
+
+地址：[https://macroeconomics-phase1-jggagi.jggagi.chatgpt.site](https://macroeconomics-phase1-jggagi.jggagi.chatgpt.site)。沿用同一 Site，访问权限仍为 owner-only，未扩大分享范围。原生发布结果 `succeeded`，无失败信息；管理标题已改为“宏观经济学 · 完整课程”。
+
+- Project ID：`appgprj_6ac116886a9081919efc64bfd0f76696`。
+- Sites 源代码 commit：`428c9108af4b09e385fe2f54d1cc9d7aebfc676e`，已确认远端同一分支指向该提交。
+- 保存版本：`appgprj_6ac116886a9081919efc64bfd0f76696~appgver_716401101788819188a1e7a95729c4ee`。
+- 部署：`appgdep_6ac1247d5d0c819183ab0f2d5feaabe9`；成功时间：2026-10-03T15:51:39.852809+00:00。
+- 发布包只含 `.openai/hosting.json`、`dist/index.html`、本地资源与图标。发布副本再次通过类型检查与生产构建，JS SHA-256 与上文验收产物完全一致：`faacd3473c19adda305f3257ac986c0cc46b618aa4fb4c30233ea661361f2b86`。
+
+当前执行环境未提供 Sites 配套本地脚本，沿用此前等价的本地 Git 同步、检查与静态打包流程，并用原生 Sites 工具发布。复用同一 project，不创建替代站点、不新增登录/数据服务，不上传任何学习记录。只依据原生成功返回验证发布，未声称额外线上浏览器测试。原地址的用户记录仍在同一 origin，可直接升级恢复。
