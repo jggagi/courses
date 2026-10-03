@@ -1,6 +1,6 @@
 import { productionFixture } from '../data/synthetic';
 import type { AccountsInput, AccountsResult, ActivityRecord, ExpenditureRow, ProductionActivity } from './types';
-import { assertClose, assertNumber, assertRecord, assertText, EPSILON } from './validation';
+import { assertClose, assertRecord, assertText, moneyCents } from './validation';
 
 export function defaultAccountsInput(): AccountsInput {
   return { inventory: 0, exports: 0, imports: 0, machine: false, transfer: 0, stock: 0, secondhand: 0, oldInventorySale: 0, openingInventory: 20 };
@@ -15,17 +15,19 @@ export function validateProductionActivities(source: ProductionActivity[]): void
     assertText(activity.id, '生产活动ID'); assertText(activity.label, '生产者名称');
     if (ids.has(activity.id)) throw new Error('生产活动ID重复，不能重复计算同一生产。');
     ids.add(activity.id);
-    for (const key of ['output', 'intermediate', 'wages', 'surplus'] as const) assertNumber(activity[key], `${activity.label}的${key}`);
-    if (activity.intermediate > activity.output) throw new Error(`${activity.label}的中间投入超过产出，本教学模型不接受该源记录。`);
-    assertClose(activity.output - activity.intermediate, activity.wages + activity.surplus, `${activity.label}源记录不平衡：增加值不等于工资加毛营业盈余；请检查源科目。`);
+    for (const key of ['output', 'intermediate', 'wages', 'surplus'] as const) moneyCents(activity[key], `${activity.label}的${key}`);
+    const output = moneyCents(activity.output, '产出'); const intermediate = moneyCents(activity.intermediate, '中间投入');
+    if (intermediate > output) throw new Error(`${activity.label}的中间投入超过产出，本教学模型不接受该源记录。`);
+    if (output - intermediate !== moneyCents(activity.wages, '工资') + moneyCents(activity.surplus, '毛营业盈余')) throw new Error(`${activity.label}源记录不平衡：增加值不等于工资加毛营业盈余；请检查源科目。`);
   }
 }
 
-export function computeAccounts(input: AccountsInput, source: ProductionActivity[] = productionFixture): AccountsResult {
-  assertRecord(input, 'GDP活动选择');
-  for (const key of ['inventory', 'exports', 'imports', 'transfer', 'stock', 'secondhand', 'oldInventorySale', 'openingInventory'] as const) assertNumber(input[key], `${key}金额`);
+export function computeAccounts(rawInput: AccountsInput, source: ProductionActivity[] = productionFixture): AccountsResult {
+  assertRecord(rawInput, 'GDP活动选择');
+  const input = { ...rawInput };
+  for (const key of ['inventory', 'exports', 'imports', 'transfer', 'stock', 'secondhand', 'oldInventorySale', 'openingInventory'] as const) input[key] = moneyCents(rawInput[key], `${key}金额`) / 100;
   if (typeof input.machine !== 'boolean') throw new Error('新增机器必须选择是或否。');
-  if (input.inventory + input.exports > 100 + EPSILON) throw new Error('本期成品总值100，未售存货与出口之和不能超过100。');
+  if (moneyCents(input.inventory, '存货') + moneyCents(input.exports, '出口') > 10_000) throw new Error('本期成品总值100，未售存货与出口之和不能超过100。');
   if (input.oldInventorySale > input.openingInventory) throw new Error('前期存货销售超过明确的期初库存，不能超额卖出。');
   validateProductionActivities(source);
   // 可选源记录供审查明确科目，不是任意生产网络接口；首期三活动的供应链固定。
@@ -36,14 +38,14 @@ export function computeAccounts(input: AccountsInput, source: ProductionActivity
     assertClose(item.output, expected.output, '源记录不平衡：首期教学生产链的产出必须为30、50、100，不能隐含未说明的最终使用。');
     assertClose(item.intermediate, expected.intermediate, '源记录不平衡：首期教学生产链的中间投入必须为0、30、50，须与上游供应对应。');
   }
-  const sourceCopy = source.map(activity => ({ ...activity }));
+  const sourceCopy = source.map(activity => ({ ...activity, output: moneyCents(activity.output, '产出') / 100, intermediate: moneyCents(activity.intermediate, '中间投入') / 100, wages: moneyCents(activity.wages, '工资') / 100, surplus: moneyCents(activity.surplus, '毛营业盈余') / 100 }));
   const reserved = ['machine', 'domestic-consumption', 'current-inventory', 'exports', 'imports', 'old-inventory-sale', 'transfer', 'stock', 'secondhand'];
   if (sourceCopy.some(activity => reserved.includes(activity.id))) throw new Error('生产源活动ID与情景事件ID冲突。');
   if (input.machine) sourceCopy.push({ id: 'machine', label: '新增机器生产者', output: 40, intermediate: 0, wages: 25, surplus: 15 });
 
   const productionRows = sourceCopy.map(activity => ({ ...activity, valueAdded: activity.output - activity.intermediate, sourceIds: [activity.id] }));
-  const incomeRows = sourceCopy.map(activity => ({ id: `income-${activity.id}`, label: activity.label, wages: activity.wages, surplus: activity.surplus, total: activity.wages + activity.surplus, sourceIds: [activity.id] }));
-  const domesticConsumption = 100 - input.inventory - input.exports;
+  const incomeRows = sourceCopy.map(activity => ({ id: `income-${activity.id}`, label: activity.label, wages: activity.wages, surplus: activity.surplus, total: (moneyCents(activity.wages, '工资') + moneyCents(activity.surplus, '盈余')) / 100, sourceIds: [activity.id] }));
+  const domesticConsumption = (10_000 - moneyCents(input.inventory, '存货') - moneyCents(input.exports, '出口')) / 100;
   const activities: ActivityRecord[] = sourceCopy.map(activity => ({
     id: activity.id, label: activity.label, period: 'current', origin: 'domestic',
     use: activity.id === 'machine' ? 'capital' : activity.id === 'final' ? 'final' : 'intermediate',
@@ -72,18 +74,20 @@ export function computeAccounts(input: AccountsInput, source: ProductionActivity
     row('M', '进口', 'M', input.imports, ['imports'], 'M为正数，在支出总式中扣除，避免境外生产混入GDP。'),
   ];
   if (input.machine) expenditureRows.push(row('I-machine', '本国新机器资本形成', 'I', 40, ['machine'], '新生产机器用于资本形成，生产与收入记录同时新增。'));
-  const components = { C: 0, I: 0, G: 0, X: 0, M: 0 };
-  for (const item of expenditureRows) components[item.component] += item.amount;
-  const production = productionRows.reduce((sum, item) => sum + item.valueAdded, 0);
-  const income = incomeRows.reduce((sum, item) => sum + item.total, 0);
-  const expenditure = components.C + components.I + components.G + components.X - components.M;
+  // 各分项在整数分中汇总，避免大额进口与小额存货相消时产生假的统计差异。
+  const componentCents = { C: 0, I: 0, G: 0, X: 0, M: 0 };
+  for (const item of expenditureRows) componentCents[item.component] += moneyCents(item.amount, '最终使用记录', { signed: true });
+  const components = { C: componentCents.C / 100, I: componentCents.I / 100, G: componentCents.G / 100, X: componentCents.X / 100, M: componentCents.M / 100 };
+  const production = productionRows.reduce((sum, item) => sum + moneyCents(item.valueAdded, '增加值'), 0) / 100;
+  const income = incomeRows.reduce((sum, item) => sum + moneyCents(item.total, '收入'), 0) / 100;
+  const expenditure = (componentCents.C + componentCents.I + componentCents.G + componentCents.X - componentCents.M) / 100;
   assertClose(production, income, '源记录不平衡：生产增加值与明确收入科目不一致。');
   assertClose(production, expenditure, '源记录不平衡：生产与最终使用不一致；不能自动添加调整项。');
   return {
     production, expenditure, income, components, productionRows, expenditureRows, incomeRows, activities,
     salesTotal: productionRows.reduce((sum, item) => sum + item.output, 0),
-    wages: incomeRows.reduce((sum, item) => sum + item.wages, 0),
-    surplus: incomeRows.reduce((sum, item) => sum + item.surplus, 0),
-    closingInventory: input.openingInventory + input.inventory - input.oldInventorySale,
+    wages: incomeRows.reduce((sum, item) => sum + moneyCents(item.wages, '工资'), 0) / 100,
+    surplus: incomeRows.reduce((sum, item) => sum + moneyCents(item.surplus, '盈余'), 0) / 100,
+    closingInventory: (moneyCents(input.openingInventory, '期初存货') + moneyCents(input.inventory, '存货') - moneyCents(input.oldInventorySale, '前期库存销售')) / 100,
   };
 }

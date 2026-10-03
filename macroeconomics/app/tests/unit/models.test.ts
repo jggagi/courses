@@ -228,6 +228,14 @@ describe('LA02 活动源记录派生GDP三法', () => {
     expect(source.reduce((sum, row) => sum + row.output - row.intermediate, 0)).toBe(100);
     expect(() => computeAccounts(defaultAccountsInput(), source)).toThrow('源记录不平衡');
   });
+
+  it('大额进口与小数存货叠加不会因浮点相消伪造源记录不平衡', () => {
+    const result = equalThreeMethods({ inventory: 14.31, exports: 76.43, imports: 1_000_000_000, oldInventorySale: 17.13 }, 100);
+    expect(result.components.I).toBe(-2.82);
+    expect(result.components.C).toBe(1_000_000_026.39);
+    expect(result.closingInventory).toBe(17.18);
+    expect(() => accounts({ inventory: 0.001 })).toThrow('两位小数');
+  });
 });
 
 describe('LA03 原始p/q唯一源的产出、指数与增长', () => {

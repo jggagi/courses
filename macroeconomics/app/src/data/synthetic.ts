@@ -9,7 +9,7 @@ export const syntheticMetadata = {
   frequency: '每一步为一期；LA03默认一期为一年',
   units: {
     ledger: '教学货币单位；存量为时点值，流量为本期值',
-    accounts: '教学货币单位/期，当前生产价格，毛值',
+    accounts: '教学货币单位/期，当前生产价格，毛值；金额至多两位小数、内部整数分汇总',
     price: '价格：教学货币单位/件；数量：件/期；指数：指数点；增长率：小数',
   },
   generationRules: {

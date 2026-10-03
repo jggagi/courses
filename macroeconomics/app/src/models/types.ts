@@ -1,4 +1,4 @@
-/** 账本金额以教学货币单位输入（至多两位小数），内部整数分结算；输出不使用显示舍入值。 */
+/** 账本及GDP金额以教学货币单位输入（至多两位小数），内部整数分结算；输出不使用显示舍入值。 */
 export interface LedgerEvent {
   id: string;
   sequence: number;
