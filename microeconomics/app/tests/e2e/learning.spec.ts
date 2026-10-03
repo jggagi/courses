@@ -38,6 +38,35 @@ async function takeScreenshot(page: Page, name: string) {
   await page.screenshot({ path: path.join(artifactDirectory, name), fullPage: false });
 }
 
+test('从第一课顺序进入六节完整课程，自动请求仅使用本地资源', async ({ page }) => {
+  const externalRequests: string[] = [];
+  page.on('request', request => {
+    if (/^https?:/.test(request.url()) && new URL(request.url()).origin !== 'http://127.0.0.1:5173') externalRequests.push(request.url());
+  });
+  await page.goto('/');
+  await page.getByRole('link', { name: /开始第一课 M01-A/ }).click();
+  const lessonIds = ['M01-A', 'M01-B', 'M02-A', 'M02-B', 'M03-A', 'M03-B'];
+  for (const [index, lesson] of lessonIds.entries()) {
+    await expect(page).toHaveURL(new RegExp(`#/lesson/${lesson}$`));
+    await expect(page.locator('article h1')).not.toBeEmpty();
+    await expect(page.getByRole('heading', { name: '对象、定义与假设', exact: true })).toBeVisible();
+    await expect(page.locator('article .concept-index a').first()).toBeVisible();
+    await expect(page.getByRole('heading', { name: '用具体数字走一遍', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: '反例与失效边界', exact: true })).toBeVisible();
+    await expect(page.locator('.checks .check')).toHaveCount(4);
+    const lab = page.getByTestId(`ML0${Math.floor(index / 2) + 1}`);
+    await expect(lab).toBeVisible();
+    if (await lab.getByRole('button', { name: '跳过预测并运行' }).count()) await lab.getByRole('button', { name: '跳过预测并运行' }).click();
+    await expect(lab.getByRole('img').first()).toBeVisible();
+    await expect(lab.getByRole('table').first()).toBeVisible();
+    if (index < lessonIds.length - 1) await page.getByRole('link', { name: new RegExp(`下一节 ${lessonIds[index + 1]}`) }).click();
+  }
+  await expect(page.getByRole('link', { name: '返回工作台 · Phase 1 到这里', exact: true })).toBeVisible();
+  await page.getByRole('link', { name: '参考资料', exact: true }).click();
+  await expect(page.getByRole('link', { name: '打开官方参考资料 ↗', exact: true })).toHaveCount(2);
+  expect(externalRequests).toEqual([]);
+});
+
 test('M01 学习、针对性反馈、自评、下一课和预算图表形成闭环', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('link', { name: /开始第一课 M01-A/ }).click();
