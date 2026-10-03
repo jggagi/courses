@@ -1,10 +1,17 @@
-import { computeAccounts, computePrices, defaultAccountsInput, defaultPriceInput, initialLedger, replayLedger } from '../models';
+import {
+  computeAccounts,
+  computePrices,
+  defaultAccountsInput,
+  defaultPriceInput,
+  initialLedger,
+  replayLedger,
+} from "../models";
 
 /** 客观题与实验复用同一纯函数结果，不从显示层已舍入的数读取答案。 */
 const ledger = replayLedger(initialLedger(), [
-  { id: 'content-wage', sequence: 1, type: 'wage', amount: 20 },
-  { id: 'content-service', sequence: 2, type: 'service', amount: 10 },
-  { id: 'content-principal', sequence: 3, type: 'repayment', amount: 5 },
+  { id: "content-wage", sequence: 1, type: "wage", amount: 20 },
+  { id: "content-service", sequence: 2, type: "service", amount: 10 },
+  { id: "content-principal", sequence: 3, type: "repayment", amount: 5 },
 ]);
 const accounts = computeAccounts({ ...defaultAccountsInput(), inventory: 20 });
 const prices = computePrices(defaultPriceInput());

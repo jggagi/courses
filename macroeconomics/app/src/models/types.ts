@@ -2,14 +2,20 @@
 export interface LedgerEvent {
   id: string;
   sequence: number;
-  type: 'wage' | 'service' | 'repayment';
+  type: "wage" | "service" | "repayment";
   amount: number;
 }
 
 export interface LedgerState {
   H: { deposit: number; netWorth: number };
   F: { deposit: number; loan: number; netWorth: number };
-  B: { reserves: number; loanAsset: number; depositH: number; depositF: number; equity: number };
+  B: {
+    reserves: number;
+    loanAsset: number;
+    depositH: number;
+    depositF: number;
+    equity: number;
+  };
   flow: {
     householdIncome: number;
     householdConsumption: number;
@@ -49,7 +55,7 @@ export interface ProductionRow extends ProductionActivity {
 export interface ExpenditureRow {
   id: string;
   label: string;
-  component: 'C' | 'I' | 'G' | 'X' | 'M';
+  component: "C" | "I" | "G" | "X" | "M";
   amount: number;
   sourceIds: string[];
   explanation: string;
@@ -67,10 +73,16 @@ export interface IncomeRow {
 export interface ActivityRecord {
   id: string;
   label: string;
-  period: 'current' | 'previous';
-  origin: 'domestic' | 'foreign';
-  use: 'intermediate' | 'final' | 'capital' | 'inventory' | 'financial' | 'transfer';
-  kind: 'production' | 'final-use' | 'financial' | 'transfer';
+  period: "current" | "previous";
+  origin: "domestic" | "foreign";
+  use:
+    | "intermediate"
+    | "final"
+    | "capital"
+    | "inventory"
+    | "financial"
+    | "transfer";
+  kind: "production" | "final-use" | "financial" | "transfer";
   amount: number;
   explanation: string;
 }
@@ -90,7 +102,12 @@ export interface AccountsResult {
   closingInventory: number;
 }
 
-export interface PricePeriod { px: number; py: number; qx: number; qy: number }
+export interface PricePeriod {
+  px: number;
+  py: number;
+  qx: number;
+  qy: number;
+}
 export interface PriceInput {
   periods: PricePeriod[];
   priceBase: number;

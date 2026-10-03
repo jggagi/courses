@@ -1,7 +1,7 @@
 # 宏观经济学｜从总量核算到增长、波动与政策
 
 **courseId:** `macroeconomics`  
-**状态：** 课程设计完成；Web 实现待 Codex。12 模块 / 24 节核心课；首期实现 A01–A03。
+**状态：** Phase 1 Web 应用已实现：A01–A03 六节可学习课程、LA01–LA03 三个实验。完整目录含 24 节，A04–A12 的 18 节标注“已规划，未实现”。
 
 ## 一条主线
 
@@ -31,4 +31,34 @@
 
 先把概念地基做扎实：6节课、3个实验（交易与资产负债、GDP三种核算、名义/实际与价格指数），配有练习、错误反馈、本地笔记和恢复状态。通胀—政策模拟、增长模型和真实数据分析在后续阶段，不用虚假的政策仪表盘填充第一版。
 
-默认全用教学合成数据，年份写“第0期/第1期”而非伪装历史。无需金融账户、个人资产或云端API。源码以后仅在本目录 `app/` 内，当前文档不意味着应用已经实现。
+默认全用教学合成数据，时期写“第0期/第1期/第2期”而非伪装历史。无需金融账户、个人资产或云端 API。源码、依赖、锁文件与测试全部在本目录 `app/` 内，另一门课无需启动。
+
+## 本地运行
+
+需要 Node.js 24（依赖 engines 允许的其他兼容版本亦可）与 npm：
+
+```bash
+cd macroeconomics/app
+npm ci
+npm run dev
+```
+
+打开 `http://localhost:5174/`。端口严格固定，冲突时退出并报告，不静默切换。hash 深链接例如 `/#/lesson/A01-A`；生产资源使用相对 base，可放在子路径。
+
+```bash
+npm run typecheck
+npm test
+npm run test:content
+npm run build
+npm run test:e2e
+```
+
+浏览器测试默认使用 `/usr/bin/chromium`。若 Chromium 在别处，运行 `CHROMIUM_PATH=/absolute/path/to/chromium npm run test:e2e`；也可用 Playwright 安装的 Chromium 可执行文件。生产本地预览使用 `npm run preview`。
+
+## 学习记录与边界
+
+预测、笔记、客观题尝试、自由题自评、模型卡与实验原始输入仅存于浏览器键 `courses:macroeconomics:v1`。导入文件会校验课程、版本、大小、结构和模型可行性。损坏记录不自动覆盖；存储不可用时提示内存模式。JSON 导出由用户明确操作，包含私人笔记，不应提交公开仓库。
+
+LA01 只展开 H/F/B，准备金发行方在边界之外；LA02 是核算实验，不模拟政策行为；LA03 是固定价格/篮子模型，不复现官方链式与质量调整。没有后台、遥测、登录、自动外链请求、实时数据或 LLM 判卷。
+
+实际验证结果与截图见 [DELIVERY.md](DELIVERY.md)，精度和模型边界见 [IMPLEMENTATION_NOTES.md](IMPLEMENTATION_NOTES.md)。没有自动合并或部署，未扩展 Phase 2。
