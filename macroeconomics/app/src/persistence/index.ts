@@ -1,4 +1,15 @@
 import {
+  advancedDefaults,
+  validateAdvancedInput,
+  ADVANCED_LAB_IDS,
+  type AdvancedInputs,
+} from "../models/advanced";
+import {
+  initialCapstone,
+  validateCapstone,
+  type CapstoneState,
+} from "./capstone";
+import {
   initialLedger,
   replayLedger,
   validateLedger,
@@ -22,7 +33,26 @@ export const LEARNABLE_LESSON_IDS = [
   "A02-B",
   "A03-A",
   "A03-B",
+  "A04-A",
+  "A04-B",
+  "A05-A",
+  "A05-B",
+  "A06-A",
+  "A06-B",
+  "A07-A",
+  "A07-B",
+  "A08-A",
+  "A08-B",
+  "A09-A",
+  "A09-B",
+  "A10-A",
+  "A10-B",
+  "A11-A",
+  "A11-B",
+  "A12-A",
+  "A12-B",
 ] as const;
+const LEGACY_LESSON_IDS = LEARNABLE_LESSON_IDS.slice(0, 6);
 export type LessonId = (typeof LEARNABLE_LESSON_IDS)[number];
 export type LessonStatus =
   "not_started" | "in_progress" | "practiced" | "self_checked";
@@ -64,7 +94,14 @@ export interface LearningState {
     LA01: LabState<LedgerInput>;
     LA02: AccountsLabState;
     LA03: LabState<PriceInput>;
+    LA04: LabState<AdvancedInputs["LA04"]>;
+    LA05: LabState<AdvancedInputs["LA05"]>;
+    LA06: LabState<AdvancedInputs["LA06"]>;
+    LA07: LabState<AdvancedInputs["LA07"]>;
+    LA08: LabState<AdvancedInputs["LA08"]>;
+    LA09: LabState<AdvancedInputs["LA09"]>;
   };
+  capstone: CapstoneState;
   updatedAt: string;
 }
 export interface LocalStorageLike {
@@ -100,6 +137,7 @@ export function initialState(): LearningState {
   const ledger: LedgerInput = { initial: initialLedger(), events: [] };
   const accounts = defaultAccountsInput();
   const prices = defaultPriceInput();
+  const extended = advancedDefaults();
   const lab = <T>(input: T): LabState<T> => ({
     input: clone(input),
     baseline: clone(input),
@@ -125,7 +163,14 @@ export function initialState(): LearningState {
       LA01: lab(ledger),
       LA02: { ...lab(accounts), classifications: {} },
       LA03: lab(prices),
+      LA04: lab(extended.LA04),
+      LA05: lab(extended.LA05),
+      LA06: lab(extended.LA06),
+      LA07: lab(extended.LA07),
+      LA08: lab(extended.LA08),
+      LA09: lab(extended.LA09),
     },
+    capstone: initialCapstone(),
     updatedAt: new Date().toISOString(),
   };
 }
@@ -436,7 +481,7 @@ function dictionary<Value>(
 ): Record<string, Value> {
   const source = object(value, label);
   const entries = Object.entries(source);
-  if (entries.length > 200) fail(`${label}最多保存200项。`);
+  if (entries.length > 600) fail(`${label}最多保存600项。`);
   return Object.fromEntries(
     entries.map(([key, entry]) => [
       keyText(key, `${label}标识`),
@@ -452,6 +497,7 @@ export function validateState(input: unknown): LearningState {
     fail("课程不匹配：只接受macroeconomics宏观课程文件，不能导入微观记录。");
   if (source.schemaVersion !== 1)
     fail("未知记录版本：本应用只支持schemaVersion 1。");
+  const legacy = !Object.hasOwn(source, "capstone");
   keys(
     source,
     [
@@ -464,16 +510,19 @@ export function validateState(input: unknown): LearningState {
       "notes",
       "labStates",
       "updatedAt",
+      ...(legacy ? [] : ["capstone"]),
     ],
     "学习记录",
   );
   const lessons = keys(
     source.lessonStates,
-    LEARNABLE_LESSON_IDS,
+    legacy ? LEGACY_LESSON_IDS : LEARNABLE_LESSON_IDS,
     "各课学习状态",
   );
   const lessonStates = Object.fromEntries(
     LEARNABLE_LESSON_IDS.map((id) => {
+      if (legacy && !Object.hasOwn(lessons, id))
+        return [id, { status: "not_started", confidence: 0 }];
       const entry = keys(
         lessons[id],
         ["status", "confidence"],
@@ -504,6 +553,8 @@ export function validateState(input: unknown): LearningState {
       ["lessonId", "checkId", "answer", "correct", "at"],
       "客观题尝试",
     );
+    if (legacy && !LEGACY_LESSON_IDS.includes(entry.lessonId as LessonId))
+      fail("首期旧记录不能含扩展课程尝试。");
     return {
       lessonId: lessonId(entry.lessonId, "客观题课ID"),
       checkId: keyText(entry.checkId, "题目ID"),
@@ -512,7 +563,16 @@ export function validateState(input: unknown): LearningState {
       at: date(entry.at, "尝试时间"),
     };
   });
-  const labs = keys(source.labStates, ["LA01", "LA02", "LA03"], "实验状态");
+  const labs = keys(
+    source.labStates,
+    legacy
+      ? ["LA01", "LA02", "LA03"]
+      : ["LA01", "LA02", "LA03", ...ADVANCED_LAB_IDS],
+    "实验状态",
+  );
+  const defaults = initialState();
+  if (legacy && !LEGACY_LESSON_IDS.includes(source.lastLessonId as LessonId))
+    fail("首期旧记录的最近课ID不合法。");
   const result: LearningState = {
     schemaVersion: 1,
     courseId: "macroeconomics",
@@ -525,7 +585,50 @@ export function validateState(input: unknown): LearningState {
       LA01: lab(labs.LA01, ledgerInput, "LA01"),
       LA02: lab(labs.LA02, accountsInput, "LA02", true),
       LA03: lab(labs.LA03, priceInput, "LA03"),
+      LA04: legacy
+        ? defaults.labStates.LA04
+        : lab(
+            labs.LA04,
+            (value) => validateAdvancedInput("LA04", value),
+            "LA04",
+          ),
+      LA05: legacy
+        ? defaults.labStates.LA05
+        : lab(
+            labs.LA05,
+            (value) => validateAdvancedInput("LA05", value),
+            "LA05",
+          ),
+      LA06: legacy
+        ? defaults.labStates.LA06
+        : lab(
+            labs.LA06,
+            (value) => validateAdvancedInput("LA06", value),
+            "LA06",
+          ),
+      LA07: legacy
+        ? defaults.labStates.LA07
+        : lab(
+            labs.LA07,
+            (value) => validateAdvancedInput("LA07", value),
+            "LA07",
+          ),
+      LA08: legacy
+        ? defaults.labStates.LA08
+        : lab(
+            labs.LA08,
+            (value) => validateAdvancedInput("LA08", value),
+            "LA08",
+          ),
+      LA09: legacy
+        ? defaults.labStates.LA09
+        : lab(
+            labs.LA09,
+            (value) => validateAdvancedInput("LA09", value),
+            "LA09",
+          ),
     },
+    capstone: legacy ? defaults.capstone : validateCapstone(source.capstone),
     updatedAt: date(source.updatedAt, "更新时间"),
   };
   if (

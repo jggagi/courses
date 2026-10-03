@@ -2,6 +2,13 @@ import { useEffect, useState } from "react";
 import { lessons, plannedLessons, terms, sources } from "./content";
 import type { Check, Lesson } from "./content/types";
 import Labs from "./components/Labs";
+import AdvancedLabs from "./components/AdvancedLabs";
+import Capstone from "./components/Capstone";
+import {
+  labNames,
+  ADVANCED_LAB_IDS,
+  type AdvancedLabId,
+} from "./models/advanced";
 import {
   loadState,
   saveState,
@@ -334,12 +341,12 @@ export default function App() {
         <a href="#/home" className="brand">
           <span className="brand-symbol">∑</span>
           <span>
-            经济学学习工作台<small>MACROECONOMICS · PHASE 1</small>
+            经济学学习工作台<small>MACROECONOMICS · 12 MODULES</small>
           </span>
         </a>
         <p className="sidebar-intro">先把世界看清，再写公式。</p>
         <nav aria-label="课程目录">
-          <p className="eyebrow">核算与测量 · 六节可学课程</p>
+          <p className="eyebrow">完整课程 · 24节可学课程</p>
           {lessons.map((l) => (
             <a
               aria-current={lesson?.id === l.id ? "page" : undefined}
@@ -359,15 +366,17 @@ export default function App() {
         </nav>
         <nav aria-label="实验目录" className="lab-nav">
           <p className="eyebrow">可复现实验</p>
-          {(["LA01", "LA02", "LA03"] as const).map((id, i) => (
-            <a
-              key={id}
-              href={`#/lab/${id}`}
-              aria-current={labId === id ? "page" : undefined}
-            >
-              {id} · {["交易账本", "GDP 三种视角", "价格与数量"][i]}
-            </a>
-          ))}
+          {(["LA01", "LA02", "LA03", ...ADVANCED_LAB_IDS] as const).map(
+            (id, i) => (
+              <a
+                key={id}
+                href={`#/lab/${id}`}
+                aria-current={labId === id ? "page" : undefined}
+              >
+                {id} · {labNames[i]}
+              </a>
+            ),
+          )}
         </nav>
         <details className="concept-nav">
           <summary>概念导航 · {terms.length} 个词条</summary>
@@ -377,6 +386,9 @@ export default function App() {
             </a>
           ))}
         </details>
+        <a href="#/capstone" className="records-link">
+          终课作品 · 宏观诊断
+        </a>
         <a href="#/records" className="records-link">
           个人记录与导入 / 导出
         </a>
@@ -392,7 +404,7 @@ export default function App() {
       <div className="main-shell">
         <header className="topbar">
           <span>宏观经济学</span>
-          <span>6 节已实现 · 18 节已规划</span>
+          <span>24 节课程 · 9 个实验</span>
         </header>
         {notice && (
           <div role="alert" className="notice">
@@ -437,15 +449,14 @@ export default function App() {
         <main id="main" tabIndex={-1}>
           {current === "home" && (
             <>
-              <p className="eyebrow">PHASE 1 / 01—03</p>
+              <p className="eyebrow">完整课程 / 01—12</p>
               <h1>
                 从一笔交易，
                 <br />
                 读懂一个经济体。
               </h1>
               <p className="lead">
-                收入与财富为什么不能直接相加？GDP
-                为何不是所有交易之和？价格涨了和产量多了，怎样分开看？从对象、账本与测量开始，用三个可复现实验检查自己的解释。
+                从收入、账本与测量开始，理解增长、需求、通胀、银行、财政与开放经济。用九个可复现实验比较机制与反例，最后写一份有证据和不确定性清单的宏观诊断。
               </p>
               <div className="button-row">
                 <a className="button" href={`#/lesson/${state.lastLessonId}`}>
@@ -460,6 +471,15 @@ export default function App() {
                   ["01", "对象与账本", "A01 · 存量、流量、资产与负债"],
                   ["02", "同一生产的三侧", "A02 · 增加值与国民核算"],
                   ["03", "价格和数量分开", "A03 · 实际产出与价格指数"],
+                  ["04", "增长与资本积累", "A04 · 稳态与过渡动态"],
+                  ["05", "技术、人口与分配", "A05 · 生产率与受益机制"],
+                  ["06", "支出与收入反馈", "A06 · 需求、存货与乘数"],
+                  ["07", "就业、通胀与预期", "A07 · 劳动口径与冲击"],
+                  ["08", "银行与货币政策", "A08 · 信贷、支付与传导"],
+                  ["09", "财政与公共债务", "A09 · 赤字、利息与债务率"],
+                  ["10", "开放经济与汇率", "A10 · 经常账户与外部资产"],
+                  ["11", "危机与金融反馈", "A11 · 杠杆、流动性与偿付"],
+                  ["12", "证据与宏观诊断", "A12 · 模型比较与终课作品"],
                 ].map(([n, t, d]) => (
                   <a
                     className="panel module-card"
@@ -479,20 +499,14 @@ export default function App() {
                 </p>
                 <p>{started} 节有学习记录；这不是掌握率。</p>
               </section>
-              <section>
-                <h2>完整规划目录</h2>
-                <p className="muted">
-                  A04–A12：已规划，未实现。这里只展示主题，不提供空白课程或政策模拟器。
+              <section className="panel">
+                <h2>把模型带到新问题</h2>
+                <p>
+                  完成24节课程后，比较至少两个模型，复算名义—实际与账表，做一次参数敏感性检验，再写出支持、反对和仍不知道的证据。
                 </p>
-                <div className="planned-list">
-                  {plannedLessons.map((l) => (
-                    <p key={l.id}>
-                      <span>{l.id}</span>
-                      {l.title}
-                      <small>已规划，未实现</small>
-                    </p>
-                  ))}
-                </div>
+                <a className="button secondary" href="#/capstone">
+                  打开终课作品工作台
+                </a>
               </section>
             </>
           )}
@@ -663,7 +677,8 @@ export default function App() {
                 <References ids={lesson.references} />
               </section>
               <div className="button-row">
-                {lessons.findIndex((l) => l.id === lesson.id) < 5 && (
+                {lessons.findIndex((l) => l.id === lesson.id) <
+                  lessons.length - 1 && (
                   <a
                     className="button secondary"
                     href={`#/lesson/${lessons[lessons.findIndex((l) => l.id === lesson.id) + 1].id}`}
@@ -700,11 +715,35 @@ export default function App() {
                   返回对应课程
                 </a>
               </>
+            ) : ADVANCED_LAB_IDS.includes(labId as AdvancedLabId) ? (
+              <>
+                <p className="eyebrow">可控实验 / {labId}</p>
+                <h1>
+                  {labId} · {labNames[Number(labId.slice(2)) - 1]}
+                </h1>
+                <AdvancedLabs
+                  key={labId}
+                  id={labId as AdvancedLabId}
+                  state={state.labStates}
+                  onChange={(labStates) => change({ ...state, labStates })}
+                />
+                <a
+                  href={`#/lesson/${lessons.find((l) => l.labId === labId)?.id}`}
+                >
+                  返回对应课程
+                </a>
+              </>
             ) : (
               <p>
-                实验未实现。<a href="#/home">返回目录</a>
+                实验不存在。<a href="#/home">返回目录</a>
               </p>
             ))}
+          {current === "capstone" && (
+            <Capstone
+              value={state.capstone}
+              onChange={(capstone) => change({ ...state, capstone })}
+            />
+          )}
           {current.startsWith("term/") &&
             (() => {
               const term = terms.find((t) => t.id === current.slice(5));
@@ -728,13 +767,13 @@ export default function App() {
             <>
               <h1>参考来源与数据说明</h1>
               <p className="lead">
-                全部实验数据为确定性教学合成数据 synthetic，以第 0 / 1 / 2
-                期表示。默认一步为一年，无季调、年化或真实经济体校准。
+                全部实验数据为确定性教学合成数据
+                synthetic，以第0期起的合成时期表示。默认一步为一期，价格实验一步为一年；无季调、年化或真实经济体校准。
               </p>
               <p>
                 原创文案、题目与 SVG；外链只在你主动打开时访问。LA01
                 的准备金发行方在边界之外；LA02 不模拟行为响应；LA03
-                为固定基年与固定篮子演示，不复现官方链式与质量调整方法。
+                为固定基年与固定篮子演示，不复现官方链式与质量调整方法。LA04–LA09分别建模增长、支出、滞后政策、银行事件、债务与开放经济；这些简化机制没有现实校准，也不是政策或投资预测。
               </p>
               <References ids={sources.map((s) => s.id)} />
             </>
@@ -817,7 +856,7 @@ export default function App() {
           )}
           {!lesson &&
             !labId &&
-            !["home", "records", "sources"].includes(current) &&
+            !["home", "records", "sources", "capstone"].includes(current) &&
             !current.startsWith("term/") && (
               <p>
                 此页面不存在或尚未实现。<a href="#/home">回到目录</a>
@@ -825,7 +864,7 @@ export default function App() {
             )}
         </main>
         <footer>
-          宏观经济学 Phase 1 · 对象 → 预测 → 实验 → 解释 → 反例 → 学习记录
+          宏观经济学完整课程 · 对象 → 预测 → 实验 → 解释 → 反例 → 学习记录
         </footer>
         <div
           role="status"

@@ -5,175 +5,200 @@ export const growthTerms: Term[] = [
   {
     id: "production-function",
     name: "生产函数（production function）",
-    definition: "在给定技术与组织条件下，将投入与可生产产出联系起来的模型。本课Y=A K^α L^(1−α)，K为资本存量、L为工人数、Y为实际产出/期；它不是保证实际销售或就业达到该水平的核算恒等式。",
+    definition:
+      "在给定技术与组织条件下，将投入与可生产产出联系起来的模型。本课Y=A K^α L^(1−α)，K为资本存量、L为工人数、Y为实际产出/期；它不是保证实际销售或就业达到该水平的核算恒等式。",
     lessonId: "A04-A",
     references: ["MAC-MIT", "MAC-CORE"],
   },
   {
     id: "capital-per-worker",
     name: "每工人资本（capital per worker）",
-    definition: "资本存量K除以工人数L，k=K/L，单位是资本单位/工人。在规模报酬不变的本课生产函数下，每工人产出y=Y/L=A k^α；工人增长会稀释给定的资本存量。",
+    definition:
+      "资本存量K除以工人数L，k=K/L，单位是资本单位/工人。在规模报酬不变的本课生产函数下，每工人产出y=Y/L=A k^α；工人增长会稀释给定的资本存量。",
     lessonId: "A04-A",
     references: ["MAC-MIT"],
   },
   {
     id: "diminishing-marginal-returns",
     name: "资本边际报酬递减（diminishing marginal returns）",
-    definition: "固定技术与劳动时，继续增加资本仍可增产，但每增加一单位资本带来的新增产出越来越小。本课0<α<1使y=A k^α呈凹形；它不同于总产出下降，也不同于同时扩大所有投入的规模报酬。",
+    definition:
+      "固定技术与劳动时，继续增加资本仍可增产，但每增加一单位资本带来的新增产出越来越小。本课0<α<1使y=A k^α呈凹形；它不同于总产出下降，也不同于同时扩大所有投入的规模报酬。",
     lessonId: "A04-A",
     references: ["MAC-MIT", "MAC-CORE"],
   },
   {
     id: "depreciation",
     name: "资本折旧（depreciation）",
-    definition: "一期内既有资本损耗的部分。本模型按固定比例δ扣除期初资本，折旧δK是资本单位/期；不包含资产市场价格下跌，也没有复现官方折旧估计方法。",
+    definition:
+      "一期内既有资本损耗的部分。本模型按固定比例δ扣除期初资本，折旧δK是资本单位/期；不包含资产市场价格下跌，也没有复现官方折旧估计方法。",
     lessonId: "A04-A",
     references: ["MAC-MIT", "MAC-BEA"],
   },
   {
     id: "saving-rate",
     name: "储蓄率（saving rate）",
-    definition: "本课设为产出中用于资本形成的比例s，0≤s<1，其余(1−s)用于消费。这是封闭增长模型的行为设定与资源配置规则，不是银行存款增长率，也不是现实储蓄率必然外生的结论。",
+    definition:
+      "本课设为产出中用于资本形成的比例s，0≤s<1，其余(1−s)用于消费。这是封闭增长模型的行为设定与资源配置规则，不是银行存款增长率，也不是现实储蓄率必然外生的结论。",
     lessonId: "A04-A",
     references: ["MAC-MIT", "MAC-CORE"],
   },
   {
     id: "steady-state",
     name: "稳态（steady state）",
-    definition: "指定标准化变量不再变化的动态状态。固定A的本课正资本稳态满足sA k^α=(n+δ)k；每工人资本与产出不变，仍有生产、消费和更新投资，n>0时总量仍可增长。零资本也是本模型的吸收状态，不能用正稳态公式隐藏它。",
+    definition:
+      "指定标准化变量不再变化的动态状态。固定A的本课正资本稳态满足sA k^α=(n+δ)k；每工人资本与产出不变，仍有生产、消费和更新投资，n>0时总量仍可增长。零资本也是本模型的吸收状态，不能用正稳态公式隐藏它。",
     lessonId: "A04-B",
     references: ["MAC-MIT"],
   },
   {
     id: "transition-dynamics",
     name: "过渡动态（transition dynamics）",
-    definition: "从初始状态按逐期更新方程走向新的状态的路径。储蓄率改变后资本不能瞬间跳到新稳态，消费和增长率在过渡期间可能不同于长期结果；有限模拟期末不是已经达到稳态的证明。",
+    definition:
+      "从初始状态按逐期更新方程走向新的状态的路径。储蓄率改变后资本不能瞬间跳到新稳态，消费和增长率在过渡期间可能不同于长期结果；有限模拟期末不是已经达到稳态的证明。",
     lessonId: "A04-B",
     references: ["MAC-MIT", "MAC-CORE"],
   },
   {
     id: "level-effect",
     name: "水平效应（level effect）",
-    definition: "一种改变使变量最终达到更高或更低的水平，却不必永久改变其增长率。固定人口与技术的Solow基准中，更高储蓄率提高正稳态每工人产出，稳态每工人增长率仍为零。",
+    definition:
+      "一种改变使变量最终达到更高或更低的水平，却不必永久改变其增长率。固定人口与技术的Solow基准中，更高储蓄率提高正稳态每工人产出，稳态每工人增长率仍为零。",
     lessonId: "A04-B",
     references: ["MAC-MIT"],
   },
   {
     id: "growth-effect",
     name: "增长效应（growth effect）",
-    definition: "在明确口径下持续改变长期增长率的效应。一次生产率水平上移与每期生产率持续增长不同；本课A是总要素效率乘数，并非直接等同于劳动增进型技术水平。",
+    definition:
+      "在明确口径下持续改变长期增长率的效应。一次生产率水平上移与每期生产率持续增长不同；本课A是总要素效率乘数，并非直接等同于劳动增进型技术水平。",
     lessonId: "A05-A",
     references: ["MAC-MIT", "MAC-CORE"],
   },
   {
     id: "total-factor-productivity",
     name: "全要素生产率（total factor productivity）",
-    definition: "本课生产函数Y=A K^α L^(1−α)中的效率乘数A。经验增长核算中的A或残差还可能吸收利用率、遗漏投入、质量与测量误差；不能直接把残差全部归为某一项发明的因果贡献。",
+    definition:
+      "本课生产函数Y=A K^α L^(1−α)中的效率乘数A。经验增长核算中的A或残差还可能吸收利用率、遗漏投入、质量与测量误差；不能直接把残差全部归为某一项发明的因果贡献。",
     lessonId: "A05-A",
     references: ["MAC-MIT", "MAC-CORE"],
   },
   {
     id: "growth-accounting",
     name: "增长核算（growth accounting）",
-    definition: "在选定生产函数与投入测量下，把产出变化分解为资本、劳动及效率项。固定α时ΔlnY=ΔlnA+αΔlnK+(1−α)ΔlnL是数学分解；解释这些项为何变化仍需行为机制与因果证据。",
+    definition:
+      "在选定生产函数与投入测量下，把产出变化分解为资本、劳动及效率项。固定α时ΔlnY=ΔlnA+αΔlnK+(1−α)ΔlnL是数学分解；解释这些项为何变化仍需行为机制与因果证据。",
     lessonId: "A05-A",
     references: ["MAC-MIT"],
   },
   {
     id: "knowledge-spillover",
     name: "知识溢出（knowledge spillover）",
-    definition: "一个主体产生的知识可能被其他主体使用，使私人收益与社会收益不同。知识可多方使用不意味着复制、培训和实施没有成本；溢出大小、产权与创新激励需要另行建模或取证。",
+    definition:
+      "一个主体产生的知识可能被其他主体使用，使私人收益与社会收益不同。知识可多方使用不意味着复制、培训和实施没有成本；溢出大小、产权与创新激励需要另行建模或取证。",
     lessonId: "A05-A",
     references: ["MAC-CORE", "MAC-MIT"],
   },
   {
     id: "human-capital",
     name: "人力资本（human capital）",
-    definition: "能够影响生产与学习的技能、知识和经验。不能仅凭工人人数变化识别技能变化；本课基础LA04只计工人数，技能差异属于需扩展的投入或效率机制。",
+    definition:
+      "能够影响生产与学习的技能、知识和经验。不能仅凭工人人数变化识别技能变化；本课基础LA04只计工人数，技能差异属于需扩展的投入或效率机制。",
     lessonId: "A05-A",
     references: ["MAC-CORE", "MAC-MIT"],
   },
   {
     id: "institutions",
     name: "制度与创新激励（institutions）",
-    definition: "影响选择与交易的规则和执行安排，例如合约、竞争、产权与培训制度。制度可影响投资、扩散和收益分配；把其统统放进A不能证明哪项制度造成了生产率变化，也不能直接推出规范排序。",
+    definition:
+      "影响选择与交易的规则和执行安排，例如合约、竞争、产权与培训制度。制度可影响投资、扩散和收益分配；把其统统放进A不能证明哪项制度造成了生产率变化，也不能直接推出规范排序。",
     lessonId: "A05-A",
     references: ["MAC-CORE"],
   },
   {
     id: "technology-diffusion",
     name: "技术扩散（technology diffusion）",
-    definition: "技术从可用到被不同主体有效采用的过程。配套资本、培训、组织调整与融资可能使收益出现滞后或分布不均；一次把A上调是这些细节之外的简化反事实。",
+    definition:
+      "技术从可用到被不同主体有效采用的过程。配套资本、培训、组织调整与融资可能使收益出现滞后或分布不均；一次把A上调是这些细节之外的简化反事实。",
     lessonId: "A05-A",
     references: ["MAC-CORE", "MAC-MIT"],
   },
   {
     id: "output-per-person",
     name: "每居民产出（output per person）",
-    definition: "总产出Y除以所选居民人口N，与每工人产出Y/L不同。L,N>0时Y/N=(Y/L)(L/N)；人口年龄构成、参与与就业都可改变L/N，GDP均值也不等于中位数收入。",
+    definition:
+      "总产出Y除以所选居民人口N，与每工人产出Y/L不同。L,N>0时Y/N=(Y/L)(L/N)；人口年龄构成、参与与就业都可改变L/N，GDP均值也不等于中位数收入。",
     lessonId: "A05-B",
     references: ["MAC-CORE", "MAC-MIT"],
   },
   {
     id: "growth-employment-ratio",
     name: "工人与居民之比（workers per resident）",
-    definition: "本课人口分解中的L/N，即实际工人数除以居民人数；它不是失业率，也不等于通常以劳动年龄人口为分母的劳动力参与率。必须把年龄范围、劳动力和就业各层分母写清。",
+    definition:
+      "本课人口分解中的L/N，即实际工人数除以居民人数；它不是失业率，也不等于通常以劳动年龄人口为分母的劳动力参与率。必须把年龄范围、劳动力和就业各层分母写清。",
     lessonId: "A05-B",
     references: ["MAC-BLS-LABOR", "MAC-CORE"],
   },
   {
     id: "complementarity-substitution",
     name: "技术互补与替代（complementarity / substitution）",
-    definition: "技术可能提高某类劳动的生产能力，也可能替代某些任务；任务被替代不等于所有岗位或总就业按相同比例消失。重新配置、需求、工资、培训与产权决定最终就业和收入，基础单一劳动模型无法给出分组结论。",
+    definition:
+      "技术可能提高某类劳动的生产能力，也可能替代某些任务；任务被替代不等于所有岗位或总就业按相同比例消失。重新配置、需求、工资、培训与产权决定最终就业和收入，基础单一劳动模型无法给出分组结论。",
     lessonId: "A05-B",
     references: ["MAC-CORE", "MAC-MIT"],
   },
   {
     id: "planned-expenditure",
     name: "计划支出（planned expenditure）",
-    definition: "家庭、企业和政府在给定收入等条件下计划购买的当期商品服务Z。在LA05中Z=C0+c(Y−T)+I0+G；计划投资I0不包含非计划库存变化，故Z不必等于当期实际产出Y。",
+    definition:
+      "家庭、企业和政府在给定收入等条件下计划购买的当期商品服务Z。在LA05中Z=C0+c(Y−T)+I0+G；计划投资I0不包含非计划库存变化，故Z不必等于当期实际产出Y。",
     lessonId: "A06-A",
     references: ["MAC-MIT", "MAC-CORE"],
   },
   {
     id: "unplanned-inventory",
     name: "非计划存货变化（unplanned inventory change）",
-    definition: "本期产出减计划购买，即Y−Z。正值为未被计划购买的产出进入库存，负值为库存被意外消耗；实际投资=计划投资I0+(Y−Z)，使实现后核算始终成立。负值要求足够期初库存，抽象调整路径不展开实物库存下限。",
+    definition:
+      "本期产出减计划购买，即Y−Z。正值为未被计划购买的产出进入库存，负值为库存被意外消耗；实际投资=计划投资I0+(Y−Z)，使实现后核算始终成立。负值要求足够期初库存，抽象调整路径不展开实物库存下限。",
     lessonId: "A06-A",
     references: ["MAC-MIT", "MAC-BEA"],
   },
   {
     id: "marginal-propensity-consume",
     name: "边际消费倾向（marginal propensity to consume）",
-    definition: "本课消费方程中可支配收入增加一单位带来的计划消费增量c，0≤c<1。它不同于平均消费占收入比例；C0、借贷与分组行为可使平均比例不同，现实参数需估计而非由恒等式得出。",
+    definition:
+      "本课消费方程中可支配收入增加一单位带来的计划消费增量c，0≤c<1。它不同于平均消费占收入比例；C0、借贷与分组行为可使平均比例不同，现实参数需估计而非由恒等式得出。",
     lessonId: "A06-A",
     references: ["MAC-CORE", "MAC-MIT"],
   },
   {
     id: "multiplier",
     name: "固定价格支出乘数（expenditure multiplier）",
-    definition: "在封闭、闲置产能、固定价格、外生税与投资的LA05中，外生购买增加1最终使均衡产出增加1/(1−c)。它是完整行为假设下的比较静态结果，不是任何时期和政策的固定经验常数。",
+    definition:
+      "在封闭、闲置产能、固定价格、外生税与投资的LA05中，外生购买增加1最终使均衡产出增加1/(1−c)。它是完整行为假设下的比较静态结果，不是任何时期和政策的固定经验常数。",
     lessonId: "A06-A",
     references: ["MAC-MIT", "MAC-CORE"],
   },
   {
     id: "is-relation",
     name: "IS关系（IS relation）",
-    definition: "在价格固定的商品市场模型中，给定投资随实际利率变化的行为式后，使计划支出等于产出的Y与r组合。例如I=Ibar−br给出Y=[C0−cT+Ibar−br+G]/(1−c)；它本身没有决定利率，也没有包含货币市场或央行规则。",
+    definition:
+      "在价格固定的商品市场模型中，给定投资随实际利率变化的行为式后，使计划支出等于产出的Y与r组合。例如I=Ibar−br给出Y=[C0−cT+Ibar−br+G]/(1−c)；它本身没有决定利率，也没有包含货币市场或央行规则。",
     lessonId: "A06-B",
     references: ["MAC-MIT"],
   },
   {
     id: "expectations-demand",
     name: "预期与支出计划（expectations and demand）",
-    definition: "家庭与企业对未来收入、销量和融资条件的看法可影响现在的消费与投资计划。在LA05中通过明确改变C0或I0构造反事实，不从一次参数变动宣称已识别现实预期的效果。",
+    definition:
+      "家庭与企业对未来收入、销量和融资条件的看法可影响现在的消费与投资计划。在LA05中通过明确改变C0或I0构造反事实，不从一次参数变动宣称已识别现实预期的效果。",
     lessonId: "A06-B",
     references: ["MAC-CORE", "MAC-MIT"],
   },
   {
     id: "model-closure",
     name: "模型闭合方式（model closure）",
-    definition: "为共同决定内生变量而补充的一组行为方程、约束与政策设定。固定投资、利率敏感投资、固定货币量与利率规则对应不同闭合；不能用同一恒等式掩盖这些假设的差别。",
+    definition:
+      "为共同决定内生变量而补充的一组行为方程、约束与政策设定。固定投资、利率敏感投资、固定货币量与利率规则对应不同闭合；不能用同一恒等式掩盖这些假设的差别。",
     lessonId: "A06-B",
     references: ["MAC-MIT"],
   },

@@ -7,22 +7,17 @@ import {
   terms,
 } from "../../src/content";
 
-const expectedLearnable = [
-  "A01-A",
-  "A01-B",
-  "A02-A",
-  "A02-B",
-  "A03-A",
-  "A03-B",
-];
-const expectedPlanned = Array.from(
-  { length: 9 },
-  (_, index) => `A${String(index + 4).padStart(2, "0")}`,
-).flatMap((moduleId) => [`${moduleId}-A`, `${moduleId}-B`]);
+const expectedLearnable = Array.from(
+  { length: 12 },
+  (_, i) => `A${String(i + 1).padStart(2, "0")}`,
+).flatMap((module) => [`${module}-A`, `${module}-B`]);
+const expectedPlanned: string[] = [];
 const termIds = new Set(terms.map((term) => term.id));
 const sourceIds = new Set(sources.map((source) => source.id));
 const lessonIds = new Set<string>(lessons.map((lesson) => lesson.id));
-const labs = new Set(["LA01", "LA02", "LA03"]);
+const labs = new Set(
+  Array.from({ length: 9 }, (_, i) => `LA${String(i + 1).padStart(2, "0")}`),
+);
 
 function expectReferences(ids: string[]): void {
   expect(ids.length).toBeGreaterThan(0);
@@ -30,8 +25,8 @@ function expectReferences(ids: string[]): void {
   for (const id of ids) expect(sourceIds.has(id), `悬空来源 ${id}`).toBe(true);
 }
 
-describe("首期范围与完整规划目录", () => {
-  it("只开放A01–A03六节，保留A04–A12十八个规划ID", () => {
+describe("完整课程范围", () => {
+  it("开放A01–A12二十四节，九个实验均有课程入口", () => {
     expect(courseId).toBe("macroeconomics");
     expect(lessons.map((lesson) => lesson.id)).toEqual(expectedLearnable);
     expect(plannedLessons.map((lesson) => lesson.id)).toEqual(expectedPlanned);
@@ -53,7 +48,7 @@ describe("首期范围与完整规划目录", () => {
   });
 });
 
-describe("六节可独立阅读的教学内容合同", () => {
+describe("二十四节可独立阅读的教学内容合同", () => {
   for (const lesson of lessons) {
     it(`${lesson.id}有七步讲解、完整模型说明与可追溯词条/来源/实验`, () => {
       expect(lesson.title.trim()).not.toBe("");
@@ -77,12 +72,10 @@ describe("六节可独立阅读的教学内容合同", () => {
       }
       expect(lesson.sections.some((section) => section.advanced)).toBe(true);
       expect(lesson.sections.some((section) => section.formula)).toBe(true);
-      expect(lesson.modelTypeTags.some((tag) => tag.includes("定义"))).toBe(
-        true,
-      );
+      expect(lesson.modelTypeTags.length).toBeGreaterThanOrEqual(3);
       expect(
         lesson.modelTypeTags.some((tag) =>
-          /恒等式|核算关系|数学关系/.test(tag),
+          /定义|核算|行为|动态|均衡|测量|反事实/.test(tag),
         ),
       ).toBe(true);
       expect(lesson.assumptions.length).toBeGreaterThan(0);
@@ -97,7 +90,8 @@ describe("六节可独立阅读的教学内容合同", () => {
       for (const id of lesson.definitions)
         expect(termIds.has(id), `${lesson.id}悬空词条 ${id}`).toBe(true);
       expect(labs.has(lesson.labId), `${lesson.id}悬空实验`).toBe(true);
-      expect(lesson.labId).toBe(`LA${lesson.moduleId.slice(1)}`);
+      if (lesson.moduleId <= "A03")
+        expect(lesson.labId).toBe(`LA${lesson.moduleId.slice(1)}`);
       expectReferences(lesson.references);
     });
 
@@ -146,7 +140,7 @@ describe("六节可独立阅读的教学内容合同", () => {
 
   it("客观数值题复用内核且与教学oracle一致", () => {
     const expectedValues = [110, 10, 100, 20, 44, 140.25];
-    lessons.forEach((lesson, index) => {
+    lessons.slice(0, 6).forEach((lesson, index) => {
       expect(
         lesson.checks.find((check) => check.kind === "numeric")?.value,
       ).toBeCloseTo(expectedValues[index], 8);

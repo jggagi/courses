@@ -758,3 +758,39 @@ button + button {
     scroll-behavior: auto !important;
   }
 }
+/* Long-course experiments retain keyboard inputs and local horizontal tables. */
+.parameter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1rem;
+}
+.parameter-grid label {
+  min-width: 0;
+}
+.parameter-grid input {
+  width: 100%;
+}
+.model-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.model-choices label,
+.check-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+.model-choices input,
+.check-label input {
+  width: auto;
+  flex-shrink: 0;
+}
+.table-scroll th small {
+  display: block;
+  font-weight: normal;
+}
+.synthetic-label {
+  font-weight: 600;
+  color: #183c39;
+}

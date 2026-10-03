@@ -378,7 +378,7 @@ describe("宏观导入结构与模型源记录校验", () => {
     expect(() => validateState({ ...state, cachedGDP: 100 })).toThrow(
       /未知字段/,
     );
-    expect(() => validateState({ ...state, lastLessonId: "A04-A" })).toThrow(
+    expect(() => validateState({ ...state, lastLessonId: "A13-A" })).toThrow(
       /已实现/,
     );
     const input = JSON.parse(exportState(state));

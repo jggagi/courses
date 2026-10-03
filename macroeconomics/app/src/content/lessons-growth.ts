@@ -1,18 +1,25 @@
 import type { Lesson } from "./types";
 import { defaultGrowthParameters, simulateGrowth } from "../models/growth";
-import { defaultSpendingParameters, simulateSpending } from "../models/spending";
+import {
+  defaultSpendingParameters,
+  simulateSpending,
+} from "../models/spending";
 
 // 客观答案与实验使用同一计算内核；不读图形坐标或已舍入的显示值。
 const baseGrowth = simulateGrowth(defaultGrowthParameters());
 const higherSaving = simulateGrowth({ ...defaultGrowthParameters(), s: 0.4 });
 const productivityLevel = simulateGrowth({
-  ...defaultGrowthParameters(), K0: 4, L0: 1,
-  technologyShock: 1.2, shockPeriod: 1,
+  ...defaultGrowthParameters(),
+  K0: 4,
+  L0: 1,
+  technologyShock: 1.2,
+  shockPeriod: 1,
 });
 const baseSpending = simulateSpending(defaultSpendingParameters());
 // IS插页把利率敏感投资的明确行为假设转换成LA05的外生投资场景。
 const interestScenario = simulateSpending({
-  ...defaultSpendingParameters(), I0: 40 - 100 * 0.05,
+  ...defaultSpendingParameters(),
+  I0: 40 - 100 * 0.05,
 });
 
 export const growthLessons: Lesson[] = [
@@ -20,9 +27,21 @@ export const growthLessons: Lesson[] = [
     id: "A04-A",
     moduleId: "A04",
     title: "多一台设备，为什么不总多出同样的产量？",
-    centralQuestion: "若每期多留一点产出建机器，下一期会更富吗？资本能无成本地一直加下去吗？",
-    prerequisites: ["A02：消费、资本形成与储蓄；A03：实际量和增长率；平方根按需解释"],
-    definitions: ["production-function", "capital-per-worker", "diminishing-marginal-returns", "saving-rate", "depreciation", "stock", "flow", "investment"],
+    centralQuestion:
+      "若每期多留一点产出建机器，下一期会更富吗？资本能无成本地一直加下去吗？",
+    prerequisites: [
+      "A02：消费、资本形成与储蓄；A03：实际量和增长率；平方根按需解释",
+    ],
+    definitions: [
+      "production-function",
+      "capital-per-worker",
+      "diminishing-marginal-returns",
+      "saving-rate",
+      "depreciation",
+      "stock",
+      "flow",
+      "investment",
+    ],
     modelTypeTags: [
       "定义：总资本、工人数与每工人量",
       "行为与技术假设：固定储蓄率、生产函数和折旧率",
@@ -104,55 +123,102 @@ export const growthLessons: Lesson[] = [
         ],
       },
     ],
-    workedExample: "教学合成第0期：A1、α0.5、s0.2、δ0.1、n0、K=L=1。Y=1、每工人消费0.8、新投资0.2、折旧0.1；K₁=k₁=1.1，y₁=√1.1≈1.048808848。只改n为0.1时K₁=1.1、L₁=1.1、k₁=1，总量与每工人增长不同。",
+    workedExample:
+      "教学合成第0期：A1、α0.5、s0.2、δ0.1、n0、K=L=1。Y=1、每工人消费0.8、新投资0.2、折旧0.1；K₁=k₁=1.1，y₁=√1.1≈1.048808848。只改n为0.1时K₁=1.1、L₁=1.1、k₁=1，总量与每工人增长不同。",
     labId: "LA04",
-    counterexample: "旧机器仅估值上涨不提高本模型实际K或产出；k₀=0且没有外部资本时路径吸收在0，模型没有自动起飞机制。",
+    counterexample:
+      "旧机器仅估值上涨不提高本模型实际K或产出；k₀=0且没有外部资本时路径吸收在0，模型没有自动起飞机制。",
     checks: [
       {
-        id: "A04-A-explain", kind: "explanation",
+        id: "A04-A-explain",
+        kind: "explanation",
         prompt: "为什么储蓄率20%不能直接解释成每工人资本或产出增长20%？",
-        answer: "20%是本期产出用于资本形成的比例；资本还要扣折旧并除以下期工人数，资本形成相对于期初资本的大小取决于生产函数。产出又由资本与技术劳动共同决定，边际报酬递减使其增长不与资本一比一。",
-        rubric: ["区分储蓄率的分母是产出而不是资本。", "指出折旧和工人数增长进入资本更新。", "说明产出要经过生产函数，而非把资本增长直接复制为产出增长。"],
+        answer:
+          "20%是本期产出用于资本形成的比例；资本还要扣折旧并除以下期工人数，资本形成相对于期初资本的大小取决于生产函数。产出又由资本与技术劳动共同决定，边际报酬递减使其增长不与资本一比一。",
+        rubric: [
+          "区分储蓄率的分母是产出而不是资本。",
+          "指出折旧和工人数增长进入资本更新。",
+          "说明产出要经过生产函数，而非把资本增长直接复制为产出增长。",
+        ],
         misconception: "把每个百分数都当成同一增长率；先写各自的分母与时期。",
       },
       {
-        id: "A04-A-number", kind: "numeric",
+        id: "A04-A-number",
+        kind: "numeric",
         prompt: "A1、α0.5、s0.2、δ0.1、n0、k₀1时，第1期每工人资本k₁是多少？",
-        value: baseGrowth.periods[1].k, tolerance: 1e-8, unit: "资本单位/工人（第1期）",
-        answer: "y₀=1；k₁=(1−0.1)×1+0.2×1=1.1。投资0.2减折旧0.1才是资本净增0.1。",
+        value: baseGrowth.periods[1].k,
+        tolerance: 1e-8,
+        unit: "资本单位/工人（第1期）",
+        answer:
+          "y₀=1；k₁=(1−0.1)×1+0.2×1=1.1。投资0.2减折旧0.1才是资本净增0.1。",
         rubric: ["先求第0期产出，再将投资和折旧分别代入。"],
         misconception: "1.2漏掉折旧，0.9漏掉投资；资本不是只有一条变动来源。",
       },
       {
-        id: "A04-A-transfer", kind: "transfer",
-        prompt: "同一初始工坊只把工人数增长n改成10%，总资本下一期仍为1.1。每工人资本是否增长10%？请解释。",
-        answer: "不增长。初始L=1时下期L=1.1，k₁=1.1/1.1=1；总资本增长刚好被工人人数增长稀释。每工人产出仍1，这不等于总产出没有增长。",
-        rubric: ["写出下期工人数1.1而非沿用初始分母。", "算出k₁1并说明没有每工人增长。", "区分总资本/产出与每工人资本/产出。"],
+        id: "A04-A-transfer",
+        kind: "transfer",
+        prompt:
+          "同一初始工坊只把工人数增长n改成10%，总资本下一期仍为1.1。每工人资本是否增长10%？请解释。",
+        answer:
+          "不增长。初始L=1时下期L=1.1，k₁=1.1/1.1=1；总资本增长刚好被工人人数增长稀释。每工人产出仍1，这不等于总产出没有增长。",
+        rubric: [
+          "写出下期工人数1.1而非沿用初始分母。",
+          "算出k₁1并说明没有每工人增长。",
+          "区分总资本/产出与每工人资本/产出。",
+        ],
         misconception: "只看分子增长，忽略新增工人也需要设备。",
       },
       {
-        id: "A04-A-choice", kind: "choice",
+        id: "A04-A-choice",
+        kind: "choice",
         prompt: "固定劳动与技术时，“资本边际报酬递减”在本模型中意味着什么？",
         answer: "资本增加仍增产，但每添一单位资本的新增产出逐步减少。",
         rubric: ["辨认固定其他投入下的边际变化。"],
         options: [
-          { label: "资本越多，总产出越少。", correct: false, feedback: "把边际贡献减少混成总产出下降；本课曲线仍向上，只是越来越平。" },
-          { label: "资本增加仍增产，但每添一单位资本的新增产出逐步减少。", correct: true, feedback: "对。固定A和L时，y的斜率为正且逐步降低。" },
-          { label: "资本和劳动同时翻倍，产出也必定不到两倍。", correct: false, feedback: "这混淆边际报酬与规模报酬。本课K和L同时翻倍恰好让Y翻倍。" },
+          {
+            label: "资本越多，总产出越少。",
+            correct: false,
+            feedback:
+              "把边际贡献减少混成总产出下降；本课曲线仍向上，只是越来越平。",
+          },
+          {
+            label: "资本增加仍增产，但每添一单位资本的新增产出逐步减少。",
+            correct: true,
+            feedback: "对。固定A和L时，y的斜率为正且逐步降低。",
+          },
+          {
+            label: "资本和劳动同时翻倍，产出也必定不到两倍。",
+            correct: false,
+            feedback: "这混淆边际报酬与规模报酬。本课K和L同时翻倍恰好让Y翻倍。",
+          },
         ],
         misconception: "把曲线斜率、总量和规模扩张混成一个结论。",
       },
     ],
-    recap: { must: "实际投入、每工人量、储蓄与折旧、递减边际产出、正确的跨期更新顺序。", later: "异质资本、劳动质量、融资与闲置投入；生产函数参数需要证据。", returnAt: "A04-B找固定点与过渡；A05解释技术和人口；A06分析闲置产能。" },
-    references: ["MAC-MIT", "MAC-CORE"], status: "learnable",
+    recap: {
+      must: "实际投入、每工人量、储蓄与折旧、递减边际产出、正确的跨期更新顺序。",
+      later: "异质资本、劳动质量、融资与闲置投入；生产函数参数需要证据。",
+      returnAt: "A04-B找固定点与过渡；A05解释技术和人口；A06分析闲置产能。",
+    },
+    references: ["MAC-MIT", "MAC-CORE"],
+    status: "learnable",
   },
   {
     id: "A04-B",
     moduleId: "A04",
     title: "到达更高的平台，不等于永远跑得更快",
-    centralQuestion: "储蓄率从20%升到40%，为什么长期每工人产出更高，但稳态增长率仍可能为零？",
+    centralQuestion:
+      "储蓄率从20%升到40%，为什么长期每工人产出更高，但稳态增长率仍可能为零？",
     prerequisites: ["A04-A：生产与资本递推；A03：水平与增长率"],
-    definitions: ["steady-state", "transition-dynamics", "level-effect", "saving-rate", "depreciation", "growth-rate", "consumption"],
+    definitions: [
+      "steady-state",
+      "transition-dynamics",
+      "level-effect",
+      "saving-rate",
+      "depreciation",
+      "growth-rate",
+      "consumption",
+    ],
     modelTypeTags: [
       "定义：固定每工人量的稳态",
       "核算恒等式：新增资本与维持资本的资源平衡",
@@ -199,7 +265,8 @@ export const growthLessons: Lesson[] = [
           "默认A1、α0.5、s0.2、δ0.1、n0得到k*=4，y*=√4=2，消费*=0.8×2=1.6。每工人投资0.4恰好等于折旧0.4。把s改0.4，新目标k*=16、y*=4、消费*=2.4；无技术进步和人口固定时，达到新平台后的每工人产出增长率仍为0。",
           "若从旧稳态k₀4开始提高s，本期消费从1.6降至1.2，k₁=0.9×4+0.4×2=4.4；下一期产出√4.4≈2.097617696。目标16不是下一期16。储蓄既有未来资源收益，也有当前消费代价，不能只看终点产出给福利盖章。",
         ],
-        formula: "固定A、k*>0：sA(k*)^α=(n+δ)k*；k*=[sA/(n+δ)]^(1/(1−α))；y*=A(k*)^α",
+        formula:
+          "固定A、k*>0：sA(k*)^α=(n+δ)k*；k*=[sA/(n+δ)]^(1/(1−α))；y*=A(k*)^α",
       },
       {
         title: "5 · 可控实验：把时间路径与长期目标并排看",
@@ -235,55 +302,108 @@ export const growthLessons: Lesson[] = [
         ],
       },
     ],
-    workedExample: "教学合成固定A：储蓄20%时k*4、y*2、c*1.6；储蓄40%时k*16、y*4、c*2.4。从旧稳态k₀4提高储蓄时，本期消费1.2、k₁4.4，并非瞬间16。高储蓄80%虽使y*8，c*只有1.6。",
+    workedExample:
+      "教学合成固定A：储蓄20%时k*4、y*2、c*1.6；储蓄40%时k*16、y*4、c*2.4。从旧稳态k₀4提高储蓄时，本期消费1.2、k₁4.4，并非瞬间16。高储蓄80%虽使y*8，c*只有1.6。",
     labId: "LA04",
-    counterexample: "固定A下s0.8的稳态产出8高于s0.5的5，但稳态消费1.6低于2.5；产出排序不能直接变成消费或福利排序。",
+    counterexample:
+      "固定A下s0.8的稳态产出8高于s0.5的5，但稳态消费1.6低于2.5；产出排序不能直接变成消费或福利排序。",
     checks: [
       {
-        id: "A04-B-explain", kind: "explanation",
-        prompt: "稳态每工人产出增长率为零，是否说明经济没有生产、投资或总量增长？",
-        answer: "不说明。仍有产出、消费与替换折旧及配给新增工人的投资，只是每工人资本不变。人口固定时总量不增长；工人数增长时总产出随工人数增长，尽管每工人产出不变。技术持续进步还需另一个标准化。",
-        rubric: ["把稳态定义为指定每工人变量不变。", "指出更新投资与消费仍存在。", "区分n=0和n>0时总量增长，并限定技术固定。"],
-        misconception: "把零净增长误解成所有流量为零，或把每工人增长当总量增长。",
+        id: "A04-B-explain",
+        kind: "explanation",
+        prompt:
+          "稳态每工人产出增长率为零，是否说明经济没有生产、投资或总量增长？",
+        answer:
+          "不说明。仍有产出、消费与替换折旧及配给新增工人的投资，只是每工人资本不变。人口固定时总量不增长；工人数增长时总产出随工人数增长，尽管每工人产出不变。技术持续进步还需另一个标准化。",
+        rubric: [
+          "把稳态定义为指定每工人变量不变。",
+          "指出更新投资与消费仍存在。",
+          "区分n=0和n>0时总量增长，并限定技术固定。",
+        ],
+        misconception:
+          "把零净增长误解成所有流量为零，或把每工人增长当总量增长。",
       },
       {
-        id: "A04-B-number", kind: "numeric",
-        prompt: "固定A1、α0.5、δ0.1、n0，储蓄率s0.4时，正稳态每工人资本k*是多少？",
-        value: higherSaving.steadyState!.k, tolerance: 1e-8, unit: "资本单位/工人（正稳态）",
-        answer: "k*=(0.4/0.1)^(1/(1−0.5))=4²=16。该值是长期固定点，不是从k₀1一步到达的结果。",
+        id: "A04-B-number",
+        kind: "numeric",
+        prompt:
+          "固定A1、α0.5、δ0.1、n0，储蓄率s0.4时，正稳态每工人资本k*是多少？",
+        value: higherSaving.steadyState!.k,
+        tolerance: 1e-8,
+        unit: "资本单位/工人（正稳态）",
+        answer:
+          "k*=(0.4/0.1)^(1/(1−0.5))=4²=16。该值是长期固定点，不是从k₀1一步到达的结果。",
         rubric: ["由固定点方程解出正根，并区分目标与下一期状态。"],
         misconception: "答4漏掉指数2；把16当下一期值则忽略了资本积累的过渡。",
       },
       {
-        id: "A04-B-transfer", kind: "transfer",
-        prompt: "某报告仅因储蓄提高后过渡期产出增长更快，就断言长期增长率永久更高。固定A模型能支持这个说法吗？",
-        answer: "不能。更高s提高正稳态k和y，过渡时投资超过维持需要而增长，接近新固定点后增长率回到零。要得到持续每工人增长需要额外机制，如持续技术进步，并检查其设定与证据。",
-        rubric: ["明确更高水平与更快长期增长不同。", "用维持投资解释过渡增长为何趋缓。", "指出持续增长需要改变技术等机制而非仅外推短期路径。"],
+        id: "A04-B-transfer",
+        kind: "transfer",
+        prompt:
+          "某报告仅因储蓄提高后过渡期产出增长更快，就断言长期增长率永久更高。固定A模型能支持这个说法吗？",
+        answer:
+          "不能。更高s提高正稳态k和y，过渡时投资超过维持需要而增长，接近新固定点后增长率回到零。要得到持续每工人增长需要额外机制，如持续技术进步，并检查其设定与证据。",
+        rubric: [
+          "明确更高水平与更快长期增长不同。",
+          "用维持投资解释过渡增长为何趋缓。",
+          "指出持续增长需要改变技术等机制而非仅外推短期路径。",
+        ],
         misconception: "从有限窗口的增长率推断整个长期，忽视固定点及技术条件。",
       },
       {
-        id: "A04-B-choice", kind: "choice",
+        id: "A04-B-choice",
+        kind: "choice",
         prompt: "对提高储蓄率的福利判断，哪项表述符合本模型的边界？",
         answer: "应分别看过渡消费和长期消费，还要另选价值标准与分配假设。",
         rubric: ["同时考虑时间与分配，避免产出替代福利。"],
         options: [
-          { label: "稳态产出越高，所有人的福利一定越高。", correct: false, feedback: "产出不是消费，更不是每个人福利。高s可降低稳态消费，收益与成本还可能落在不同人身上。" },
-          { label: "应分别看过渡消费和长期消费，还要另选价值标准与分配假设。", correct: true, feedback: "对。模型提供资源路径，福利需要时间权衡与分配条件。" },
-          { label: "消费在提高储蓄当期下降，因此以后永远都更低。", correct: false, feedback: "把当期变化当永久结果。资本积累提高产出后，长期消费可高于原水平，须按路径计算。" },
+          {
+            label: "稳态产出越高，所有人的福利一定越高。",
+            correct: false,
+            feedback:
+              "产出不是消费，更不是每个人福利。高s可降低稳态消费，收益与成本还可能落在不同人身上。",
+          },
+          {
+            label: "应分别看过渡消费和长期消费，还要另选价值标准与分配假设。",
+            correct: true,
+            feedback: "对。模型提供资源路径，福利需要时间权衡与分配条件。",
+          },
+          {
+            label: "消费在提高储蓄当期下降，因此以后永远都更低。",
+            correct: false,
+            feedback:
+              "把当期变化当永久结果。资本积累提高产出后，长期消费可高于原水平，须按路径计算。",
+          },
         ],
         misconception: "只用一时期或一个总量替代完整福利问题。",
       },
     ],
-    recap: { must: "正固定点、零资本边界、稳态仍有流量、过渡与水平/增长效应、消费的时间权衡。", later: "跨期最优储蓄、风险、代际福利和经验收敛检验。", returnAt: "A05-A区分技术水平与趋势；A05-B检查人口与分配；A12检验机制证据。" },
-    references: ["MAC-MIT", "MAC-CORE"], status: "learnable",
+    recap: {
+      must: "正固定点、零资本边界、稳态仍有流量、过渡与水平/增长效应、消费的时间权衡。",
+      later: "跨期最优储蓄、风险、代际福利和经验收敛检验。",
+      returnAt:
+        "A05-A区分技术水平与趋势；A05-B检查人口与分配；A12检验机制证据。",
+    },
+    references: ["MAC-MIT", "MAC-CORE"],
+    status: "learnable",
   },
   {
     id: "A05-A",
     moduleId: "A05",
     title: "发明出现了，生产率为什么未必立刻提高？",
-    centralQuestion: "一项新工具提高效率20%，与效率每期持续提高2%，会给出同一种增长路径吗？",
+    centralQuestion:
+      "一项新工具提高效率20%，与效率每期持续提高2%，会给出同一种增长路径吗？",
     prerequisites: ["A04：生产函数、积累与固定A稳态；A03：水平和增长率"],
-    definitions: ["total-factor-productivity", "growth-accounting", "knowledge-spillover", "human-capital", "institutions", "technology-diffusion", "growth-effect", "level-effect"],
+    definitions: [
+      "total-factor-productivity",
+      "growth-accounting",
+      "knowledge-spillover",
+      "human-capital",
+      "institutions",
+      "technology-diffusion",
+      "growth-effect",
+      "level-effect",
+    ],
     modelTypeTags: [
       "定义：给定生产函数下的效率参数A",
       "数学关系：增长核算分解",
@@ -330,7 +450,8 @@ export const growthLessons: Lesson[] = [
           "持续模式指定Aₜ=A₀(1+gA)^t，例如gA0.02。它表示每一期继续进步，不能使用某一个固定A的k*作为整条路径终点。本课A乘在整个生产函数前，不能直接断言每工人长期产出增长恰好等于gA；技术定义和资本响应都要一致。",
           "增长核算也从同一函数出发：在α固定时，取对数得到ΔlnY=ΔlnA+αΔlnK+(1−α)ΔlnL。它是一种数学分解。若K增21%、L不变、α0.5且A不变，Y恰增10%；看到产出增10%并不能把这10%全部叫作技术贡献，更不能辨认哪一项制度造成变化。",
         ],
-        formula: "一次水平：Aₜ在冲击期乘固定因子；持续趋势：Aₜ=A₀(1+gA)^t；ΔlnY=ΔlnA+αΔlnK+(1−α)ΔlnL",
+        formula:
+          "一次水平：Aₜ在冲击期乘固定因子；持续趋势：Aₜ=A₀(1+gA)^t；ΔlnY=ΔlnA+αΔlnK+(1−α)ΔlnL",
       },
       {
         title: "5 · 可控实验：一次上移与每期增长各跑一遍",
@@ -366,55 +487,108 @@ export const growthLessons: Lesson[] = [
         ],
       },
     ],
-    workedExample: "教学合成旧稳态k4、A1、y2。第1期一次把A乘1.2时资本仍4，y₁2.4、消费1.92、新资本0.48、折旧0.4；A固定1.2的新正稳态k5.76/y2.88/c2.304。持续A增长模式不适用固定A稳态终点。",
+    workedExample:
+      "教学合成旧稳态k4、A1、y2。第1期一次把A乘1.2时资本仍4，y₁2.4、消费1.92、新资本0.48、折旧0.4；A固定1.2的新正稳态k5.76/y2.88/c2.304。持续A增长模式不适用固定A稳态终点。",
     labId: "LA04",
-    counterexample: "仅设备利用率恢复或遗漏技能变化也可能提高测算A；效率残差上升不能单独证明某一新技术或制度的因果贡献。",
+    counterexample:
+      "仅设备利用率恢复或遗漏技能变化也可能提高测算A；效率残差上升不能单独证明某一新技术或制度的因果贡献。",
     checks: [
       {
-        id: "A05-A-explain", kind: "explanation",
-        prompt: "“新技术可用了”为什么不等于“生产率已经提高，并且所有人的收入同比例增加”？",
-        answer: "技术要经采纳、配套资本、培训和组织调整才能影响有效产出，可能存在成本与滞后。总体效率不规定收入如何在工资、资本收益、价格和不同人群间分配；分配机制与证据须另行补充。",
-        rubric: ["区分技术存在、采纳与有效使用。", "列出至少一个配套条件和时间或成本机制。", "指出总体产出效率与个人收入分配不是同一对象。"],
+        id: "A05-A-explain",
+        kind: "explanation",
+        prompt:
+          "“新技术可用了”为什么不等于“生产率已经提高，并且所有人的收入同比例增加”？",
+        answer:
+          "技术要经采纳、配套资本、培训和组织调整才能影响有效产出，可能存在成本与滞后。总体效率不规定收入如何在工资、资本收益、价格和不同人群间分配；分配机制与证据须另行补充。",
+        rubric: [
+          "区分技术存在、采纳与有效使用。",
+          "列出至少一个配套条件和时间或成本机制。",
+          "指出总体产出效率与个人收入分配不是同一对象。",
+        ],
         misconception: "用技术名称跳过行为链，再把平均变化复制给所有人。",
       },
       {
-        id: "A05-A-number", kind: "numeric",
-        prompt: "旧稳态k4、α0.5；第1期资本仍为4，技术A从1一次提高到1.2。该期每工人产出y₁是多少？",
-        value: productivityLevel.periods[1].y, tolerance: 1e-8, unit: "实际产品单位/工人/期（第1期）",
-        answer: "y₁=1.2×4^0.5=2.4。2.88是固定新A下资本后续调整后的正稳态产出，不是冲击当期。",
+        id: "A05-A-number",
+        kind: "numeric",
+        prompt:
+          "旧稳态k4、α0.5；第1期资本仍为4，技术A从1一次提高到1.2。该期每工人产出y₁是多少？",
+        value: productivityLevel.periods[1].y,
+        tolerance: 1e-8,
+        unit: "实际产品单位/工人/期（第1期）",
+        answer:
+          "y₁=1.2×4^0.5=2.4。2.88是固定新A下资本后续调整后的正稳态产出，不是冲击当期。",
         rubric: ["用冲击期A与尚未调整的k计算产出。"],
         misconception: "答2忽略技术，答2.88把长期资本反馈提前放入冲击当期。",
       },
       {
-        id: "A05-A-transfer", kind: "transfer",
-        prompt: "数据中产出与测算A都上升，有人把残差全部称为某项工具的贡献。至少提出两种替代解释及一种区分它们的数据。",
-        answer: "替代解释可包括利用率恢复、遗漏劳动技能/工时、资本质量与测量误差。可比较工具采纳时间和强度、设备开机时长、技能培训以及合适对照组的产出变化；还要检查采纳是否因需求上升而内生，不能只看同期相关。",
-        rubric: ["给出至少两个区别于特定工具因果贡献的机制。", "提出与某个机制对应的可观察数据或比较。", "明确核算分解不能单独完成因果识别。"],
+        id: "A05-A-transfer",
+        kind: "transfer",
+        prompt:
+          "数据中产出与测算A都上升，有人把残差全部称为某项工具的贡献。至少提出两种替代解释及一种区分它们的数据。",
+        answer:
+          "替代解释可包括利用率恢复、遗漏劳动技能/工时、资本质量与测量误差。可比较工具采纳时间和强度、设备开机时长、技能培训以及合适对照组的产出变化；还要检查采纳是否因需求上升而内生，不能只看同期相关。",
+        rubric: [
+          "给出至少两个区别于特定工具因果贡献的机制。",
+          "提出与某个机制对应的可观察数据或比较。",
+          "明确核算分解不能单独完成因果识别。",
+        ],
         misconception: "把生产函数中剩余解释项当成已经被识别的原因。",
       },
       {
-        id: "A05-A-choice", kind: "choice",
+        id: "A05-A-choice",
+        kind: "choice",
         prompt: "哪种技术路径可以直接使用一个固定A的稳态公式作为长期目标？",
         answer: "一次把A提高后保持不变，并保持其余固定参数。",
         rubric: ["检查稳态推导依赖A固定。"],
         options: [
-          { label: "一次把A提高后保持不变，并保持其余固定参数。", correct: true, feedback: "对。冲击后A固定，可计算新正固定点，同时逐期走过资本过渡。" },
-          { label: "A每期都提高2%，仍永远使用第0期稳态作为终点。", correct: false, feedback: "持续技术变化不断改变生产条件，第0期固定A的交点不能作整条路径终点。" },
-          { label: "只要叫作技术进步，下一期都可以直接跳到新稳态。", correct: false, feedback: "即时效率变化不等于即时资本形成；已有K按积累方程更新，需要过渡时间。" },
+          {
+            label: "一次把A提高后保持不变，并保持其余固定参数。",
+            correct: true,
+            feedback:
+              "对。冲击后A固定，可计算新正固定点，同时逐期走过资本过渡。",
+          },
+          {
+            label: "A每期都提高2%，仍永远使用第0期稳态作为终点。",
+            correct: false,
+            feedback:
+              "持续技术变化不断改变生产条件，第0期固定A的交点不能作整条路径终点。",
+          },
+          {
+            label: "只要叫作技术进步，下一期都可以直接跳到新稳态。",
+            correct: false,
+            feedback:
+              "即时效率变化不等于即时资本形成；已有K按积累方程更新，需要过渡时间。",
+          },
         ],
-        misconception: "把一次冲击、持续趋势和资本调整混在同一“技术进步”标签下。",
+        misconception:
+          "把一次冲击、持续趋势和资本调整混在同一“技术进步”标签下。",
       },
     ],
-    recap: { must: "效率参数的对象、一次水平与持续趋势、资本反馈、核算与因果、扩散的成本和条件。", later: "内生创新、知识产权和研发选择；具体制度和技术效果需原始证据。", returnAt: "A05-B分析人口、任务与收益分配；A11看融资条件；A12做替代机制与证据比较。" },
-    references: ["MAC-MIT", "MAC-CORE"], status: "learnable",
+    recap: {
+      must: "效率参数的对象、一次水平与持续趋势、资本反馈、核算与因果、扩散的成本和条件。",
+      later: "内生创新、知识产权和研发选择；具体制度和技术效果需原始证据。",
+      returnAt:
+        "A05-B分析人口、任务与收益分配；A11看融资条件；A12做替代机制与证据比较。",
+    },
+    references: ["MAC-MIT", "MAC-CORE"],
+    status: "learnable",
   },
   {
     id: "A05-B",
     moduleId: "A05",
     title: "平均更富，为什么有些人仍未受益？",
-    centralQuestion: "每工人产出提高10%，能否直接说每位居民收入提高10%，或总就业一定减少？",
+    centralQuestion:
+      "每工人产出提高10%，能否直接说每位居民收入提高10%，或总就业一定减少？",
     prerequisites: ["A05-A：技术和生产率；A04：每工人量；A03：比例与增长率"],
-    definitions: ["output-per-person", "growth-employment-ratio", "complementarity-substitution", "human-capital", "technology-diffusion", "growth-rate", "income"],
+    definitions: [
+      "output-per-person",
+      "growth-employment-ratio",
+      "complementarity-substitution",
+      "human-capital",
+      "technology-diffusion",
+      "growth-rate",
+      "income",
+    ],
     modelTypeTags: [
       "定义：居民、工人、劳动力与各自分母",
       "核算恒等式：每居民产出分解",
@@ -460,7 +634,8 @@ export const growthLessons: Lesson[] = [
           "进一步可写L/N=(W/N)(LF/W)(L/LF)。它把年龄结构、参与和就业三层分开，但只有分母为正且口径一致时才成立。任意一层的变化都可能影响总量；恒等式本身没有告诉我们育儿支持、健康、退休、需求或技能匹配分别造成多少变化。",
           "技术收益的分配还需要规则：若劳动与资本互补且工人具备培训，劳动需求或工资可能提高；若某类任务被替代、再配置缓慢，该群体收入可能受压；若产权集中，新利润可能更多归资本持有者。相同总量效率提升能与不同分配并存，必须分别检验这些机制。",
         ],
-        formula: "Y/N=(Y/L)×(L/N)；L/N=(W/N)×(LF/W)×(L/LF)（各分母为正、口径一致）",
+        formula:
+          "Y/N=(Y/L)×(L/N)；L/N=(W/N)×(LF/W)×(L/LF)（各分母为正、口径一致）",
       },
       {
         title: "5 · 可控实验：先看能力，再检查人口与分配条件",
@@ -496,56 +671,108 @@ export const growthLessons: Lesson[] = [
         ],
       },
     ],
-    workedExample: "教学合成N100、L40、Y/L5，所以Y200、Y/N2。若Y/L升为5.5、L/N降为0.35，则每居民产出1.925，降低3.75%。三人收入4/5/6变为4/5/15，均值5→8而中位数仍5，均值与分配不同。",
+    workedExample:
+      "教学合成N100、L40、Y/L5，所以Y200、Y/N2。若Y/L升为5.5、L/N降为0.35，则每居民产出1.925，降低3.75%。三人收入4/5/6变为4/5/15，均值5→8而中位数仍5，均值与分配不同。",
     labId: "LA04",
-    counterexample: "每工人产出增10%而工人与居民之比0.4→0.35时，每居民产出反而降低3.75%；平均收入增加也可能伴随中位数不变。",
+    counterexample:
+      "每工人产出增10%而工人与居民之比0.4→0.35时，每居民产出反而降低3.75%；平均收入增加也可能伴随中位数不变。",
     checks: [
       {
-        id: "A05-B-explain", kind: "explanation",
-        prompt: "为什么LA04的每工人产出不能直接当作每居民收入，也不能说明中位数收入？",
-        answer: "每工人产出以在岗工人L为分母，每居民产出以居民N为分母，需要乘L/N才能转换。居民可支配收入与产出还涉及分配、跨境收入、税和转移；中位数由收入分布决定，单一均值不能确定它。",
-        rubric: ["分别标出工人和居民分母。", "明确转换需要L/N，收入与GDP口径还需另查。", "指出平均总量不决定中位数或个体收益。"],
+        id: "A05-B-explain",
+        kind: "explanation",
+        prompt:
+          "为什么LA04的每工人产出不能直接当作每居民收入，也不能说明中位数收入？",
+        answer:
+          "每工人产出以在岗工人L为分母，每居民产出以居民N为分母，需要乘L/N才能转换。居民可支配收入与产出还涉及分配、跨境收入、税和转移；中位数由收入分布决定，单一均值不能确定它。",
+        rubric: [
+          "分别标出工人和居民分母。",
+          "明确转换需要L/N，收入与GDP口径还需另查。",
+          "指出平均总量不决定中位数或个体收益。",
+        ],
         misconception: "把所有“人均”理解为同一分母，再把平均值当每个人的值。",
       },
       {
-        id: "A05-B-number", kind: "numeric",
+        id: "A05-B-number",
+        kind: "numeric",
         prompt: "合成社区每工人产出5、居民100、在岗工人40。每居民产出是多少？",
         // 人口分解是定义恒等式，不属于LA04未建模的居民数据；按题目明确分母计算。
-        value: 5 * (40 / 100), tolerance: 1e-8, unit: "实际产品单位/居民/期",
+        value: 5 * (40 / 100),
+        tolerance: 1e-8,
+        unit: "实际产品单位/居民/期",
         answer: "Y/N=(Y/L)(L/N)=5×(40/100)=2；总Y=5×40=200。",
         rubric: ["先标出工人与居民的不同分母，再相乘转换。"],
         misconception: "答5沿用工人分母；答200算的是总量而不是每居民量。",
       },
       {
-        id: "A05-B-transfer", kind: "transfer",
-        prompt: "一项工具让每项重复任务所需工时减少50%。能否直接预测总就业减少50%？给出两条可能改变结果的机制。",
-        answer: "不能。任务、岗位与就业人数不同；降成本可能扩大销售和其他任务，组织也可能减少工时而不是岗位。培训再配置、需求响应、工资和投资会影响净结果，需要任务和岗位数据及适当比较，不能从技术效率百分比直接外推总就业。",
-        rubric: ["区分任务工时、岗位与就业人数。", "给出至少两条需求、再配置或组织机制。", "指出结果需额外模型与证据，不作确定总量预测。"],
+        id: "A05-B-transfer",
+        kind: "transfer",
+        prompt:
+          "一项工具让每项重复任务所需工时减少50%。能否直接预测总就业减少50%？给出两条可能改变结果的机制。",
+        answer:
+          "不能。任务、岗位与就业人数不同；降成本可能扩大销售和其他任务，组织也可能减少工时而不是岗位。培训再配置、需求响应、工资和投资会影响净结果，需要任务和岗位数据及适当比较，不能从技术效率百分比直接外推总就业。",
+        rubric: [
+          "区分任务工时、岗位与就业人数。",
+          "给出至少两条需求、再配置或组织机制。",
+          "指出结果需额外模型与证据，不作确定总量预测。",
+        ],
         misconception: "把局部任务节省当成全经济没有反馈的一比一岗位损失。",
       },
       {
-        id: "A05-B-choice", kind: "choice",
+        id: "A05-B-choice",
+        kind: "choice",
         prompt: "三人收入从4/5/6变为4/5/15，哪个结论正确？",
         answer: "均值从5升到8，中位数仍为5，增长分布不均。",
         rubric: ["分别计算均值并辨认排序中间值。"],
         options: [
-          { label: "均值从5升到8，中位数仍为5，增长分布不均。", correct: true, feedback: "对。总收入增加集中在第三人，平均上升没有让中间收入改变。" },
-          { label: "均值上涨60%，所以三人的收入都上涨60%。", correct: false, feedback: "平均变化不等于个体变化；前两人的收入在给定表中没有变。" },
-          { label: "中位数没变，所以总收入没有增长。", correct: false, feedback: "中位数只反映排序中间位置；总收入15变24，集中在高收入者的增长仍改变总量。" },
+          {
+            label: "均值从5升到8，中位数仍为5，增长分布不均。",
+            correct: true,
+            feedback:
+              "对。总收入增加集中在第三人，平均上升没有让中间收入改变。",
+          },
+          {
+            label: "均值上涨60%，所以三人的收入都上涨60%。",
+            correct: false,
+            feedback: "平均变化不等于个体变化；前两人的收入在给定表中没有变。",
+          },
+          {
+            label: "中位数没变，所以总收入没有增长。",
+            correct: false,
+            feedback:
+              "中位数只反映排序中间位置；总收入15变24，集中在高收入者的增长仍改变总量。",
+          },
         ],
         misconception: "用一个分布统计量替代另一个，或替代所有个体。",
       },
     ],
-    recap: { must: "总量/每工人/每居民口径，年龄参与就业分层，均值/中位数，任务互补替代和收益分配机制。", later: "真实人口与劳动统计、异质技能和工资模型、社会福利的具体价值标准。", returnAt: "A07-A展开就业与参与率；A09看税与转移；A12检验技术与分配解释。" },
-    references: ["MAC-MIT", "MAC-CORE", "MAC-BLS-LABOR"], status: "learnable",
+    recap: {
+      must: "总量/每工人/每居民口径，年龄参与就业分层，均值/中位数，任务互补替代和收益分配机制。",
+      later: "真实人口与劳动统计、异质技能和工资模型、社会福利的具体价值标准。",
+      returnAt: "A07-A展开就业与参与率；A09看税与转移；A12检验技术与分配解释。",
+    },
+    references: ["MAC-MIT", "MAC-CORE", "MAC-BLS-LABOR"],
+    status: "learnable",
   },
   {
     id: "A06-A",
     moduleId: "A06",
     title: "大家都想多存一点，为什么收入也会变？",
-    centralQuestion: "家庭都减少消费时，整个经济实现的储蓄一定增加吗？卖不掉的产出算到哪里？",
-    prerequisites: ["A01：一人支出与另一人收入；A02：储蓄投资与库存核算；A04：长期能力与短期使用不同"],
-    definitions: ["planned-expenditure", "unplanned-inventory", "marginal-propensity-consume", "multiplier", "consumption", "saving", "investment", "identity", "behavioral-mechanism"],
+    centralQuestion:
+      "家庭都减少消费时，整个经济实现的储蓄一定增加吗？卖不掉的产出算到哪里？",
+    prerequisites: [
+      "A01：一人支出与另一人收入；A02：储蓄投资与库存核算；A04：长期能力与短期使用不同",
+    ],
+    definitions: [
+      "planned-expenditure",
+      "unplanned-inventory",
+      "marginal-propensity-consume",
+      "multiplier",
+      "consumption",
+      "saving",
+      "investment",
+      "identity",
+      "behavioral-mechanism",
+    ],
     modelTypeTags: [
       "定义：计划购买与实现后投资",
       "行为假设：收入相关消费、外生计划投资和购买",
@@ -629,55 +856,113 @@ export const growthLessons: Lesson[] = [
         ],
       },
     ],
-    workedExample: "教学合成C0=20/c0.6/T20/I0=30/G30：均衡Y170/C110/私人储蓄40/政府储蓄−10/国民储蓄30。Y0=100时Z128、库存−28、实际I2，GDP核算100仍成立；η0.5时Y1=114。G40→Y195；C0=10→Y145/C85/国民储蓄仍30。",
+    workedExample:
+      "教学合成C0=20/c0.6/T20/I0=30/G30：均衡Y170/C110/私人储蓄40/政府储蓄−10/国民储蓄30。Y0=100时Z128、库存−28、实际I2，GDP核算100仍成立；η0.5时Y1=114。G40→Y195；C0=10→Y145/C85/国民储蓄仍30。",
     labId: "LA05",
-    counterexample: "供给达到上限、价格或利率响应时，固定价格外生投资的2.5乘数不再适用；c=1不能填一个有限结果，负存货流还需实物库存支持。",
+    counterexample:
+      "供给达到上限、价格或利率响应时，固定价格外生投资的2.5乘数不再适用；c=1不能填一个有限结果，负存货流还需实物库存支持。",
     checks: [
       {
-        id: "A06-A-explain", kind: "explanation",
-        prompt: "为什么减少计划消费不保证整个经济实现的储蓄增加？解释本模型的收入反馈，并区分计划与实现。",
-        answer: "单个家庭固定收入时少消费能多储蓄，但同时减少购买会降低他人收入，模型让产出与收入向较低计划需求调整。在外生I0且封闭的均衡中，收入下降使实现国民储蓄仍等于I0；这是行为闭合的结果，S=I核算本身没规定因果方向。",
-        rubric: ["区分固定个体收入与全经济内生收入。", "说明支出减少如何通过消费反馈改变Y。", "将计划储蓄意愿与实现储蓄分开，限定外生投资等条件。"],
-        misconception: "把每个家庭收入固定的计算直接加总，或把S=I当作收入变化的原因。",
+        id: "A06-A-explain",
+        kind: "explanation",
+        prompt:
+          "为什么减少计划消费不保证整个经济实现的储蓄增加？解释本模型的收入反馈，并区分计划与实现。",
+        answer:
+          "单个家庭固定收入时少消费能多储蓄，但同时减少购买会降低他人收入，模型让产出与收入向较低计划需求调整。在外生I0且封闭的均衡中，收入下降使实现国民储蓄仍等于I0；这是行为闭合的结果，S=I核算本身没规定因果方向。",
+        rubric: [
+          "区分固定个体收入与全经济内生收入。",
+          "说明支出减少如何通过消费反馈改变Y。",
+          "将计划储蓄意愿与实现储蓄分开，限定外生投资等条件。",
+        ],
+        misconception:
+          "把每个家庭收入固定的计算直接加总，或把S=I当作收入变化的原因。",
       },
       {
-        id: "A06-A-number", kind: "numeric",
+        id: "A06-A-number",
+        kind: "numeric",
         prompt: "C0=20、c0.6、T20、I0=30、G30的LA05均衡产出Y是多少？",
-        value: baseSpending.equilibrium.Y, tolerance: 1e-8, unit: "固定价格产品单位/期（均衡）",
-        answer: "Y=(20−0.6×20+30+30)/(1−0.6)=68/0.4=170；核对C110，加I30和G30得170。",
+        value: baseSpending.equilibrium.Y,
+        tolerance: 1e-8,
+        unit: "固定价格产品单位/期（均衡）",
+        answer:
+          "Y=(20−0.6×20+30+30)/(1−0.6)=68/0.4=170；核对C110，加I30和G30得170。",
         rubric: ["先计算截距68，再除以1−c，并核对均衡分项。"],
-        misconception: "答80直接加C0、I0、G，既漏掉税对消费的影响也漏掉收入反馈；答68只算截距，漏掉后续反馈。",
+        misconception:
+          "答80直接加C0、I0、G，既漏掉税对消费的影响也漏掉收入反馈；答68只算截距，漏掉后续反馈。",
       },
       {
-        id: "A06-A-transfer", kind: "transfer",
-        prompt: "调整过程中Y100、C68、I0=30、G30，因此计划Z128。有人说GDP恒等式差了28，暂时不成立。应怎样记账？",
-        answer: "非计划存货变化Y−Z=−28，实际投资I=30−28=2。Y=C+I+G=68+2+30=100始终成立。负库存变化表示动用已有库存，需足够库存；它与计划支出不等于产出的失衡同时存在。",
-        rubric: ["计算非计划库存−28并说明方向。", "用实际I2核对GDP100。", "区分实现后核算与Y=Z的均衡条件，并指出库存下限边界。"],
-        misconception: "把计划I0误当所有实际投资，再以计划购买与产出不同否定恒等式。",
+        id: "A06-A-transfer",
+        kind: "transfer",
+        prompt:
+          "调整过程中Y100、C68、I0=30、G30，因此计划Z128。有人说GDP恒等式差了28，暂时不成立。应怎样记账？",
+        answer:
+          "非计划存货变化Y−Z=−28，实际投资I=30−28=2。Y=C+I+G=68+2+30=100始终成立。负库存变化表示动用已有库存，需足够库存；它与计划支出不等于产出的失衡同时存在。",
+        rubric: [
+          "计算非计划库存−28并说明方向。",
+          "用实际I2核对GDP100。",
+          "区分实现后核算与Y=Z的均衡条件，并指出库存下限边界。",
+        ],
+        misconception:
+          "把计划I0误当所有实际投资，再以计划购买与产出不同否定恒等式。",
       },
       {
-        id: "A06-A-choice", kind: "choice",
+        id: "A06-A-choice",
+        kind: "choice",
         prompt: "在LA05保持其余条件不变，C0从20降到10时，哪种解释正确？",
         answer: "均衡收入降至145，实现国民储蓄仍30，这依赖外生投资和消费反馈。",
         rubric: ["同时解释收入和储蓄，并注明闭合假设。"],
         options: [
-          { label: "收入一定保持170，所以总储蓄永久增加10。", correct: false, feedback: "这沿用单个家庭固定收入的条件；LA05的总收入由计划支出均衡共同决定。" },
-          { label: "均衡收入降至145，实现国民储蓄仍30，这依赖外生投资和消费反馈。", correct: true, feedback: "对。C变85，145−85−30=30；因果解释来自行为方程和外生I，不来自恒等式单独推断。" },
-          { label: "所有储蓄在任何模型中都不可能增加。", correct: false, feedback: "把一个固定投资的短期结果推广为普遍定律；投资、供给与利率等条件变化时储蓄可以变化。" },
+          {
+            label: "收入一定保持170，所以总储蓄永久增加10。",
+            correct: false,
+            feedback:
+              "这沿用单个家庭固定收入的条件；LA05的总收入由计划支出均衡共同决定。",
+          },
+          {
+            label:
+              "均衡收入降至145，实现国民储蓄仍30，这依赖外生投资和消费反馈。",
+            correct: true,
+            feedback:
+              "对。C变85，145−85−30=30；因果解释来自行为方程和外生I，不来自恒等式单独推断。",
+          },
+          {
+            label: "所有储蓄在任何模型中都不可能增加。",
+            correct: false,
+            feedback:
+              "把一个固定投资的短期结果推广为普遍定律；投资、供给与利率等条件变化时储蓄可以变化。",
+          },
         ],
         misconception: "忽略模型内生收入，或把条件性悖论变成永恒规范结论。",
       },
     ],
-    recap: { must: "计划Z与实际支出、存货维持核算、消费反馈与乘数、均衡和动态、节俭悖论的条件。", later: "供给上限、真实库存存量、利率、进口、异质家庭和未来预期。", returnAt: "A06-B添加投资利率与闭合问题；A07/A08处理价格和政策；A09/A10扩展税和进口。" },
-    references: ["MAC-MIT", "MAC-CORE", "MAC-BEA"], status: "learnable",
+    recap: {
+      must: "计划Z与实际支出、存货维持核算、消费反馈与乘数、均衡和动态、节俭悖论的条件。",
+      later: "供给上限、真实库存存量、利率、进口、异质家庭和未来预期。",
+      returnAt:
+        "A06-B添加投资利率与闭合问题；A07/A08处理价格和政策；A09/A10扩展税和进口。",
+    },
+    references: ["MAC-MIT", "MAC-CORE", "MAC-BEA"],
+    status: "learnable",
   },
   {
     id: "A06-B",
     moduleId: "A06",
     title: "利率改变了，投资为什么不必照着按钮走？",
-    centralQuestion: "同样降低利率，为什么支出和产出可能有不同反应？商品市场关系还缺什么条件？",
-    prerequisites: ["A06-A：计划支出与均衡；A01：融资与净财富不同；A03：名义和实际"],
-    definitions: ["is-relation", "expectations-demand", "model-closure", "planned-expenditure", "multiplier", "investment", "behavioral-mechanism", "identity"],
+    centralQuestion:
+      "同样降低利率，为什么支出和产出可能有不同反应？商品市场关系还缺什么条件？",
+    prerequisites: [
+      "A06-A：计划支出与均衡；A01：融资与净财富不同；A03：名义和实际",
+    ],
+    definitions: [
+      "is-relation",
+      "expectations-demand",
+      "model-closure",
+      "planned-expenditure",
+      "multiplier",
+      "investment",
+      "behavioral-mechanism",
+      "identity",
+    ],
     modelTypeTags: [
       "定义：利率敏感的计划投资",
       "行为假设：预期与实际融资成本影响计划",
@@ -725,7 +1010,8 @@ export const growthLessons: Lesson[] = [
           "若r降至0.04但预期恶化使Ibar降至35，则I31、Y172.5，反而低于原来的182.5。同方向利率变化可以伴随不同需求结果，观察利率和产出同时变化不能直接识别利率因果效应。b=0时投资对r完全不响应，IS中没有这条利率传导；b<0则不属于本节假设域。",
           "还缺一个决定r或其他金融变量的闭合。传统LM以给定名义货币量与价格下的货币需求/供给相容来补条件；利率规则则规定政策如何响应产出和通胀。二者是不同设定，不能一边声称利率外生固定，一边又把它按货币市场均衡内生变动。A08会具体讨论政策规则与制度边界。",
         ],
-        formula: "I=Ibar−br（r为小数/期、I≥0）；IS：Y=[C0−cT+Ibar−br+G]/(1−c)；须另选利率或货币闭合",
+        formula:
+          "I=Ibar−br（r为小数/期、I≥0）；IS：Y=[C0−cT+Ibar−br+G]/(1−c)；须另选利率或货币闭合",
       },
       {
         title: "5 · 可控实验：用外生投资场景验证IS上的点",
@@ -761,46 +1047,90 @@ export const growthLessons: Lesson[] = [
         ],
       },
     ],
-    workedExample: "教学合成Ibar40/b100，r0.05→I35；其余C0=20/c0.6/T20/G30时均衡Y182.5。r0.04且预期不变→I36/Y185；若同时Ibar35→I31/Y172.5。LA05通过这些外生I0场景核对商品市场点，不内生求利率。",
+    workedExample:
+      "教学合成Ibar40/b100，r0.05→I35；其余C0=20/c0.6/T20/G30时均衡Y182.5。r0.04且预期不变→I36/Y185；若同时Ibar35→I31/Y172.5。LA05通过这些外生I0场景核对商品市场点，不内生求利率。",
     labId: "LA05",
-    counterexample: "预期恶化或风险溢价上升可以抵消较低政策利率；利率与产出同降也可能是政策对衰退的反应，不能直接当政策因果证据。",
+    counterexample:
+      "预期恶化或风险溢价上升可以抵消较低政策利率；利率与产出同降也可能是政策对衰退的反应，不能直接当政策因果证据。",
     checks: [
       {
-        id: "A06-B-explain", kind: "explanation",
-        prompt: "IS关系已经给出Y与r的一组相容组合，为什么还不能独立决定产出和利率？",
-        answer: "一条商品市场条件联系两个变量，需要补利率外生、政策规则或金融/货币市场条件才能闭合。固定货币量的LM和利率规则具有不同外生条件；选择后须保持一致，并区分政策利率与实际融资成本。",
-        rubric: ["说明一条关系不能唯一决定两个未知数。", "给出至少一种明确闭合，并区分固定货币量与利率规则。", "指出融资成本及供给价格假设仍需一致。"],
+        id: "A06-B-explain",
+        kind: "explanation",
+        prompt:
+          "IS关系已经给出Y与r的一组相容组合，为什么还不能独立决定产出和利率？",
+        answer:
+          "一条商品市场条件联系两个变量，需要补利率外生、政策规则或金融/货币市场条件才能闭合。固定货币量的LM和利率规则具有不同外生条件；选择后须保持一致，并区分政策利率与实际融资成本。",
+        rubric: [
+          "说明一条关系不能唯一决定两个未知数。",
+          "给出至少一种明确闭合，并区分固定货币量与利率规则。",
+          "指出融资成本及供给价格假设仍需一致。",
+        ],
         misconception: "把图上的相容线误当已经确定了某一个经济状态。",
       },
       {
-        id: "A06-B-number", kind: "numeric",
-        prompt: "I=40−100r、r0.05，C0=20/c0.6/T20/G30。固定价格商品市场的均衡Y是多少？",
-        value: interestScenario.equilibrium.Y, tolerance: 1e-8, unit: "固定价格产品单位/期（均衡）",
-        answer: "I=40−100×0.05=35；Y=(20−12+35+30)/0.4=73/0.4=182.5。5%须输入0.05，不能把5直接代入小数格式公式。",
+        id: "A06-B-number",
+        kind: "numeric",
+        prompt:
+          "I=40−100r、r0.05，C0=20/c0.6/T20/G30。固定价格商品市场的均衡Y是多少？",
+        value: interestScenario.equilibrium.Y,
+        tolerance: 1e-8,
+        unit: "固定价格产品单位/期（均衡）",
+        answer:
+          "I=40−100×0.05=35；Y=(20−12+35+30)/0.4=73/0.4=182.5。5%须输入0.05，不能把5直接代入小数格式公式。",
         rubric: ["先按小数利率计算I35，再用LA05同一内核求均衡。"],
-        misconception: "答170沿用默认I30，未代入投资式；百分数格式错会导致域外负投资而非可用结果。",
+        misconception:
+          "答170沿用默认I30，未代入投资式；百分数格式错会导致域外负投资而非可用结果。",
       },
       {
-        id: "A06-B-transfer", kind: "transfer",
-        prompt: "某合成情景中利率下降而产出仍下降。至少写出两种与简单投资机制兼容的解释，以及一种需要补充的数据。",
-        answer: "可能未来销量预期下降使Ibar或消费C0降低，也可能风险溢价上升使企业融资成本未降，或政策因预计衰退才降息。可查预期订单、实际借款利率/利差、政策宣布时序和预期外变动；需要区分共同冲击与政策内生性，不能凭相关给因果结论。",
-        rubric: ["给出至少两个预期、融资或政策响应机制。", "区分政策利率和实际融资成本或明确变量闭合。", "提出能区分解释的具体数据，并避免仅用相关证明因果。"],
-        misconception: "观察结果没按单一箭头走，就忽略同时变化的条件或反向政策响应。",
+        id: "A06-B-transfer",
+        kind: "transfer",
+        prompt:
+          "某合成情景中利率下降而产出仍下降。至少写出两种与简单投资机制兼容的解释，以及一种需要补充的数据。",
+        answer:
+          "可能未来销量预期下降使Ibar或消费C0降低，也可能风险溢价上升使企业融资成本未降，或政策因预计衰退才降息。可查预期订单、实际借款利率/利差、政策宣布时序和预期外变动；需要区分共同冲击与政策内生性，不能凭相关给因果结论。",
+        rubric: [
+          "给出至少两个预期、融资或政策响应机制。",
+          "区分政策利率和实际融资成本或明确变量闭合。",
+          "提出能区分解释的具体数据，并避免仅用相关证明因果。",
+        ],
+        misconception:
+          "观察结果没按单一箭头走，就忽略同时变化的条件或反向政策响应。",
       },
       {
-        id: "A06-B-choice", kind: "choice",
-        prompt: "在I=Ibar−br的模型中，哪种改变属于改变预期条件，而不只是沿同一IS关系变化？",
+        id: "A06-B-choice",
+        kind: "choice",
+        prompt:
+          "在I=Ibar−br的模型中，哪种改变属于改变预期条件，而不只是沿同一IS关系变化？",
         answer: "未来销售预期恶化，Ibar下降，即使利率不变也降低计划投资。",
         rubric: ["辨认固定其他条件的利率变化与基准计划变化。"],
         options: [
-          { label: "只降低r，Ibar和其他参数完全保持。", correct: false, feedback: "这是沿给定IS关系的利率变化，不是投资基准预期的变化。" },
-          { label: "未来销售预期恶化，Ibar下降，即使利率不变也降低计划投资。", correct: true, feedback: "对。基准投资计划改变，商品市场相容组合整体移动。" },
-          { label: "把利率5%改写成小数0.05，经济投资必须增加。", correct: false, feedback: "同一利率的不同表示没有改变经济条件；单位转换不能冒充冲击。" },
+          {
+            label: "只降低r，Ibar和其他参数完全保持。",
+            correct: false,
+            feedback: "这是沿给定IS关系的利率变化，不是投资基准预期的变化。",
+          },
+          {
+            label: "未来销售预期恶化，Ibar下降，即使利率不变也降低计划投资。",
+            correct: true,
+            feedback: "对。基准投资计划改变，商品市场相容组合整体移动。",
+          },
+          {
+            label: "把利率5%改写成小数0.05，经济投资必须增加。",
+            correct: false,
+            feedback:
+              "同一利率的不同表示没有改变经济条件；单位转换不能冒充冲击。",
+          },
         ],
         misconception: "把参数移线、内生变量变化和数字格式转换都当同一冲击。",
       },
     ],
-    recap: { must: "投资的利率与预期条件、r小数单位、IS相容组合、移线与沿线、完整闭合与因果边界。", later: "LM的货币需求设定、银行融资约束、预期消费模型和开放经济响应。", returnAt: "A07加通胀与产出缺口；A08讨论实际利率和政策；A09/A10加入税与进口；A12做政策识别。" },
-    references: ["MAC-MIT", "MAC-CORE"], status: "learnable",
+    recap: {
+      must: "投资的利率与预期条件、r小数单位、IS相容组合、移线与沿线、完整闭合与因果边界。",
+      later: "LM的货币需求设定、银行融资约束、预期消费模型和开放经济响应。",
+      returnAt:
+        "A07加通胀与产出缺口；A08讨论实际利率和政策；A09/A10加入税与进口；A12做政策识别。",
+    },
+    references: ["MAC-MIT", "MAC-CORE"],
+    status: "learnable",
   },
 ];

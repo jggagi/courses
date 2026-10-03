@@ -1,6 +1,9 @@
+import { growthTerms } from "./terms-growth";
+import { policyTerms } from "./terms-policy";
+import { globalTerms } from "./terms-global";
 import type { Term } from "./types";
 
-export const terms: Term[] = [
+const foundationTerms: Term[] = [
   {
     id: "agent",
     name: "主体（agent）",
@@ -321,4 +324,11 @@ export const terms: Term[] = [
     lessonId: "A03-B",
     references: ["MAC-BEA"],
   },
+];
+
+export const terms: Term[] = [
+  ...foundationTerms,
+  ...growthTerms,
+  ...policyTerms,
+  ...globalTerms,
 ];

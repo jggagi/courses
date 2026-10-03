@@ -74,17 +74,22 @@ export function SeriesChart({
             />
           </g>
         ))}
-        {periods.map((period, index) => (
-          <text
-            key={period}
-            x={x(index)}
-            y="213"
-            textAnchor="middle"
-            fontSize="12"
-          >
-            {period}
-          </text>
-        ))}
+        {periods.map(
+          (period, index) =>
+            (periods.length <= 12 ||
+              index === periods.length - 1 ||
+              index % Math.ceil(periods.length / 8) === 0) && (
+              <text
+                key={period}
+                x={x(index)}
+                y="213"
+                textAnchor="middle"
+                fontSize="12"
+              >
+                {period}
+              </text>
+            ),
+        )}
         {series.map((item, index) => (
           <g
             key={item.label}

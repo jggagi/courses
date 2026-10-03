@@ -1,7 +1,10 @@
 import type { Lesson, PlannedLesson } from "./types";
 import { numericAnswers } from "./answers";
+import { growthLessons } from "./lessons-growth";
+import { policyLessons } from "./lessons-policy";
+import { globalLessons } from "./lessons-global";
 
-export const lessons: Lesson[] = [
+const foundationLessons: Lesson[] = [
   {
     id: "A01-A",
     moduleId: "A01",
@@ -1090,113 +1093,10 @@ export const lessons: Lesson[] = [
 ];
 
 /** 仅规划标题与稳定ID；不制造后续正文、练习或可运行实验。 */
-export const plannedLessons: PlannedLesson[] = [
-  {
-    id: "A04-A",
-    moduleId: "A04",
-    title: "生产函数、每工人资本与折旧",
-    status: "planned",
-  },
-  {
-    id: "A04-B",
-    moduleId: "A04",
-    title: "Solow基准、稳态与过渡动态",
-    status: "planned",
-  },
-  {
-    id: "A05-A",
-    moduleId: "A05",
-    title: "生产率、创新、人力资本与制度",
-    status: "planned",
-  },
-  {
-    id: "A05-B",
-    moduleId: "A05",
-    title: "人口、技术互补与收入分配",
-    status: "planned",
-  },
-  {
-    id: "A06-A",
-    moduleId: "A06",
-    title: "计划支出、存货与收入反馈",
-    status: "planned",
-  },
-  {
-    id: "A06-B",
-    moduleId: "A06",
-    title: "消费、投资、利率与需求冲击",
-    status: "planned",
-  },
-  {
-    id: "A07-A",
-    moduleId: "A07",
-    title: "就业、工资、参与率与价格",
-    status: "planned",
-  },
-  {
-    id: "A07-B",
-    moduleId: "A07",
-    title: "需求/供给冲击、预期与通胀动态",
-    status: "planned",
-  },
-  {
-    id: "A08-A",
-    moduleId: "A08",
-    title: "存款、准备金、贷款与银行约束",
-    status: "planned",
-  },
-  {
-    id: "A08-B",
-    moduleId: "A08",
-    title: "名义/实际利率与货币政策传导",
-    status: "planned",
-  },
-  {
-    id: "A09-A",
-    moduleId: "A09",
-    title: "政府购买、转移、税收与财政机制",
-    status: "planned",
-  },
-  {
-    id: "A09-B",
-    moduleId: "A09",
-    title: "初级余额、利息与债务率动态",
-    status: "planned",
-  },
-  {
-    id: "A10-A",
-    moduleId: "A10",
-    title: "跨境收入、经常账户与外部资产",
-    status: "planned",
-  },
-  {
-    id: "A10-B",
-    moduleId: "A10",
-    title: "汇率、制度与国际传导",
-    status: "planned",
-  },
-  {
-    id: "A11-A",
-    moduleId: "A11",
-    title: "杠杆、期限错配与偿付能力",
-    status: "planned",
-  },
-  {
-    id: "A11-B",
-    moduleId: "A11",
-    title: "金融—实体反馈与模型比较",
-    status: "planned",
-  },
-  {
-    id: "A12-A",
-    moduleId: "A12",
-    title: "识别、反事实与模型不确定性",
-    status: "planned",
-  },
-  {
-    id: "A12-B",
-    moduleId: "A12",
-    title: "四类机制比较与终课作品",
-    status: "planned",
-  },
+export const plannedLessons: PlannedLesson[] = [];
+export const lessons: Lesson[] = [
+  ...foundationLessons,
+  ...growthLessons,
+  ...policyLessons,
+  ...globalLessons,
 ];

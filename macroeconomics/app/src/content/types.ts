@@ -18,7 +18,9 @@ export type Section = {
   advanced?: boolean;
 };
 export type LearnableLessonId =
-  "A01-A" | "A01-B" | "A02-A" | "A02-B" | "A03-A" | "A03-B";
+  `A${"01" | "02" | "03" | "04" | "05" | "06" | "07" | "08" | "09" | "10" | "11" | "12"}-${"A" | "B"}`;
+export type LabId =
+  `LA${"01" | "02" | "03" | "04" | "05" | "06" | "07" | "08" | "09"}`;
 export type Lesson = {
   id: LearnableLessonId;
   moduleId: string;
@@ -30,7 +32,7 @@ export type Lesson = {
   modelTypeTags: string[];
   assumptions: string[];
   workedExample: string;
-  labId: "LA01" | "LA02" | "LA03";
+  labId: LabId;
   checks: Check[];
   counterexample: string;
   recap: { must: string; later: string; returnAt: string };

@@ -1,28 +1,48 @@
 import type { Lesson } from "./types";
-import { calculateExternal, defaultExternalParameters } from "../models/external";
-import { defaultSpendingParameters, simulateSpending } from "../models/spending";
+import {
+  calculateExternal,
+  defaultExternalParameters,
+} from "../models/external";
+import {
+  defaultSpendingParameters,
+  simulateSpending,
+} from "../models/spending";
 import { computePrices } from "../models/prices";
 
 // 实验相关客观答案直接取同一纯计算内核；不从图表显示后的舍入值反推。
 const externalExample = calculateExternal(defaultExternalParameters());
 const exchangeExample = calculateExternal({
-  ...defaultExternalParameters(), exchangeRate: 7.7,
+  ...defaultExternalParameters(),
+  exchangeRate: 7.7,
 });
 const spendingBase = simulateSpending({
-  ...defaultSpendingParameters(), C0: 20, c: 0.6, T: 0, I0: 20, G: 20,
+  ...defaultSpendingParameters(),
+  C0: 20,
+  c: 0.6,
+  T: 0,
+  I0: 20,
+  G: 20,
 });
 const spendingChange = simulateSpending({
-  ...defaultSpendingParameters(), C0: 20, c: 0.6, T: 0, I0: 20, G: 10,
+  ...defaultSpendingParameters(),
+  C0: 20,
+  c: 0.6,
+  T: 0,
+  I0: 20,
+  G: 10,
 });
 const priceExample = computePrices({
   periods: [
     { px: 1, py: 1, qx: 100, qy: 0 },
     { px: 1.1, py: 1.1, qx: 100, qy: 0 },
-  ], priceBase: 0, basketBase: 0, normalization: 100,
+  ],
+  priceBase: 0,
+  basketBase: 0,
+  normalization: 100,
 });
 // 杠杆与描述性变化差是正文独立例的定义计算，未假装由LA07/06推导。
 const leverageExample = (100 - 5) / (100 - 90 - 5);
-const descriptiveDifference = (98 - 100) - (99 - 100);
+const descriptiveDifference = 98 - 100 - (99 - 100);
 
 type GlobalLesson = Omit<Lesson, "id" | "labId"> & {
   id: "A10-A" | "A10-B" | "A11-A" | "A11-B" | "A12-A" | "A12-B";
@@ -35,10 +55,32 @@ export const globalLessons: GlobalLesson[] = [
     id: "A10-A",
     moduleId: "A10",
     title: "贸易之外的另一侧：经常账户与外部净资产",
-    centralQuestion: "本国净出口为−5，为什么经常账户可以是−2，而外部净资产还能增加2？",
-    prerequisites: ["A01存量/流量与净值", "A02国内生产和最终使用", "A09部门余额与债务对账"],
-    definitions: ["net-exports", "saving", "investment", "identity", "revaluation", "global-current-account", "global-primary-income", "global-current-transfer", "global-disposable-income", "global-external-net-assets", "global-financial-flow"],
-    modelTypeTags: ["定义：居民视角、经常账户与外部净资产", "核算恒等式：CA=S−I", "存量流量关系：外部净资产加流量与估值", "边界假设：忽略资本账户及其他调整"],
+    centralQuestion:
+      "本国净出口为−5，为什么经常账户可以是−2，而外部净资产还能增加2？",
+    prerequisites: [
+      "A01存量/流量与净值",
+      "A02国内生产和最终使用",
+      "A09部门余额与债务对账",
+    ],
+    definitions: [
+      "net-exports",
+      "saving",
+      "investment",
+      "identity",
+      "revaluation",
+      "global-current-account",
+      "global-primary-income",
+      "global-current-transfer",
+      "global-disposable-income",
+      "global-external-net-assets",
+      "global-financial-flow",
+    ],
+    modelTypeTags: [
+      "定义：居民视角、经常账户与外部净资产",
+      "核算恒等式：CA=S−I",
+      "存量流量关系：外部净资产加流量与估值",
+      "边界假设：忽略资本账户及其他调整",
+    ],
     assumptions: [
       "全部数字是教学合成数据，国内与国外只是虚构记账部门，不指代真实国家。",
       "Y、C、I、G、NX、NPI、NCT均以本币/期计；外部净资产以本币计、注明期末。本例使用毛储蓄与毛投资一致口径。",
@@ -77,7 +119,8 @@ export const globalLessons: GlobalLesson[] = [
           "先由Y=C+I+G+NX得到NX=Y−C−I−G=100−60−25−20=−5。再定义YD=Y+NPI+NCT=103，国民储蓄S=YD−C−G=23。把YD的定义代入S−I，得到S−I=NX+NPI+NCT=CA=−2。这一推导只改变了收入范围，没有添加任何消费或汇率行为方程。",
           "本课将对外资产净取得减对外负债净发生定义为净对外融资，忽略资本账户和其他调整时它等于CA。CA=−2可与对外净负债增加2相容，但不能仅凭这一个总量判定到底是谁借款、以何币种融资、何时到期。外部存量在同一计价货币下W₁=W₀+CA+V=10−2+4=12。",
         ],
-        formula: "NX=Y−C−I−G；YD=Y+NPI+NCT；S=YD−C−G；CA=NX+NPI+NCT=S−I；W₁=W₀+CA+V（省略资本账户及其他调整）",
+        formula:
+          "NX=Y−C−I−G；YD=Y+NPI+NCT；S=YD−C−G；CA=NX+NPI+NCT=S−I；W₁=W₀+CA+V（省略资本账户及其他调整）",
       },
       {
         title: "5 · 可控实验：收入项与估值项分别改变",
@@ -113,52 +156,111 @@ export const globalLessons: GlobalLesson[] = [
         ],
       },
     ],
-    workedExample: "教学合成一期：Y100、C60、G20、I25给NX−5；NPI2、NCT1给YD103、S23、CA−2。忽略资本账户及其他调整，期初外部净资产10、估值+4，期末12，变化+2；CA负数与净资产增加同时成立。",
+    workedExample:
+      "教学合成一期：Y100、C60、G20、I25给NX−5；NPI2、NCT1给YD103、S23、CA−2。忽略资本账户及其他调整，期初外部净资产10、估值+4，期末12，变化+2；CA负数与净资产增加同时成立。",
     labId: "LA09",
     checks: [
       {
-        id: "A10-A-explain", kind: "explanation",
-        prompt: "为什么NX、CA、外部净资产变化不能互换名称？请写对象、时间和被省略项。",
-        answer: "NX只包含商品服务净出口；CA再加跨境净初次收入和净经常转移，两者是本期流量。外部净资产是时点存量，其变化还含估值、资本账户及其他调整。本课省略后写ΔW=CA+V，不能把CA直接叫外部净资产。",
-        rubric: ["区分NX与CA的收入、转移范围。", "把流量与时点存量区分。", "至少指出估值与一个可能省略项。"],
-        misconception: "把所有跨境资金移动都称为出口；先问交换的是当期产品、收入还是金融权利。",
+        id: "A10-A-explain",
+        kind: "explanation",
+        prompt:
+          "为什么NX、CA、外部净资产变化不能互换名称？请写对象、时间和被省略项。",
+        answer:
+          "NX只包含商品服务净出口；CA再加跨境净初次收入和净经常转移，两者是本期流量。外部净资产是时点存量，其变化还含估值、资本账户及其他调整。本课省略后写ΔW=CA+V，不能把CA直接叫外部净资产。",
+        rubric: [
+          "区分NX与CA的收入、转移范围。",
+          "把流量与时点存量区分。",
+          "至少指出估值与一个可能省略项。",
+        ],
+        misconception:
+          "把所有跨境资金移动都称为出口；先问交换的是当期产品、收入还是金融权利。",
       },
       {
-        id: "A10-A-number", kind: "numeric",
+        id: "A10-A-number",
+        kind: "numeric",
         prompt: "Y100、C60、G20、I25、NPI2、NCT1，经常账户CA是多少？",
-        value: externalExample.CA, tolerance: 1e-8, unit: "本币/期",
+        value: externalExample.CA,
+        tolerance: 1e-8,
+        unit: "本币/期",
         answer: "NX=100−60−20−25=−5；CA=−5+2+1=−2。也可由YD103、S23算S−I=−2。",
         rubric: ["两条核算路径采用同一期和毛口径，结果均为−2。"],
-        misconception: "答−5只算了NX；答2把收入项与逆差符号混用；借款到账本身不加到NPI。",
+        misconception:
+          "答−5只算了NX；答2把收入项与逆差符号混用；借款到账本身不加到NPI。",
       },
       {
-        id: "A10-A-transfer", kind: "transfer",
-        prompt: "CA=−2、外部资产净估值+4，就能说本期储蓄为+2吗？若有人据进口负号主张停止进口必定提高Y，缺少什么？",
-        answer: "不能。+2是省略其他调整后的外部净资产变化，CA仍−2，估值不等于储蓄。进口的负号只消除最终支出中的境外生产；停止进口会怎样改变C、I、生产投入、价格和出口，需要行为与资源约束，不能固定其他分项由恒等式推因果。",
-        rubric: ["将CA、估值和存量变化分列。", "否认把估值当储蓄。", "说出进口政策判断至少一个缺失机制。"],
-        misconception: "把净资产的所有变化都归入储蓄，或把恒等式的负号当政策因果方向。",
+        id: "A10-A-transfer",
+        kind: "transfer",
+        prompt:
+          "CA=−2、外部资产净估值+4，就能说本期储蓄为+2吗？若有人据进口负号主张停止进口必定提高Y，缺少什么？",
+        answer:
+          "不能。+2是省略其他调整后的外部净资产变化，CA仍−2，估值不等于储蓄。进口的负号只消除最终支出中的境外生产；停止进口会怎样改变C、I、生产投入、价格和出口，需要行为与资源约束，不能固定其他分项由恒等式推因果。",
+        rubric: [
+          "将CA、估值和存量变化分列。",
+          "否认把估值当储蓄。",
+          "说出进口政策判断至少一个缺失机制。",
+        ],
+        misconception:
+          "把净资产的所有变化都归入储蓄，或把恒等式的负号当政策因果方向。",
       },
       {
-        id: "A10-A-choice", kind: "choice",
+        id: "A10-A-choice",
+        kind: "choice",
         prompt: "本课CA为−2、估值为+4且无其他调整，哪项成立？",
-        answer: "外部净资产增加2，但CA仍是−2。", rubric: [],
+        answer: "外部净资产增加2，但CA仍是−2。",
+        rubric: [],
         options: [
-          { label: "外部净资产增加2，但CA仍是−2。", correct: true, feedback: "对。交易流量与估值分别进入存量对账，不能互相改名。" },
-          { label: "CA变成+2，因为已有资产涨价。", correct: false, feedback: "估值提高净资产，不改写本期经常交易CA。" },
-          { label: "GDP增加4，因为外部资产增加价值。", correct: false, feedback: "已有资产重估不是本期国内新生产，不能加到GDP。" },
+          {
+            label: "外部净资产增加2，但CA仍是−2。",
+            correct: true,
+            feedback: "对。交易流量与估值分别进入存量对账，不能互相改名。",
+          },
+          {
+            label: "CA变成+2，因为已有资产涨价。",
+            correct: false,
+            feedback: "估值提高净资产，不改写本期经常交易CA。",
+          },
+          {
+            label: "GDP增加4，因为外部资产增加价值。",
+            correct: false,
+            feedback: "已有资产重估不是本期国内新生产，不能加到GDP。",
+          },
         ],
       },
     ],
-    counterexample: "NX−5、CA−2、估值+4可以使外部净资产增加2；同一CA可对应不同投资用途、借款币种和期限，不给出自动风险判决。",
-    recap: { must: "NX/CA/金融交易/外部净资产的对象与符号，CA=S−I的口径和估值对账。", later: "资本账户、统计误差及完整国际收支分类；需要真实案例时查具体机构方法。", returnAt: "A10-B补汇率与估值渠道；A11比较币种和期限风险；终课作品单列账目与机制。" },
-    references: ["MAC-MIT", "MAC-CORE"], status: "learnable",
+    counterexample:
+      "NX−5、CA−2、估值+4可以使外部净资产增加2；同一CA可对应不同投资用途、借款币种和期限，不给出自动风险判决。",
+    recap: {
+      must: "NX/CA/金融交易/外部净资产的对象与符号，CA=S−I的口径和估值对账。",
+      later:
+        "资本账户、统计误差及完整国际收支分类；需要真实案例时查具体机构方法。",
+      returnAt:
+        "A10-B补汇率与估值渠道；A11比较币种和期限风险；终课作品单列账目与机制。",
+    },
+    references: ["MAC-MIT", "MAC-CORE"],
+    status: "learnable",
   },
   {
-    id: "A10-B", moduleId: "A10", title: "汇率是一个比价，贸易响应需要另一套机制",
+    id: "A10-B",
+    moduleId: "A10",
+    title: "汇率是一个比价，贸易响应需要另一套机制",
     centralQuestion: "本币贬值10%，是否立刻使出口增加10%、贸易余额改善10%？",
     prerequisites: ["A03名义/实际与指数", "A08融资条件", "A10-A跨境核算"],
-    definitions: ["nominal", "real", "price-index", "behavioral-mechanism", "global-exchange-rate", "global-real-exchange-rate", "global-exchange-regime", "global-trade-response"],
-    modelTypeTags: ["定义：e为本币/外币、q=eP*/P", "数学关系：名义汇率与价格水平共同决定相对比价", "行为假设：贸易数量响应需另加弹性及滞后", "制度条件：政策约束取决于汇率及资本流动安排"],
+    definitions: [
+      "nominal",
+      "real",
+      "price-index",
+      "behavioral-mechanism",
+      "global-exchange-rate",
+      "global-real-exchange-rate",
+      "global-exchange-regime",
+      "global-trade-response",
+    ],
+    modelTypeTags: [
+      "定义：e为本币/外币、q=eP*/P",
+      "数学关系：名义汇率与价格水平共同决定相对比价",
+      "行为假设：贸易数量响应需另加弹性及滞后",
+      "制度条件：政策约束取决于汇率及资本流动安排",
+    ],
     assumptions: [
       "全部价格、汇率和贸易数字是教学合成数据，不代表现实货币或当前汇率。",
       "e>0采用本币/外币；P>0、P*>0采用固定可比篮子及一致指数基准。q=eP*/P，在此约定下q上升为实际贬值。",
@@ -197,7 +299,8 @@ export const globalLessons: GlobalLesson[] = [
           "初始e=7、P*=100、P=100，q=7。只把e改7.7，q=7.7，增长7.7/7−1=10%，在本约定下实际贬值。若同时P变110，q=7.7×100/110=7，实际比价不变；名义贬值被相同比例的本国价格上涨抵消。",
           "跨期精确关系是q₁/q₀=(e₁/e₀)(P*₁/P*₀)/(P₁/P₀)。小变化下实际贬值率约等于名义贬值率加国外通胀减本国通胀，近似不是恒等式。X、M的数量及本币价值如何反应尚未被这个定义决定；贸易余额也受收入、生产能力和计价规则影响。",
         ],
-        formula: "q=eP*/P（e：本币/外币）；q₁/q₀=(e₁/e₀)×(P*₁/P*₀)/(P₁/P₀)；q上升为本约定下的实际贬值",
+        formula:
+          "q=eP*/P（e：本币/外币）；q₁/q₀=(e₁/e₀)×(P*₁/P*₀)/(P₁/P₀)；q上升为本约定下的实际贬值",
       },
       {
         title: "5 · 可控实验：不要偷偷替换贸易行为",
@@ -233,28 +336,118 @@ export const globalLessons: GlobalLesson[] = [
         ],
       },
     ],
-    workedExample: "教学合成e7→7.7、P*=P=100：q7→7.7，实际贬值10%；若P同时100→110，q=7.7×100/110=7。NX与CA为给定核算量，不自动响应；固定10外币债务的本币价值70→77需另看收入与到期现金。",
+    workedExample:
+      "教学合成e7→7.7、P*=P=100：q7→7.7，实际贬值10%；若P同时100→110，q=7.7×100/110=7。NX与CA为给定核算量，不自动响应；固定10外币债务的本币价值70→77需另看收入与到期现金。",
     labId: "LA09",
     checks: [
-      { id: "A10-B-explain", kind: "explanation", prompt: "为什么必须先声明汇率标价方向？q上升为何不能独立证明贸易余额改善？", answer: "本课e为本币/外币，所以e上升为本币贬值，q=eP*/P上升为实际贬值。倒数约定数值方向相反但含义可翻译。q只定义相对价格，贸易余额还需数量弹性、合同计价、价格传导、收入与时间，LA09未加入这些响应。", rubric: ["给出e的单位与方向。", "给出q约定与实际贬值含义。", "至少列两项缺失的贸易机制。"], misconception: "把教材的符号方向当经济事实，或把相对价格定义当数量反应方程。" },
-      { id: "A10-B-number", kind: "numeric", prompt: "按e为本币/外币，e=7.7、P*=100、P=100时q是多少？", value: exchangeExample.q, tolerance: 1e-8, unit: "实际汇率q（同一指数基准）", answer: "q=7.7×100/100=7.7；相对基准q=7上升10%，是本约定下的实际贬值。若本国P变110，q会回到7。", rubric: ["按eP*/P换算，不能把e取倒数或把10%填作水平。"], misconception: "答10把变化率当水平；答1/7.7用了相反标价；答7默认了题中不存在的本国涨价。" },
-      { id: "A10-B-transfer", kind: "transfer", prompt: "e上升10%，短期进口数量和外币价格由合同固定，且企业有外币债务。能否宣布企业和本国贸易必然受益？", answer: "不能。固定进口的本币账单及外币债务本币负担可能先增加；出口数量、计价、收入和偿债现金未给出。较晚数量替代是否改善贸易还依赖弹性与产能。要分开进口成本、贸易响应和资产负债表渠道。", rubric: ["指出固定数量下本币进口成本渠道。", "指出外币债务渠道。", "拒绝无条件受益并给出至少一个缺失条件。"], misconception: "把贬值等同普遍受益，忽视进口依赖和负债币种。" },
-      { id: "A10-B-choice", kind: "choice", prompt: "e7→7.7、本国P100→110、国外P*100不变，哪项正确？", answer: "名义贬值10%，q仍为7。", rubric: [], options: [
-        { label: "名义贬值10%，q仍为7。", correct: true, feedback: "对。q=7.7×100/110=7，本国价格上涨抵消此比价变化。" },
-        { label: "实际贬值20%，因为两个量各变10%。", correct: false, feedback: "P位于分母且需用乘除关系，不能把两项增长直接相加。" },
-        { label: "出口必然立即增加10%。", correct: false, feedback: "定义不含数量弹性、合同和产能；题中实际比价也未变。" },
-      ] },
+      {
+        id: "A10-B-explain",
+        kind: "explanation",
+        prompt:
+          "为什么必须先声明汇率标价方向？q上升为何不能独立证明贸易余额改善？",
+        answer:
+          "本课e为本币/外币，所以e上升为本币贬值，q=eP*/P上升为实际贬值。倒数约定数值方向相反但含义可翻译。q只定义相对价格，贸易余额还需数量弹性、合同计价、价格传导、收入与时间，LA09未加入这些响应。",
+        rubric: [
+          "给出e的单位与方向。",
+          "给出q约定与实际贬值含义。",
+          "至少列两项缺失的贸易机制。",
+        ],
+        misconception:
+          "把教材的符号方向当经济事实，或把相对价格定义当数量反应方程。",
+      },
+      {
+        id: "A10-B-number",
+        kind: "numeric",
+        prompt: "按e为本币/外币，e=7.7、P*=100、P=100时q是多少？",
+        value: exchangeExample.q,
+        tolerance: 1e-8,
+        unit: "实际汇率q（同一指数基准）",
+        answer:
+          "q=7.7×100/100=7.7；相对基准q=7上升10%，是本约定下的实际贬值。若本国P变110，q会回到7。",
+        rubric: ["按eP*/P换算，不能把e取倒数或把10%填作水平。"],
+        misconception:
+          "答10把变化率当水平；答1/7.7用了相反标价；答7默认了题中不存在的本国涨价。",
+      },
+      {
+        id: "A10-B-transfer",
+        kind: "transfer",
+        prompt:
+          "e上升10%，短期进口数量和外币价格由合同固定，且企业有外币债务。能否宣布企业和本国贸易必然受益？",
+        answer:
+          "不能。固定进口的本币账单及外币债务本币负担可能先增加；出口数量、计价、收入和偿债现金未给出。较晚数量替代是否改善贸易还依赖弹性与产能。要分开进口成本、贸易响应和资产负债表渠道。",
+        rubric: [
+          "指出固定数量下本币进口成本渠道。",
+          "指出外币债务渠道。",
+          "拒绝无条件受益并给出至少一个缺失条件。",
+        ],
+        misconception: "把贬值等同普遍受益，忽视进口依赖和负债币种。",
+      },
+      {
+        id: "A10-B-choice",
+        kind: "choice",
+        prompt: "e7→7.7、本国P100→110、国外P*100不变，哪项正确？",
+        answer: "名义贬值10%，q仍为7。",
+        rubric: [],
+        options: [
+          {
+            label: "名义贬值10%，q仍为7。",
+            correct: true,
+            feedback: "对。q=7.7×100/110=7，本国价格上涨抵消此比价变化。",
+          },
+          {
+            label: "实际贬值20%，因为两个量各变10%。",
+            correct: false,
+            feedback: "P位于分母且需用乘除关系，不能把两项增长直接相加。",
+          },
+          {
+            label: "出口必然立即增加10%。",
+            correct: false,
+            feedback: "定义不含数量弹性、合同和产能；题中实际比价也未变。",
+          },
+        ],
+      },
     ],
-    counterexample: "短期固定外币进口合同可使贬值先抬高本币支出；e与本国P同比例上升使q不变。实际汇率定义本身不保证贸易改善。",
-    recap: { must: "e的单位与方向，q=eP*/P，名义/实际贬值及贸易响应的额外条件。", later: "资本流动、外汇市场出清与具体汇率制度，需额外行为和制度资料。", returnAt: "A11讨论外币与到期支付风险；A12终课作品把相对价格计算与经验判断分开。" },
-    references: ["MAC-MIT", "MAC-CORE"], status: "learnable",
+    counterexample:
+      "短期固定外币进口合同可使贬值先抬高本币支出；e与本国P同比例上升使q不变。实际汇率定义本身不保证贸易改善。",
+    recap: {
+      must: "e的单位与方向，q=eP*/P，名义/实际贬值及贸易响应的额外条件。",
+      later: "资本流动、外汇市场出清与具体汇率制度，需额外行为和制度资料。",
+      returnAt:
+        "A11讨论外币与到期支付风险；A12终课作品把相对价格计算与经验判断分开。",
+    },
+    references: ["MAC-MIT", "MAC-CORE"],
+    status: "learnable",
   },
   {
-    id: "A11-A", moduleId: "A11", title: "杠杆与期限：有资产为何也会付不出钱？",
-    centralQuestion: "资产只跌5%，权益为什么可以减半？一家有正权益的银行为何仍可能无法完成支付？",
-    prerequisites: ["A01资产负债表", "A08贷款、准备金与银行约束", "A10币种与跨境风险"],
-    definitions: ["asset", "liability", "net-worth", "reserves", "revaluation", "global-leverage", "global-maturity-mismatch", "policy-liquidity", "global-solvency", "policy-credit-loss", "global-valuation-loss"],
-    modelTypeTags: ["定义：杠杆、流动性和偿付能力", "核算恒等式：A=D+E", "数学关系：资产损失相对权益的放大", "事件规则：支付与损失分别记账"],
+    id: "A11-A",
+    moduleId: "A11",
+    title: "杠杆与期限：有资产为何也会付不出钱？",
+    centralQuestion:
+      "资产只跌5%，权益为什么可以减半？一家有正权益的银行为何仍可能无法完成支付？",
+    prerequisites: [
+      "A01资产负债表",
+      "A08贷款、准备金与银行约束",
+      "A10币种与跨境风险",
+    ],
+    definitions: [
+      "asset",
+      "liability",
+      "net-worth",
+      "reserves",
+      "revaluation",
+      "global-leverage",
+      "global-maturity-mismatch",
+      "policy-liquidity",
+      "global-solvency",
+      "policy-credit-loss",
+      "global-valuation-loss",
+    ],
+    modelTypeTags: [
+      "定义：杠杆、流动性和偿付能力",
+      "核算恒等式：A=D+E",
+      "数学关系：资产损失相对权益的放大",
+      "事件规则：支付与损失分别记账",
+    ],
     assumptions: [
       "所有资产价格、债务与损失数值为教学合成数据，不用于现实机构评级。",
       "示例主体初始资产A100、债务D90、权益E10；短期债务名义额固定，资产损失单列且无税、对冲或资本补充。杠杆A/E只在E>0时定义。",
@@ -293,7 +486,8 @@ export const globalLessons: GlobalLesson[] = [
           "初始L=100/10=10。给定资产损失5、负债90不变，A₁=95、E₁=5，权益下降50%，新的L₁=95/5=19。损失比例λ=5%时，ΔE/E₀=−λA₀/E₀=−λL₀。在这组假设下，资产损失10即耗尽初始权益，不是资产全部归零。",
           "第二主体E₀=50，损失5后E₁=45，权益下降10%，L₁=95/45≈2.1111。杠杆不同带来不同权益承受力；同时两者资产流动性和债务到期结构可以独立不同。E=0时A/E无定义；E<0时不能把负比率显示成更安全。静态账表也不等于现实清算价值已被准确知道。",
         ],
-        formula: "E=A−D；L=A/E（E>0）；A₁=A₀−损失，E₁=E₀−损失（D固定）；ΔE/E₀=−λL₀",
+        formula:
+          "E=A−D；L=A/E（E>0）；A₁=A₀−损失，E₁=E₀−损失（D固定）；ΔE/E₀=−λL₀",
       },
       {
         title: "5 · 可控实验：损失与支付分成两次对照",
@@ -329,28 +523,119 @@ export const globalLessons: GlobalLesson[] = [
         ],
       },
     ],
-    workedExample: "教学合成A100/D90/E10，资产损失5、D固定：A95/E5，权益减少50%，杠杆从10升至19。低杠杆A100/D50/E50同损失后E45，权益仅减10%。这些是静态估值计算，不等于LA07自动生成资产出售或违约路径。",
+    workedExample:
+      "教学合成A100/D90/E10，资产损失5、D固定：A95/E5，权益减少50%，杠杆从10升至19。低杠杆A100/D50/E50同损失后E45，权益仅减10%。这些是静态估值计算，不等于LA07自动生成资产出售或违约路径。",
     labId: "LA07",
     checks: [
-      { id: "A11-A-explain", kind: "explanation", prompt: "请用资产负债表与时间分别解释流动性、偿付能力，并区分信用损失和跨行支付。", answer: "偿付能力检查明确估值下A能否覆盖D，流动性检查到期是否有足够可结算资源。信用损失减记资产并减少权益，不自动销毁存款；跨行支付转移存款与结算准备金，不能凭支付本身把它记为资产亏损。", rubric: ["给出价值覆盖与时间支付两个不同问题。", "正确说明信用损失影响资产与权益。", "指出支付需结算资产且不等于损失。"], misconception: "把准备金不足、负净值和资产减记都叫同一种余额不够。" },
-      { id: "A11-A-number", kind: "numeric", prompt: "资产100、债务90，资产损失5而债务不变，损失后的资产杠杆A/E是多少？", value: leverageExample, tolerance: 1e-8, unit: "倍（E>0）", answer: "资产95，权益95−90=5，杠杆95/5=19倍；不是100/5，因为分子也已减少。", rubric: ["先更新资产，再由A−D算权益，最后算A/E。"], misconception: "答20使用损失前资产；答5把权益额当杠杆；答10未更新损失。" },
-      { id: "A11-A-transfer", kind: "transfer", prompt: "一家银行权益为正却缺准备金，另一家权益为负却借到短期现金。是否两家都已安全？补查什么？", answer: "不能。第一家仍需在到期时获得准备金或可行结算安排；第二家借现金通常同时增加资产与负债，不自动填补净值缺口。需分别检查资产估值、到期现金流、抵押/融资条件和法律安排，不能以当前现金余额代替偿付能力。", rubric: ["识别正权益仍可能流动性不足。", "说明借现金不自动增加净值。", "列出至少两个具体补查条件。"], misconception: "把现金到账称为资本修复，或把有权益等同所有支付均可完成。" },
-      { id: "A11-A-choice", kind: "choice", prompt: "固定负债下资产减记，哪种处理正确？", answer: "权益吸收损失；存款是否变化要看另一个明确事件。", rubric: [], options: [
-        { label: "权益吸收损失；存款是否变化要看另一个明确事件。", correct: true, feedback: "对。资产减记与存款注销是不同事件，不能为了平衡任意删科目。" },
-        { label: "银行损失5必须销毁客户存款5。", correct: false, feedback: "贷款价值降低首先减少资产与权益，没有给定存款债务解除事件。" },
-        { label: "权益为0时杠杆为0，因此风险最小。", correct: false, feedback: "A/E在E=0时无定义，不能把零分母替换成零。" },
-      ] },
+      {
+        id: "A11-A-explain",
+        kind: "explanation",
+        prompt:
+          "请用资产负债表与时间分别解释流动性、偿付能力，并区分信用损失和跨行支付。",
+        answer:
+          "偿付能力检查明确估值下A能否覆盖D，流动性检查到期是否有足够可结算资源。信用损失减记资产并减少权益，不自动销毁存款；跨行支付转移存款与结算准备金，不能凭支付本身把它记为资产亏损。",
+        rubric: [
+          "给出价值覆盖与时间支付两个不同问题。",
+          "正确说明信用损失影响资产与权益。",
+          "指出支付需结算资产且不等于损失。",
+        ],
+        misconception: "把准备金不足、负净值和资产减记都叫同一种余额不够。",
+      },
+      {
+        id: "A11-A-number",
+        kind: "numeric",
+        prompt:
+          "资产100、债务90，资产损失5而债务不变，损失后的资产杠杆A/E是多少？",
+        value: leverageExample,
+        tolerance: 1e-8,
+        unit: "倍（E>0）",
+        answer:
+          "资产95，权益95−90=5，杠杆95/5=19倍；不是100/5，因为分子也已减少。",
+        rubric: ["先更新资产，再由A−D算权益，最后算A/E。"],
+        misconception:
+          "答20使用损失前资产；答5把权益额当杠杆；答10未更新损失。",
+      },
+      {
+        id: "A11-A-transfer",
+        kind: "transfer",
+        prompt:
+          "一家银行权益为正却缺准备金，另一家权益为负却借到短期现金。是否两家都已安全？补查什么？",
+        answer:
+          "不能。第一家仍需在到期时获得准备金或可行结算安排；第二家借现金通常同时增加资产与负债，不自动填补净值缺口。需分别检查资产估值、到期现金流、抵押/融资条件和法律安排，不能以当前现金余额代替偿付能力。",
+        rubric: [
+          "识别正权益仍可能流动性不足。",
+          "说明借现金不自动增加净值。",
+          "列出至少两个具体补查条件。",
+        ],
+        misconception:
+          "把现金到账称为资本修复，或把有权益等同所有支付均可完成。",
+      },
+      {
+        id: "A11-A-choice",
+        kind: "choice",
+        prompt: "固定负债下资产减记，哪种处理正确？",
+        answer: "权益吸收损失；存款是否变化要看另一个明确事件。",
+        rubric: [],
+        options: [
+          {
+            label: "权益吸收损失；存款是否变化要看另一个明确事件。",
+            correct: true,
+            feedback:
+              "对。资产减记与存款注销是不同事件，不能为了平衡任意删科目。",
+          },
+          {
+            label: "银行损失5必须销毁客户存款5。",
+            correct: false,
+            feedback:
+              "贷款价值降低首先减少资产与权益，没有给定存款债务解除事件。",
+          },
+          {
+            label: "权益为0时杠杆为0，因此风险最小。",
+            correct: false,
+            feedback: "A/E在E=0时无定义，不能把零分母替换成零。",
+          },
+        ],
+      },
     ],
-    counterexample: "正权益而准备金不足是支付问题；负权益而借到现金未必恢复偿付能力。同样资产损失在不同杠杆和期限下结果不同。",
-    recap: { must: "A=D+E、A/E的定义域、权益损失放大、流动性/偿付能力及损失/支付的区分。", later: "法律清偿顺序、监管资本、抵押与融资制度需具体来源。", returnAt: "A11-B把账表约束与支出反应分别比较；终课作品至少保存一张可对账资产负债表。" },
-    references: ["MAC-BOE", "MAC-MIT", "MAC-CORE"], status: "learnable",
+    counterexample:
+      "正权益而准备金不足是支付问题；负权益而借到现金未必恢复偿付能力。同样资产损失在不同杠杆和期限下结果不同。",
+    recap: {
+      must: "A=D+E、A/E的定义域、权益损失放大、流动性/偿付能力及损失/支付的区分。",
+      later: "法律清偿顺序、监管资本、抵押与融资制度需具体来源。",
+      returnAt:
+        "A11-B把账表约束与支出反应分别比较；终课作品至少保存一张可对账资产负债表。",
+    },
+    references: ["MAC-BOE", "MAC-MIT", "MAC-CORE"],
+    status: "learnable",
   },
   {
-    id: "A11-B", moduleId: "A11", title: "金融与实体：比较箭头，不把三个模型拼成预测",
-    centralQuestion: "账表损失、需求收缩和通胀变化能连成一个故事，为何还不能称作验证过的联合模型？",
-    prerequisites: ["A06收入反馈与乘数", "A07/A08动态冲击和政策规则", "A11-A杠杆与支付约束"],
-    definitions: ["identity", "behavioral-mechanism", "global-leverage", "policy-liquidity", "global-solvency", "global-deleveraging", "global-feedback", "global-model-closure", "global-stress-test"],
-    modelTypeTags: ["定义：去杠杆与压力情景", "核算关系：每个模型保持自身单位与账目", "行为假设：融资条件影响支出", "模型比较：LA05、LA06、LA07分别闭合"],
+    id: "A11-B",
+    moduleId: "A11",
+    title: "金融与实体：比较箭头，不把三个模型拼成预测",
+    centralQuestion:
+      "账表损失、需求收缩和通胀变化能连成一个故事，为何还不能称作验证过的联合模型？",
+    prerequisites: [
+      "A06收入反馈与乘数",
+      "A07/A08动态冲击和政策规则",
+      "A11-A杠杆与支付约束",
+    ],
+    definitions: [
+      "identity",
+      "behavioral-mechanism",
+      "global-leverage",
+      "policy-liquidity",
+      "global-solvency",
+      "global-deleveraging",
+      "global-feedback",
+      "global-model-closure",
+      "global-stress-test",
+    ],
+    modelTypeTags: [
+      "定义：去杠杆与压力情景",
+      "核算关系：每个模型保持自身单位与账目",
+      "行为假设：融资条件影响支出",
+      "模型比较：LA05、LA06、LA07分别闭合",
+    ],
     assumptions: [
       "全部压力情景及数值为教学合成数据，不是历史事件的复现或现实危机概率。",
       "LA07是金融事件账本，LA05是固定价格的计划支出与收入均衡，LA06是给定参数的缺口、通胀和滞后政策动态；三者分别运行，没有自动联立。",
@@ -389,7 +674,8 @@ export const globalLessons: GlobalLesson[] = [
           "一个明确合成需求例取C=20+0.6Y、I+G=40，计划支出Z=60+0.6Y。由Y=Z得Y=150。若另行假定融资变化使I+G减少10，Z变50+0.6Y，均衡Y=125，变化−25。乘数1/(1−0.6)=2.5来自消费反馈、价格固定和无新增漏出的闭合，不来自贷款损失的账目恒等式。",
           "这一步没有证明某笔金融损失会使投资恰少10。连接金融情景与需求情景的“−10”是待解释的传递假设。若产能受限、货币政策反应、进口或预期改变，这个静态乘数不再独立适用；动态通胀结果应在LA06自己的规则内运行，不能由此推断一个确定值。",
         ],
-        formula: "C=20+0.6Y；Y=C+I+G；Y=(20+I+G)/(1−0.6)；ΔY=Δ(I+G)/0.4（仅本例闭合下）",
+        formula:
+          "C=20+0.6Y；Y=C+I+G；Y=(20+I+G)/(1−0.6)；ΔY=Δ(I+G)/0.4（仅本例闭合下）",
       },
       {
         title: "5 · 可控实验：分别运行，记录传递假设",
@@ -425,28 +711,117 @@ export const globalLessons: GlobalLesson[] = [
         ],
       },
     ],
-    workedExample: "合成需求闭合C20+0.6Y、I+G40得Y150；给定I+G少10，Y125、ΔY−25。这个−10是另加的传递假设，不由LA07账表自动得出；LA06另以缺口和通胀率动态比较需求/成本冲击。",
+    workedExample:
+      "合成需求闭合C20+0.6Y、I+G40得Y150；给定I+G少10，Y125、ΔY−25。这个−10是另加的传递假设，不由LA07账表自动得出；LA06另以缺口和通胀率动态比较需求/成本冲击。",
     labId: "LA05",
     checks: [
-      { id: "A11-B-explain", kind: "explanation", prompt: "资产损失→权益→信贷→投资→收入链条中，哪些是核算，哪些需行为？LA05/06/07是否已经联立？", answer: "固定债务下损失降低资产与权益是核算；信贷响应、投资响应、收入对还款的反馈需要行为或制度。LA07处理事件账表，LA05有固定价格支出均衡，LA06有缺口通胀和政策动态，它们独立闭合，尚无一致单位时期的联立传递映射。", rubric: ["指出至少一条核算箭头。", "指出至少两条待补行为箭头。", "明确三个模型独立、不能当联合校准预测。"], misconception: "因为每个模型都能运行，就认为完整反馈链已被验证。" },
-      { id: "A11-B-number", kind: "numeric", prompt: "在C=20+0.6Y、无税无进口且价格固定的例子中，I+G由40降30，均衡Y减少多少？请输入正的减少额。", value: spendingBase.equilibrium.Y - spendingChange.equilibrium.Y, tolerance: 1e-8, unit: "货币单位/期的减少额", answer: "Y₀=60/0.4=150，Y₁=50/0.4=125，减少25。符号形式ΔY=−25；题目请求正减少额25。", rubric: ["在题设闭合下计算乘数2.5并乘自主支出减少10。"], misconception: "答10漏了收入反馈；答−25混用变化量与题目要求的正减少额；答40把消费倾向当乘数。" },
-      { id: "A11-B-transfer", kind: "transfer", prompt: "一位同学把LA07损失5直接填作LA06成本冲击5，再宣布金融危机通胀必升5%。该解释缺少哪些检查？", answer: "货币损失与通胀冲击单位不同；未说明银行损失如何传到成本、信贷或需求，也未规定时期与政策反应。LA06动态结果来自自己的系数和滞后，不是把冲击数直接当最终通胀。应分别运行并列传递假设，不能据未经联立的比较预测现实。", rubric: ["识别单位和对象不一致。", "指出缺失传递机制或时间映射。", "说明冲击不等于结果，并限定独立实验的用途。"], misconception: "用同一个数字跨模型填参数，忽视单位、传导与时间。" },
-      { id: "A11-B-choice", kind: "choice", prompt: "何种表述符合三个实验的关系？", answer: "它们比较相关机制，各自的闭合与证据边界需保留。", rubric: [], options: [
-        { label: "它们比较相关机制，各自的闭合与证据边界需保留。", correct: true, feedback: "对。要联合分析还需明确传递方程、单位、时期及估计验证。" },
-        { label: "只要账表平衡，就证明信贷损失必然降低投资。", correct: false, feedback: "账表不决定投资行为，资本补充或替代融资可以改变响应。" },
-        { label: "三个独立输出相加就得到完整金融宏观预测。", correct: false, feedback: "输出对象、单位和时间不同，直接相加既不能闭合也不能验证。" },
-      ] },
+      {
+        id: "A11-B-explain",
+        kind: "explanation",
+        prompt:
+          "资产损失→权益→信贷→投资→收入链条中，哪些是核算，哪些需行为？LA05/06/07是否已经联立？",
+        answer:
+          "固定债务下损失降低资产与权益是核算；信贷响应、投资响应、收入对还款的反馈需要行为或制度。LA07处理事件账表，LA05有固定价格支出均衡，LA06有缺口通胀和政策动态，它们独立闭合，尚无一致单位时期的联立传递映射。",
+        rubric: [
+          "指出至少一条核算箭头。",
+          "指出至少两条待补行为箭头。",
+          "明确三个模型独立、不能当联合校准预测。",
+        ],
+        misconception: "因为每个模型都能运行，就认为完整反馈链已被验证。",
+      },
+      {
+        id: "A11-B-number",
+        kind: "numeric",
+        prompt:
+          "在C=20+0.6Y、无税无进口且价格固定的例子中，I+G由40降30，均衡Y减少多少？请输入正的减少额。",
+        value: spendingBase.equilibrium.Y - spendingChange.equilibrium.Y,
+        tolerance: 1e-8,
+        unit: "货币单位/期的减少额",
+        answer:
+          "Y₀=60/0.4=150，Y₁=50/0.4=125，减少25。符号形式ΔY=−25；题目请求正减少额25。",
+        rubric: ["在题设闭合下计算乘数2.5并乘自主支出减少10。"],
+        misconception:
+          "答10漏了收入反馈；答−25混用变化量与题目要求的正减少额；答40把消费倾向当乘数。",
+      },
+      {
+        id: "A11-B-transfer",
+        kind: "transfer",
+        prompt:
+          "一位同学把LA07损失5直接填作LA06成本冲击5，再宣布金融危机通胀必升5%。该解释缺少哪些检查？",
+        answer:
+          "货币损失与通胀冲击单位不同；未说明银行损失如何传到成本、信贷或需求，也未规定时期与政策反应。LA06动态结果来自自己的系数和滞后，不是把冲击数直接当最终通胀。应分别运行并列传递假设，不能据未经联立的比较预测现实。",
+        rubric: [
+          "识别单位和对象不一致。",
+          "指出缺失传递机制或时间映射。",
+          "说明冲击不等于结果，并限定独立实验的用途。",
+        ],
+        misconception: "用同一个数字跨模型填参数，忽视单位、传导与时间。",
+      },
+      {
+        id: "A11-B-choice",
+        kind: "choice",
+        prompt: "何种表述符合三个实验的关系？",
+        answer: "它们比较相关机制，各自的闭合与证据边界需保留。",
+        rubric: [],
+        options: [
+          {
+            label: "它们比较相关机制，各自的闭合与证据边界需保留。",
+            correct: true,
+            feedback: "对。要联合分析还需明确传递方程、单位、时期及估计验证。",
+          },
+          {
+            label: "只要账表平衡，就证明信贷损失必然降低投资。",
+            correct: false,
+            feedback: "账表不决定投资行为，资本补充或替代融资可以改变响应。",
+          },
+          {
+            label: "三个独立输出相加就得到完整金融宏观预测。",
+            correct: false,
+            feedback:
+              "输出对象、单位和时间不同，直接相加既不能闭合也不能验证。",
+          },
+        ],
+      },
     ],
-    counterexample: "同样金融损失在资本补充、长期融资或不同政策响应条件下不必产生相同支出结果；独立正确的三个模型不自动构成正确的联合反馈系统。",
-    recap: { must: "逐箭头区分核算与行为，LA05/06/07的对象、单位、闭合与未建模传递。", later: "完整金融宏观系统的时序、稳定性、估计与验证，不能用输出拼贴替代。", returnAt: "A12把每条待验证箭头改写为可区分机制的证据要求；终课作品比较至少两个模型。" },
-    references: ["MAC-MIT", "MAC-CORE", "MAC-BOE"], status: "learnable",
+    counterexample:
+      "同样金融损失在资本补充、长期融资或不同政策响应条件下不必产生相同支出结果；独立正确的三个模型不自动构成正确的联合反馈系统。",
+    recap: {
+      must: "逐箭头区分核算与行为，LA05/06/07的对象、单位、闭合与未建模传递。",
+      later: "完整金融宏观系统的时序、稳定性、估计与验证，不能用输出拼贴替代。",
+      returnAt:
+        "A12把每条待验证箭头改写为可区分机制的证据要求；终课作品比较至少两个模型。",
+    },
+    references: ["MAC-MIT", "MAC-CORE", "MAC-BOE"],
+    status: "learnable",
   },
   {
-    id: "A12-A", moduleId: "A12", title: "看见共变之后：反事实、识别与数据版本",
-    centralQuestion: "降息后产出仍下降，能否证明降息使产出下降？拟合历史很好为何也不够？",
-    prerequisites: ["A03增长率与数据修订", "A06–A11至少两个相关模型", "无需统计软件；先说明比较对象与假设"],
-    definitions: ["identity", "behavioral-mechanism", "data-revision", "global-counterfactual", "global-identification", "global-endogeneity", "global-confounder", "global-data-vintage", "global-uncertainty"],
-    modelTypeTags: ["定义：反事实、识别、内生性与版本", "数学关系：条件比较中的差分", "识别假设：比较组的反事实趋势可比", "证据边界：模拟不等于现实因果验证"],
+    id: "A12-A",
+    moduleId: "A12",
+    title: "看见共变之后：反事实、识别与数据版本",
+    centralQuestion:
+      "降息后产出仍下降，能否证明降息使产出下降？拟合历史很好为何也不够？",
+    prerequisites: [
+      "A03增长率与数据修订",
+      "A06–A11至少两个相关模型",
+      "无需统计软件；先说明比较对象与假设",
+    ],
+    definitions: [
+      "identity",
+      "behavioral-mechanism",
+      "data-revision",
+      "global-counterfactual",
+      "global-identification",
+      "global-endogeneity",
+      "global-confounder",
+      "global-data-vintage",
+      "global-uncertainty",
+    ],
+    modelTypeTags: [
+      "定义：反事实、识别、内生性与版本",
+      "数学关系：条件比较中的差分",
+      "识别假设：比较组的反事实趋势可比",
+      "证据边界：模拟不等于现实因果验证",
+    ],
     assumptions: [
       "例中所有政策、组别和数据版本为教学合成情景，不对应真实历史事件。",
       "差分演示只为说明识别假设：两组采用同一时期、单位和口径，无预先处理效应；因果解释另需平行反事实趋势及不存在差异同时冲击等条件。",
@@ -485,7 +860,8 @@ export const globalLessons: GlobalLesson[] = [
           "合成演示：处理组产出100→98，对照组100→99。处理组变化−2，对照组变化−1，变化差为−1。这是可复算的描述。只有当没有处理时两组变化本应相同、无差异同期冲击及其他必要条件合理时，才可能把−1解释为处理效应；两组起点相同本身不能保证趋势条件。",
           "若处理组恰好遭遇额外成本冲击1，即使政策毫无作用，也能得到同样变化差。若政策选择是因为管理者预计处理组会更差，对照组也未必提供有效反事实。识别需要设计和证据支持假设，不是套上一个差分公式就获得因果标签。",
         ],
-        formula: "描述性变化差=(Y处理,后−Y处理,前)−(Y对照,后−Y对照,前)；本例=(98−100)−(99−100)=−1",
+        formula:
+          "描述性变化差=(Y处理,后−Y处理,前)−(Y对照,后−Y对照,前)；本例=(98−100)−(99−100)=−1",
       },
       {
         title: "5 · 可控实验：用模型反事实提出证据问题",
@@ -521,28 +897,121 @@ export const globalLessons: GlobalLesson[] = [
         ],
       },
     ],
-    workedExample: "全部合成：处理组100→98、对照100→99，描述性变化差−1单位/期。只有平行反事实趋势等条件成立才可谈因果效应；额外差异成本冲击也可产生同一差。首发98与修订99须保留不同版本标签。",
+    workedExample:
+      "全部合成：处理组100→98、对照100→99，描述性变化差−1单位/期。只有平行反事实趋势等条件成立才可谈因果效应；额外差异成本冲击也可产生同一差。首发98与修订99须保留不同版本标签。",
     labId: "LA06",
     checks: [
-      { id: "A12-A-explain", kind: "explanation", prompt: "政策后结果下降为何不独立证明政策有负效应？模型反事实与真实识别有何不同？", answer: "政策可能针对未观察的衰退冲击响应，且未处理结果无法同时观察；下降可能在政策缓冲后仍发生。模型反事实来自给定方程和参数，现实识别要用证据和设计支持反事实比较及排除混杂因素。", rubric: ["说出未观察反事实。", "说明政策反应或共同冲击造成内生性。", "区分模型假设计算与现实证据支持。"], misconception: "把先后发生或模型曲线当成因果证明。" },
-      { id: "A12-A-number", kind: "numeric", prompt: "处理组100→98，对照组100→99，描述性变化差（处理变化减对照变化）是多少？", value: descriptiveDifference, tolerance: 1e-8, unit: "实际产出单位/期的差", answer: "(98−100)−(99−100)=−2−(−1)=−1；计算正确不自动满足因果识别假设。", rubric: ["分别计算两组变化，再相减且保留符号。"], misconception: "答−2漏了对照变化；答1反转组别或忽略符号；答−1仍需区分描述与因果。" },
-      { id: "A12-A-transfer", kind: "transfer", prompt: "用后来修订的GDP和已知结局拟合政策规则，再说当时政策者本应精确预测危机，有哪些问题？", answer: "后来版本与当时信息集不同，结局已知造成后见或数据泄漏；样本内拟合不独立验证预测能力和机制。应保存当时数据版本、观察/发布日期，明确训练与检验界限，再讨论模型结构和参数不确定性。", rubric: ["指出版本与当时信息不一致。", "指出拟合或后见泄漏不等于有效预测检验。", "给出保留版本和验证边界的具体修正。"], misconception: "把最终修订数据视为当时已知，忽视模型选择的不确定性。" },
-      { id: "A12-A-choice", kind: "choice", prompt: "哪项对识别与不确定性的表述正确？", answer: "变化差需要反事实比较假设；参数情景范围不自动是置信区间。", rubric: [], options: [
-        { label: "变化差需要反事实比较假设；参数情景范围不自动是置信区间。", correct: true, feedback: "对。描述计算、识别条件和概率解释需分别说明。" },
-        { label: "只要两组起点相同，变化差就必然是因果效应。", correct: false, feedback: "同起点不能排除趋势不同、政策选择和差异同期冲击。" },
-        { label: "把参数调三次得到的最大最小值就是95%置信区间。", correct: false, feedback: "没有抽样或概率构造，最大最小只能称条件敏感性范围。" },
-      ] },
+      {
+        id: "A12-A-explain",
+        kind: "explanation",
+        prompt:
+          "政策后结果下降为何不独立证明政策有负效应？模型反事实与真实识别有何不同？",
+        answer:
+          "政策可能针对未观察的衰退冲击响应，且未处理结果无法同时观察；下降可能在政策缓冲后仍发生。模型反事实来自给定方程和参数，现实识别要用证据和设计支持反事实比较及排除混杂因素。",
+        rubric: [
+          "说出未观察反事实。",
+          "说明政策反应或共同冲击造成内生性。",
+          "区分模型假设计算与现实证据支持。",
+        ],
+        misconception: "把先后发生或模型曲线当成因果证明。",
+      },
+      {
+        id: "A12-A-number",
+        kind: "numeric",
+        prompt:
+          "处理组100→98，对照组100→99，描述性变化差（处理变化减对照变化）是多少？",
+        value: descriptiveDifference,
+        tolerance: 1e-8,
+        unit: "实际产出单位/期的差",
+        answer:
+          "(98−100)−(99−100)=−2−(−1)=−1；计算正确不自动满足因果识别假设。",
+        rubric: ["分别计算两组变化，再相减且保留符号。"],
+        misconception:
+          "答−2漏了对照变化；答1反转组别或忽略符号；答−1仍需区分描述与因果。",
+      },
+      {
+        id: "A12-A-transfer",
+        kind: "transfer",
+        prompt:
+          "用后来修订的GDP和已知结局拟合政策规则，再说当时政策者本应精确预测危机，有哪些问题？",
+        answer:
+          "后来版本与当时信息集不同，结局已知造成后见或数据泄漏；样本内拟合不独立验证预测能力和机制。应保存当时数据版本、观察/发布日期，明确训练与检验界限，再讨论模型结构和参数不确定性。",
+        rubric: [
+          "指出版本与当时信息不一致。",
+          "指出拟合或后见泄漏不等于有效预测检验。",
+          "给出保留版本和验证边界的具体修正。",
+        ],
+        misconception: "把最终修订数据视为当时已知，忽视模型选择的不确定性。",
+      },
+      {
+        id: "A12-A-choice",
+        kind: "choice",
+        prompt: "哪项对识别与不确定性的表述正确？",
+        answer: "变化差需要反事实比较假设；参数情景范围不自动是置信区间。",
+        rubric: [],
+        options: [
+          {
+            label: "变化差需要反事实比较假设；参数情景范围不自动是置信区间。",
+            correct: true,
+            feedback: "对。描述计算、识别条件和概率解释需分别说明。",
+          },
+          {
+            label: "只要两组起点相同，变化差就必然是因果效应。",
+            correct: false,
+            feedback: "同起点不能排除趋势不同、政策选择和差异同期冲击。",
+          },
+          {
+            label: "把参数调三次得到的最大最小值就是95%置信区间。",
+            correct: false,
+            feedback: "没有抽样或概率构造，最大最小只能称条件敏感性范围。",
+          },
+        ],
+      },
     ],
-    counterexample: "政策针对预期衰退响应可使降息与弱产出共变；同样变化差可由差异成本冲击产生。大样本、平衡账目或样本内拟合均不独立识别因果。",
-    recap: { must: "观察/模型反事实/因果证据/规范判断，内生性、比较假设与数据版本。", later: "专门的统计识别方法和不确定性估计，需要明确假设而非套术语。", returnAt: "A12-B将至少两种机制、可检验预测、敏感性和未知清单写入终课作品。" },
-    references: ["MAC-MIT", "MAC-CORE", "MAC-BEA"], status: "learnable",
+    counterexample:
+      "政策针对预期衰退响应可使降息与弱产出共变；同样变化差可由差异成本冲击产生。大样本、平衡账目或样本内拟合均不独立识别因果。",
+    recap: {
+      must: "观察/模型反事实/因果证据/规范判断，内生性、比较假设与数据版本。",
+      later: "专门的统计识别方法和不确定性估计，需要明确假设而非套术语。",
+      returnAt:
+        "A12-B将至少两种机制、可检验预测、敏感性和未知清单写入终课作品。",
+    },
+    references: ["MAC-MIT", "MAC-CORE", "MAC-BEA"],
+    status: "learnable",
   },
   {
-    id: "A12-B", moduleId: "A12", title: "终课作品：一份有机制、有账本、有证据边界的诊断",
-    centralQuestion: "面对同一个合成情景，怎样写出可以复算、可以反驳、承认未知的宏观分析？",
-    prerequisites: ["A03名义/实际转换", "A06/A07需求与供给机制", "A11模型比较", "A12-A因果与版本护栏；选题所需前置可回看"],
-    definitions: ["nominal", "real", "deflator", "net-worth", "identity", "global-feedback", "global-counterfactual", "global-identification", "global-data-vintage", "global-uncertainty", "global-sensitivity", "global-policy-criterion", "global-reproducibility"],
-    modelTypeTags: ["定义：可复现报告与政策评价标准", "核算关系：名义/实际与资产负债表", "行为与动态机制：需求、供给、金融的条件比较", "证据与规范判断：分别陈述支持和代价"],
+    id: "A12-B",
+    moduleId: "A12",
+    title: "终课作品：一份有机制、有账本、有证据边界的诊断",
+    centralQuestion:
+      "面对同一个合成情景，怎样写出可以复算、可以反驳、承认未知的宏观分析？",
+    prerequisites: [
+      "A03名义/实际转换",
+      "A06/A07需求与供给机制",
+      "A11模型比较",
+      "A12-A因果与版本护栏；选题所需前置可回看",
+    ],
+    definitions: [
+      "nominal",
+      "real",
+      "deflator",
+      "net-worth",
+      "identity",
+      "global-feedback",
+      "global-counterfactual",
+      "global-identification",
+      "global-data-vintage",
+      "global-uncertainty",
+      "global-sensitivity",
+      "global-policy-criterion",
+      "global-reproducibility",
+    ],
+    modelTypeTags: [
+      "定义：可复现报告与政策评价标准",
+      "核算关系：名义/实际与资产负债表",
+      "行为与动态机制：需求、供给、金融的条件比较",
+      "证据与规范判断：分别陈述支持和代价",
+    ],
     assumptions: [
       "默认终课情景与模型结果均为教学合成数据，不描画当前经济或预测市场；真实案例仅使用自备且可核验的来源与版本。",
       "至少两个模型分别注明对象、参数、单位、时期、闭合与边界；独立输出不是联立或已校准预测。",
@@ -581,7 +1050,8 @@ export const globalLessons: GlobalLesson[] = [
           "名义N₁=110、平减指数D₁=110且基准100时，实际R₁=N₁/(D₁/100)=100。名义增长10%由本例价格上涨10%解释，实际产出没有增长。资产表A₀100/D₀90/E₀10在资产损失5且债务不变后为A₁95/D₁90/E₁5；这里债务符号D与平减指数D同字母，报告应改写表头避免混淆。",
           "行为例另行设C=20+cY、I+G=40，c=0.6时Y=150，c=0.5时Y=120。改变消费倾向后的均衡差来自固定价格、无税进口漏出等条件，不从资产损失直接推来。动态需求/供给比较用LA06当前模型参数计算，保留基准、冲击种类和政策规则，不能用同一个数值标签假装建立金融传导。",
         ],
-        formula: "R=N/(平减指数/100)；E=A−负债；Y=(20+I+G)/(1−c)（本例固定价格、无税及进口漏出）；每项结果保留自身单位与时期",
+        formula:
+          "R=N/(平减指数/100)；E=A−负债；Y=(20+I+G)/(1−c)（本例固定价格、无税及进口漏出）；每项结果保留自身单位与时期",
       },
       {
         title: "5 · 可控实验：从工作台保存一份可复现作品",
@@ -617,20 +1087,89 @@ export const globalLessons: GlobalLesson[] = [
         ],
       },
     ],
-    workedExample: "合成名义产出110、基准100的平减指数110，实际100；A100/负债90/权益10损失5后A95/负债90/权益5。固定价格C=20+cY、I+G40，c0.6得Y150，c0.5得120。三项是不同模型的条件计算，另以LA06对照需求/成本路径并列证据需求。",
+    workedExample:
+      "合成名义产出110、基准100的平减指数110，实际100；A100/负债90/权益10损失5后A95/负债90/权益5。固定价格C=20+cY、I+G40，c0.6得Y150，c0.5得120。三项是不同模型的条件计算，另以LA06对照需求/成本路径并列证据需求。",
     labId: "LA06",
     checks: [
-      { id: "A12-B-explain", kind: "explanation", prompt: "终课作品的七栏为何要分开写？如何同时比较两个模型而不伪装联合预测？", answer: "七栏将事实描述、测量、核算、机制、证据、政策标准和未知分开，使每项结论有对应支持。两个模型各保留对象、参数、单位、时期与闭合，比较可检验预测和边界；尚无联立传递方程时不把独立输出相加或称校准预测。", rubric: ["至少说明描述、机制与证据三类不同任务。", "列出复算所需参数、单位或版本。", "明确两个模型独立比较与未联立边界。"], misconception: "把一条合成趋势、两张模型截图和政策口号当作完整因果分析。" },
-      { id: "A12-B-number", kind: "numeric", prompt: "名义产出N=110，平减指数=110（基期=100），实际产出R是多少？", value: priceExample.periods[1].R, tolerance: 1e-8, unit: "基期价格计的产出单位/期", answer: "R=110/(110/100)=100；不能用110−10或把指数直接作货币量。该例名义增长10%、实际增长0%。", rubric: ["将指数110换成价格因子1.1后相除。"], misconception: "答1漏了基准100；答110未平减；相减法只在特殊数字巧合下得到同值，不能当通用转换。" },
-      { id: "A12-B-transfer", kind: "transfer", prompt: "报告用一张合成图声称已证明政策有效，并把三个参数情景的范围称95%置信区间，应怎样修正？", answer: "将图标为模型内合成情景，说明假设与可复算输入，列出需要真实识别证据的反事实条件。将范围改为参数敏感性范围，除非另外有明确概率/抽样依据。政策有效还要给出目标、分配与代价，并保留结构、测量和识别未知。", rubric: ["纠正合成模拟与现实因果证据的混同。", "纠正无概率依据的置信区间标签。", "补上政策标准与至少一种未知来源。"], misconception: "把可计算、可画图误当因果已识别，把条件范围误当概率。" },
-      { id: "A12-B-choice", kind: "choice", prompt: "何种终课结论最符合课程目标？", answer: "说明条件结果、可反驳证据、政策取舍与尚未知内容。", rubric: [], options: [
-        { label: "说明条件结果、可反驳证据、政策取舍与尚未知内容。", correct: true, feedback: "对。概念、账目、机制、证据与规范标准各自完整，才便于复算和讨论。" },
-        { label: "选择一个学派口号，所有情景都必须与它一致。", correct: false, feedback: "课程要求机制比较和反例，先验口号不能替代条件与证据。" },
-        { label: "只要预测下次市场涨跌准确，就无需核算与证据。", correct: false, feedback: "本课评价可复现的宏观分析，不以交易结果替代对象、核算和识别。" },
-      ] },
+      {
+        id: "A12-B-explain",
+        kind: "explanation",
+        prompt:
+          "终课作品的七栏为何要分开写？如何同时比较两个模型而不伪装联合预测？",
+        answer:
+          "七栏将事实描述、测量、核算、机制、证据、政策标准和未知分开，使每项结论有对应支持。两个模型各保留对象、参数、单位、时期与闭合，比较可检验预测和边界；尚无联立传递方程时不把独立输出相加或称校准预测。",
+        rubric: [
+          "至少说明描述、机制与证据三类不同任务。",
+          "列出复算所需参数、单位或版本。",
+          "明确两个模型独立比较与未联立边界。",
+        ],
+        misconception:
+          "把一条合成趋势、两张模型截图和政策口号当作完整因果分析。",
+      },
+      {
+        id: "A12-B-number",
+        kind: "numeric",
+        prompt: "名义产出N=110，平减指数=110（基期=100），实际产出R是多少？",
+        value: priceExample.periods[1].R,
+        tolerance: 1e-8,
+        unit: "基期价格计的产出单位/期",
+        answer:
+          "R=110/(110/100)=100；不能用110−10或把指数直接作货币量。该例名义增长10%、实际增长0%。",
+        rubric: ["将指数110换成价格因子1.1后相除。"],
+        misconception:
+          "答1漏了基准100；答110未平减；相减法只在特殊数字巧合下得到同值，不能当通用转换。",
+      },
+      {
+        id: "A12-B-transfer",
+        kind: "transfer",
+        prompt:
+          "报告用一张合成图声称已证明政策有效，并把三个参数情景的范围称95%置信区间，应怎样修正？",
+        answer:
+          "将图标为模型内合成情景，说明假设与可复算输入，列出需要真实识别证据的反事实条件。将范围改为参数敏感性范围，除非另外有明确概率/抽样依据。政策有效还要给出目标、分配与代价，并保留结构、测量和识别未知。",
+        rubric: [
+          "纠正合成模拟与现实因果证据的混同。",
+          "纠正无概率依据的置信区间标签。",
+          "补上政策标准与至少一种未知来源。",
+        ],
+        misconception: "把可计算、可画图误当因果已识别，把条件范围误当概率。",
+      },
+      {
+        id: "A12-B-choice",
+        kind: "choice",
+        prompt: "何种终课结论最符合课程目标？",
+        answer: "说明条件结果、可反驳证据、政策取舍与尚未知内容。",
+        rubric: [],
+        options: [
+          {
+            label: "说明条件结果、可反驳证据、政策取舍与尚未知内容。",
+            correct: true,
+            feedback:
+              "对。概念、账目、机制、证据与规范标准各自完整，才便于复算和讨论。",
+          },
+          {
+            label: "选择一个学派口号，所有情景都必须与它一致。",
+            correct: false,
+            feedback: "课程要求机制比较和反例，先验口号不能替代条件与证据。",
+          },
+          {
+            label: "只要预测下次市场涨跌准确，就无需核算与证据。",
+            correct: false,
+            feedback:
+              "本课评价可复现的宏观分析，不以交易结果替代对象、核算和识别。",
+          },
+        ],
+      },
     ],
-    counterexample: "同一合成价格—产出趋势可由多种机制组合产生，不能独立识别政策；敏感性若让排序反转必须报告条件，不能隐藏不利结果。",
-    recap: { must: "七栏报告、两个独立模型、名义/实际转换、平衡账表、需求/供给对照、敏感性及未知清单。", later: "真实案例需核验来源、数据版本和识别设计；未来研究从未知清单选择下一项。", returnAt: "返回终课作品工作台，保存报告与自评；按具体疑问回到相关模块和来源继续复核。" },
-    references: ["MAC-MIT", "MAC-CORE", "MAC-BEA"], status: "learnable",
+    counterexample:
+      "同一合成价格—产出趋势可由多种机制组合产生，不能独立识别政策；敏感性若让排序反转必须报告条件，不能隐藏不利结果。",
+    recap: {
+      must: "七栏报告、两个独立模型、名义/实际转换、平衡账表、需求/供给对照、敏感性及未知清单。",
+      later:
+        "真实案例需核验来源、数据版本和识别设计；未来研究从未知清单选择下一项。",
+      returnAt:
+        "返回终课作品工作台，保存报告与自评；按具体疑问回到相关模块和来源继续复核。",
+    },
+    references: ["MAC-MIT", "MAC-CORE", "MAC-BEA"],
+    status: "learnable",
   },
 ];

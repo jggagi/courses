@@ -36,7 +36,7 @@ export const sources: Source[] = [
     id: "MAC-BLS-LABOR",
     title: "BLS：CPS Concepts and Definitions",
     url: "https://www.bls.gov/cps/definitions.htm",
-    note: "A07规划阶段的就业统计阅读入口；首期不实现就业模型，也不展示未经核验的当前就业数据。",
+    note: "A07劳动统计口径的阅读入口；美国定义不能未经核验套用到其他国家。课程使用合成人口与就业数字，没有当前就业数据。",
   },
   {
     id: "MAC-BOE",

@@ -45,32 +45,98 @@ export interface CreditState {
 }
 
 export const creditCustomerIds: CreditCustomerId[] = [
-  "historicalDepositorA", "historicalBorrowerA", "historicalDepositorB",
-  "historicalBorrowerB", "newBorrower", "recipient",
+  "historicalDepositorA",
+  "historicalBorrowerA",
+  "historicalDepositorB",
+  "historicalBorrowerB",
+  "newBorrower",
+  "recipient",
 ];
 
 /** 全部为教学合成账户；准备金发行方、银行股东在展开边界之外。 */
 export function defaultCreditState(): CreditState {
   return {
     A: {
-      reserves: 20, loanAsset: 80, depositLiability: 90, equity: 10,
-      deposits: { historicalDepositorA: 90, historicalBorrowerA: 0, newBorrower: 0 },
-      loans: { historicalDepositorA: 0, historicalBorrowerA: 80, newBorrower: 0 },
-      lossAllowances: { historicalDepositorA: 0, historicalBorrowerA: 0, newBorrower: 0 },
+      reserves: 20,
+      loanAsset: 80,
+      depositLiability: 90,
+      equity: 10,
+      deposits: {
+        historicalDepositorA: 90,
+        historicalBorrowerA: 0,
+        newBorrower: 0,
+      },
+      loans: {
+        historicalDepositorA: 0,
+        historicalBorrowerA: 80,
+        newBorrower: 0,
+      },
+      lossAllowances: {
+        historicalDepositorA: 0,
+        historicalBorrowerA: 0,
+        newBorrower: 0,
+      },
     },
     B: {
-      reserves: 20, loanAsset: 80, depositLiability: 90, equity: 10,
-      deposits: { historicalDepositorB: 90, historicalBorrowerB: 0, recipient: 0 },
+      reserves: 20,
+      loanAsset: 80,
+      depositLiability: 90,
+      equity: 10,
+      deposits: {
+        historicalDepositorB: 90,
+        historicalBorrowerB: 0,
+        recipient: 0,
+      },
       loans: { historicalDepositorB: 0, historicalBorrowerB: 80, recipient: 0 },
-      lossAllowances: { historicalDepositorB: 0, historicalBorrowerB: 0, recipient: 0 },
+      lossAllowances: {
+        historicalDepositorB: 0,
+        historicalBorrowerB: 0,
+        recipient: 0,
+      },
     },
     customers: {
-      historicalDepositorA: { bank: "A", deposit: 90, loan: 0, otherAssets: 0, netWorth: 90 },
-      historicalBorrowerA: { bank: "A", deposit: 0, loan: 80, otherAssets: 80, netWorth: 0 },
-      historicalDepositorB: { bank: "B", deposit: 90, loan: 0, otherAssets: 0, netWorth: 90 },
-      historicalBorrowerB: { bank: "B", deposit: 0, loan: 80, otherAssets: 80, netWorth: 0 },
-      newBorrower: { bank: "A", deposit: 0, loan: 0, otherAssets: 0, netWorth: 0 },
-      recipient: { bank: "B", deposit: 0, loan: 0, otherAssets: 0, netWorth: 0 },
+      historicalDepositorA: {
+        bank: "A",
+        deposit: 90,
+        loan: 0,
+        otherAssets: 0,
+        netWorth: 90,
+      },
+      historicalBorrowerA: {
+        bank: "A",
+        deposit: 0,
+        loan: 80,
+        otherAssets: 80,
+        netWorth: 0,
+      },
+      historicalDepositorB: {
+        bank: "B",
+        deposit: 90,
+        loan: 0,
+        otherAssets: 0,
+        netWorth: 90,
+      },
+      historicalBorrowerB: {
+        bank: "B",
+        deposit: 0,
+        loan: 80,
+        otherAssets: 80,
+        netWorth: 0,
+      },
+      newBorrower: {
+        bank: "A",
+        deposit: 0,
+        loan: 0,
+        otherAssets: 0,
+        netWorth: 0,
+      },
+      recipient: {
+        bank: "B",
+        deposit: 0,
+        loan: 0,
+        otherAssets: 0,
+        netWorth: 0,
+      },
     },
     events: [],
   };
@@ -78,9 +144,21 @@ export function defaultCreditState(): CreditState {
 
 function clone(state: CreditState): CreditState {
   return {
-    A: { ...state.A, deposits: { ...state.A.deposits }, loans: { ...state.A.loans }, lossAllowances: { ...state.A.lossAllowances } },
-    B: { ...state.B, deposits: { ...state.B.deposits }, loans: { ...state.B.loans }, lossAllowances: { ...state.B.lossAllowances } },
-    customers: Object.fromEntries(creditCustomerIds.map((id) => [id, { ...state.customers[id] }])) as CreditState["customers"],
+    A: {
+      ...state.A,
+      deposits: { ...state.A.deposits },
+      loans: { ...state.A.loans },
+      lossAllowances: { ...state.A.lossAllowances },
+    },
+    B: {
+      ...state.B,
+      deposits: { ...state.B.deposits },
+      loans: { ...state.B.loans },
+      lossAllowances: { ...state.B.lossAllowances },
+    },
+    customers: Object.fromEntries(
+      creditCustomerIds.map((id) => [id, { ...state.customers[id] }]),
+    ) as CreditState["customers"],
     events: state.events.map((event) => ({ ...event })),
   };
 }
@@ -104,22 +182,35 @@ export function validateCreditState(state: CreditState): void {
   for (const id of creditCustomerIds) {
     const customer = state.customers[id];
     assertRecord(customer, `客户${id}`);
-    const expectedBank = ["historicalDepositorA", "historicalBorrowerA", "newBorrower"].includes(id) ? "A" : "B";
-    if (customer.bank !== expectedBank) throw new Error("客户所属银行与实验账户不符。");
+    const expectedBank = [
+      "historicalDepositorA",
+      "historicalBorrowerA",
+      "newBorrower",
+    ].includes(id)
+      ? "A"
+      : "B";
+    if (customer.bank !== expectedBank)
+      throw new Error("客户所属银行与实验账户不符。");
     const deposit = moneyCents(customer.deposit, "客户存款");
     const loan = moneyCents(customer.loan, "客户合同贷款");
     const assets = moneyCents(customer.otherAssets, "客户非金融资产");
     const worth = moneyCents(customer.netWorth, "客户净值", { signed: true });
-    if (deposit + assets !== loan + worth) throw new Error("客户资产负债表不平衡。");
+    if (deposit + assets !== loan + worth)
+      throw new Error("客户资产负债表不平衡。");
   }
   for (const bankId of ["A", "B"] as const) {
     const bank = state[bankId];
     assertRecord(bank, `银行${bankId}`);
     for (const key of ["deposits", "loans", "lossAllowances"] as const)
       assertRecord(bank[key], `银行${bankId}分户${key}`);
-    const ids = creditCustomerIds.filter((id) => state.customers[id].bank === bankId);
+    const ids = creditCustomerIds.filter(
+      (id) => state.customers[id].bank === bankId,
+    );
     for (const map of [bank.deposits, bank.loans, bank.lossAllowances]) {
-      if (Object.keys(map).length !== ids.length || Object.keys(map).some((id) => !ids.includes(id as CreditCustomerId)))
+      if (
+        Object.keys(map).length !== ids.length ||
+        Object.keys(map).some((id) => !ids.includes(id as CreditCustomerId))
+      )
         throw new Error("银行分户账户不完整或存在未知客户。");
     }
     let deposits = 0;
@@ -130,7 +221,10 @@ export function validateCreditState(state: CreditState): void {
       const allowance = moneyCents(bank.lossAllowances[id], "贷款损失准备");
       if (deposit !== moneyCents(state.customers[id].deposit, "客户存款"))
         throw new Error("客户存款与银行存款分户双边不一致。");
-      if (claim + allowance !== moneyCents(state.customers[id].loan, "客户合同本金"))
+      if (
+        claim + allowance !==
+        moneyCents(state.customers[id].loan, "客户合同本金")
+      )
         throw new Error("贷款双边不一致：净资产加减值应等于合同本金。");
       deposits += deposit;
       loans += claim;
@@ -158,14 +252,25 @@ export function validateCreditState(state: CreditState): void {
 }
 
 function add(value: number, amount: number): number {
-  return (moneyCents(value, "科目金额", { signed: true }) + moneyCents(amount, "科目变动", { signed: true })) / 100;
+  return (
+    (moneyCents(value, "科目金额", { signed: true }) +
+      moneyCents(amount, "科目变动", { signed: true })) /
+    100
+  );
 }
 
-export function applyCreditEvent(state: CreditState, event: CreditEvent): CreditState {
+export function applyCreditEvent(
+  state: CreditState,
+  event: CreditEvent,
+): CreditState {
   validateCreditState(state);
   validateEvent(event);
-  if (state.events.some((previous) => previous.id === event.id)) throw new Error("事件ID重复，不能重复应用。");
-  if (state.events.length && event.sequence <= state.events[state.events.length - 1].sequence)
+  if (state.events.some((previous) => previous.id === event.id))
+    throw new Error("事件ID重复，不能重复应用。");
+  if (
+    state.events.length &&
+    event.sequence <= state.events[state.events.length - 1].sequence
+  )
     throw new Error("事件顺序必须严格递增。");
   const next = clone(state);
   const amount = moneyCents(event.amount, "事件金额", { positive: true }) / 100;
@@ -178,14 +283,25 @@ export function applyCreditEvent(state: CreditState, event: CreditEvent): Credit
     next.A.loanAsset = add(next.A.loanAsset, amount);
     next.A.depositLiability = add(next.A.depositLiability, amount);
   } else if (event.type === "payment") {
-    if (moneyCents(amount, "付款金额") > moneyCents(borrower.deposit, "付款人存款"))
+    if (
+      moneyCents(amount, "付款金额") >
+      moneyCents(borrower.deposit, "付款人存款")
+    )
       throw new Error("跨行支付超过客户可用存款，交易未执行。");
     if (moneyCents(amount, "付款金额") > moneyCents(next.A.reserves, "准备金"))
-      throw new Error("跨行支付超过A的准备金；本模型没有自动融资，交易未执行。");
+      throw new Error(
+        "跨行支付超过A的准备金；本模型没有自动融资，交易未执行。",
+      );
     borrower.deposit = add(borrower.deposit, -amount);
     borrower.netWorth = add(borrower.netWorth, -amount);
-    next.customers.recipient.deposit = add(next.customers.recipient.deposit, amount);
-    next.customers.recipient.netWorth = add(next.customers.recipient.netWorth, amount);
+    next.customers.recipient.deposit = add(
+      next.customers.recipient.deposit,
+      amount,
+    );
+    next.customers.recipient.netWorth = add(
+      next.customers.recipient.netWorth,
+      amount,
+    );
     next.A.deposits.newBorrower = add(next.A.deposits.newBorrower, -amount);
     next.A.depositLiability = add(next.A.depositLiability, -amount);
     next.B.deposits.recipient = add(next.B.deposits.recipient, amount);
@@ -204,10 +320,19 @@ export function applyCreditEvent(state: CreditState, event: CreditEvent): Credit
     next.A.loanAsset = add(next.A.loanAsset, -amount);
     next.A.depositLiability = add(next.A.depositLiability, -amount);
   } else {
-    if (moneyCents(amount, "损失") > moneyCents(next.A.loans.historicalBorrowerA, "历史贷款净账面余额"))
+    if (
+      moneyCents(amount, "损失") >
+      moneyCents(next.A.loans.historicalBorrowerA, "历史贷款净账面余额")
+    )
       throw new Error("损失超过被操作的历史债权净账面余额，交易未执行。");
-    next.A.loans.historicalBorrowerA = add(next.A.loans.historicalBorrowerA, -amount);
-    next.A.lossAllowances.historicalBorrowerA = add(next.A.lossAllowances.historicalBorrowerA, amount);
+    next.A.loans.historicalBorrowerA = add(
+      next.A.loans.historicalBorrowerA,
+      -amount,
+    );
+    next.A.lossAllowances.historicalBorrowerA = add(
+      next.A.lossAllowances.historicalBorrowerA,
+      amount,
+    );
     next.A.loanAsset = add(next.A.loanAsset, -amount);
     next.A.equity = add(next.A.equity, -amount);
   }
@@ -217,18 +342,34 @@ export function applyCreditEvent(state: CreditState, event: CreditEvent): Credit
 }
 
 /** 撤销时移除源事件再重放。输入与此前冻结的A基准均不会被修改。 */
-export function replayCreditEvents(initial: CreditState, events: CreditEvent[]): CreditState {
+export function replayCreditEvents(
+  initial: CreditState,
+  events: CreditEvent[],
+): CreditState {
   validateCreditState(initial);
-  if (initial.events.length) throw new Error("重放初始账表不能包含已执行事件。");
-  if (!Array.isArray(events) || events.length > 10_000) throw new Error("重放事件必须为最多10000条的数组。");
+  if (initial.events.length)
+    throw new Error("重放初始账表不能包含已执行事件。");
+  if (!Array.isArray(events) || events.length > 10_000)
+    throw new Error("重放事件必须为最多10000条的数组。");
   return events.reduce(applyCreditEvent, clone(initial));
 }
 
 /** 负权益是偿付能力风险；零准备金是本模型无融资时的支付约束，两者不等价。 */
-export function creditRisk(state: CreditState): Record<CreditBankId, { negativeEquity: boolean; exhaustedReserves: boolean }> {
+export function creditRisk(
+  state: CreditState,
+): Record<
+  CreditBankId,
+  { negativeEquity: boolean; exhaustedReserves: boolean }
+> {
   validateCreditState(state);
   return {
-    A: { negativeEquity: state.A.equity < 0, exhaustedReserves: state.A.reserves === 0 },
-    B: { negativeEquity: state.B.equity < 0, exhaustedReserves: state.B.reserves === 0 },
+    A: {
+      negativeEquity: state.A.equity < 0,
+      exhaustedReserves: state.A.reserves === 0,
+    },
+    B: {
+      negativeEquity: state.B.equity < 0,
+      exhaustedReserves: state.B.reserves === 0,
+    },
   };
 }
