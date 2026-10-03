@@ -1,7 +1,18 @@
+import {
+  advancedDefaults,
+  advancedLabDefinitions,
+  runAdvancedLab,
+  ADVANCED_LAB_IDS,
+  type AdvancedLabId,
+} from "../models/advanced";
+
+export { ADVANCED_LAB_IDS };
+export type { AdvancedLabId };
+
 /** Local-only course records. This module never makes a network request. */
 export const STORAGE_KEY = "courses:microeconomics:v1";
 export const MAX_IMPORT_BYTES = 1024 * 1024;
-export const LESSON_IDS = [
+const LEGACY_LESSON_IDS = [
   "M01-A",
   "M01-B",
   "M02-A",
@@ -9,6 +20,13 @@ export const LESSON_IDS = [
   "M03-A",
   "M03-B",
 ] as const;
+export const LESSON_IDS = [
+  ...LEGACY_LESSON_IDS,
+  "M04-A", "M04-B", "M05-A", "M05-B", "M06-A", "M06-B",
+  "M07-A", "M07-B", "M08-A", "M08-B", "M09-A", "M09-B",
+  "M10-A", "M10-B", "M11-A", "M11-B", "M12-A", "M12-B",
+] as const;
+// The first three labs keep their historical parameter shape and UI contract.
 export const LAB_IDS = ["ML01", "ML02", "ML03"] as const;
 export type LessonId = (typeof LESSON_IDS)[number];
 export type LabId = (typeof LAB_IDS)[number];
@@ -46,8 +64,23 @@ export interface SelfCheck {
   answer: string;
   rating: "needs_review" | "partial" | "clear";
 }
+export interface AdvancedLabState {
+  baseline: Record<string, number>;
+  scenario: Record<string, number>;
+  prediction: string;
+  revealed: boolean;
+  explanation: string;
+}
+export interface CapstoneState {
+  object: string;
+  baseline: string;
+  counterfactuals: string;
+  boundaries: string;
+  evidence: string;
+  reflection: string;
+}
 export interface LearningState {
-  schemaVersion: 1;
+  schemaVersion: 2;
   courseId: "microeconomics";
   lastLessonId: LessonId | null;
   lessonStates: Record<LessonId, LessonStatus>;
@@ -55,6 +88,8 @@ export interface LearningState {
   selfChecks: Record<string, SelfCheck>;
   notes: Partial<Record<LessonId, string>>;
   labStates: Record<LabId, LabState>;
+  advancedLabStates: Record<AdvancedLabId, AdvancedLabState>;
+  capstone: CapstoneState;
   conceptConfidence: Record<LessonId, Confidence>;
   updatedAt: string;
 }
@@ -82,7 +117,7 @@ export interface LearningStore {
 
 const MEMORY_NOTICE =
   "浏览器本地存储不可用；记录暂存在本次页面内，关闭或刷新后可能丢失。请显式导出备份。";
-const STATE_KEYS = [
+const LEGACY_STATE_KEYS = [
   "schemaVersion",
   "courseId",
   "lastLessonId",
@@ -94,6 +129,12 @@ const STATE_KEYS = [
   "conceptConfidence",
   "updatedAt",
 ];
+const STATE_KEYS = [...LEGACY_STATE_KEYS, "advancedLabStates", "capstone"];
+const CAPSTONE_KEYS = [
+  "object", "baseline", "counterfactuals", "boundaries", "evidence", "reflection",
+] as const;
+const MIGRATION_NOTICE =
+  "Phase 1 的版本 1 学习记录已迁移到完整课程版本 2；原有进度、练习、笔记和实验均已保留。后续保存及导出使用版本 2。";
 const PARAMETER_KEYS = [
   "m",
   "px",
@@ -135,7 +176,7 @@ export function createInitialState(
   at = new Date().toISOString(),
 ): LearningState {
   return {
-    schemaVersion: 1,
+    schemaVersion: 2,
     courseId: "microeconomics",
     lastLessonId: null,
     lessonStates: Object.fromEntries(
@@ -155,6 +196,22 @@ export function createInitialState(
         },
       ]),
     ) as LearningState["labStates"],
+    advancedLabStates: Object.fromEntries(
+      ADVANCED_LAB_IDS.map((id) => [
+        id,
+        {
+          baseline: advancedDefaults(id),
+          scenario: advancedDefaults(id),
+          prediction: "",
+          revealed: false,
+          explanation: "",
+        },
+      ]),
+    ) as LearningState["advancedLabStates"],
+    capstone: {
+      object: "", baseline: "", counterfactuals: "",
+      boundaries: "", evidence: "", reflection: "",
+    },
     conceptConfidence: Object.fromEntries(
       LESSON_IDS.map((id) => [id, null]),
     ) as LearningState["conceptConfidence"],
@@ -216,11 +273,35 @@ function isoTimestamp(value: unknown, path: string): void {
     throw new Error(`${path} 必须是有效的 ISO UTC 时间。`);
   }
 }
-function questionId(id: string): boolean {
-  return (
-    LESSON_IDS.some((lesson) => id.startsWith(`${lesson}-`)) &&
-    /^M0[1-3]-[AB]-[a-z][a-z0-9-]{0,79}$/.test(id)
+function questionId(id: string, legacy: boolean): boolean {
+  const lessons: readonly string[] = legacy ? LEGACY_LESSON_IDS : LESSON_IDS;
+  const suffixes = legacy
+    ? ["explain", "choice", "number", "transfer"]
+    : ["explain", "choice", "number", "transfer", "q1", "q2", "q3", "q4"];
+  if (lessons.some((lesson) => suffixes.some((suffix) => id === `${lesson}-${suffix}`)))
+    return true;
+  return !legacy && ["cost", "tax", "game", "risk"].some(
+    (topic) => id === `M12-B-review-${topic}`,
   );
+}
+function validateAdvancedParameters(
+  value: unknown,
+  id: AdvancedLabId,
+  path: string,
+): void {
+  record(value, path);
+  exactKeys(value, Object.keys(advancedDefaults(id)), path);
+  const definition = advancedLabDefinitions.find((entry) => entry.id === id)!;
+  for (const field of definition.fields) {
+    numberIn(value[field.key], field.min, field.max, `${path}.${field.key}`);
+    if (["noBorrow", "legalPayer"].includes(field.key) &&
+      value[field.key] !== 0 && value[field.key] !== 1)
+      throw new Error(`${path}.${field.key} 必须是 0 或 1。`);
+  }
+  // Validate input domains with the same kernel as the experiment. A valid
+  // boundary case may yield no trade/no pure equilibrium/no log-domain solution.
+  // Such outcomes are legitimate saved states, rather than malformed imports.
+  runAdvancedLab(id, value as Record<string, number>);
 }
 function validateParameters(value: unknown, id: LabId, path: string): void {
   record(value, path);
@@ -270,22 +351,24 @@ function validateParameters(value: unknown, id: LabId, path: string): void {
 /** Strict validation deliberately rejects extra fields and other courses. */
 export function validateLearningState(
   value: unknown,
-): { ok: true; state: LearningState } | { ok: false; error: string } {
+): { ok: true; state: LearningState; migrated: boolean } | { ok: false; error: string } {
   try {
     record(value, "学习记录");
     if (value.courseId !== "microeconomics")
       throw new Error("课程不匹配：只接受 microeconomics 的学习记录。");
-    if (value.schemaVersion !== 1)
+    if (value.schemaVersion !== 1 && value.schemaVersion !== 2)
       throw new Error("未知 schemaVersion；原记录不会被覆盖，请保留原文件。");
-    exactKeys(value, STATE_KEYS, "学习记录");
+    const legacy = value.schemaVersion === 1;
+    const lessonIds: readonly string[] = legacy ? LEGACY_LESSON_IDS : LESSON_IDS;
+    exactKeys(value, legacy ? LEGACY_STATE_KEYS : STATE_KEYS, "学习记录");
     if (
       value.lastLessonId !== null &&
-      !LESSON_IDS.includes(value.lastLessonId as LessonId)
+      !lessonIds.includes(value.lastLessonId as string)
     )
       throw new Error("lastLessonId 不是已实现课节。");
     record(value.lessonStates, "lessonStates");
-    exactKeys(value.lessonStates, LESSON_IDS, "lessonStates");
-    for (const id of LESSON_IDS) {
+    exactKeys(value.lessonStates, lessonIds, "lessonStates");
+    for (const id of lessonIds) {
       if (
         !["not_started", "in_progress", "practiced", "self_checked"].includes(
           value.lessonStates[id] as string,
@@ -297,7 +380,7 @@ export function validateLearningState(
     if (Object.keys(value.objectiveAttempts).length > QUESTION_LIMIT)
       throw new Error("客观题记录数量超过上限。");
     for (const [id, attempts] of Object.entries(value.objectiveAttempts)) {
-      if (!questionId(id)) throw new Error(`无效题目 ID：${id}。`);
+      if (!questionId(id, legacy)) throw new Error(`无效题目 ID：${id}。`);
       if (!Array.isArray(attempts) || attempts.length > ATTEMPT_LIMIT)
         throw new Error(`${id} 的尝试必须是数组且不超过 ${ATTEMPT_LIMIT} 条。`);
       for (const attempt of attempts) {
@@ -319,7 +402,7 @@ export function validateLearningState(
     if (Object.keys(value.selfChecks).length > QUESTION_LIMIT)
       throw new Error("自评记录数量超过上限。");
     for (const [id, selfCheck] of Object.entries(value.selfChecks)) {
-      if (!questionId(id)) throw new Error(`无效自评题目 ID：${id}。`);
+      if (!questionId(id, legacy)) throw new Error(`无效自评题目 ID：${id}。`);
       record(selfCheck, id);
       exactKeys(selfCheck, ["answer", "rating"], id);
       textField(selfCheck.answer, `${id}.answer`);
@@ -332,7 +415,7 @@ export function validateLearningState(
     }
     record(value.notes, "notes");
     for (const [id, note] of Object.entries(value.notes)) {
-      if (!LESSON_IDS.includes(id as LessonId))
+      if (!lessonIds.includes(id))
         throw new Error(`无效笔记课节 ID：${id}。`);
       textField(note, `notes.${id}`);
     }
@@ -348,9 +431,27 @@ export function validateLearningState(
       if (typeof lab.revealed !== "boolean")
         throw new Error(`${id}.revealed 必须是布尔值。`);
     }
+    if (!legacy) {
+      record(value.advancedLabStates, "advancedLabStates");
+      exactKeys(value.advancedLabStates, ADVANCED_LAB_IDS, "advancedLabStates");
+      for (const id of ADVANCED_LAB_IDS) {
+        const lab = value.advancedLabStates[id];
+        record(lab, id);
+        exactKeys(lab, ["baseline", "scenario", "prediction", "revealed", "explanation"], id);
+        validateAdvancedParameters(lab.baseline, id, `${id}.baseline`);
+        validateAdvancedParameters(lab.scenario, id, `${id}.scenario`);
+        textField(lab.prediction, `${id}.prediction`);
+        textField(lab.explanation, `${id}.explanation`);
+        if (typeof lab.revealed !== "boolean")
+          throw new Error(`${id}.revealed 必须是布尔值。`);
+      }
+      record(value.capstone, "capstone");
+      exactKeys(value.capstone, CAPSTONE_KEYS, "capstone");
+      for (const key of CAPSTONE_KEYS) textField(value.capstone[key], `capstone.${key}`);
+    }
     record(value.conceptConfidence, "conceptConfidence");
-    exactKeys(value.conceptConfidence, LESSON_IDS, "conceptConfidence");
-    for (const id of LESSON_IDS) {
+    exactKeys(value.conceptConfidence, lessonIds, "conceptConfidence");
+    for (const id of lessonIds) {
       const confidence = value.conceptConfidence[id];
       if (
         confidence !== null &&
@@ -364,8 +465,25 @@ export function validateLearningState(
     const serialized = JSON.stringify(value);
     if (new TextEncoder().encode(serialized).byteLength > MAX_IMPORT_BYTES)
       throw new Error("学习记录超过 1 MiB 大小限制。");
+    // Validate every historical field before adding defaults. Otherwise corrupt
+    // v1 records could be made superficially valid by filling missing lessons.
+    const detached = JSON.parse(serialized) as LearningState;
+    if (legacy) {
+      const defaults = createInitialState(detached.updatedAt);
+      return {
+        ok: true,
+        migrated: true,
+        state: {
+          ...defaults,
+          ...detached,
+          schemaVersion: 2,
+          lessonStates: { ...defaults.lessonStates, ...detached.lessonStates },
+          conceptConfidence: { ...defaults.conceptConfidence, ...detached.conceptConfidence },
+        },
+      };
+    }
     // JSON cloning gives callers a detached plain-data snapshot.
-    return { ok: true, state: JSON.parse(serialized) as LearningState };
+    return { ok: true, state: detached, migrated: false };
   } catch (error) {
     return {
       ok: false,
@@ -428,8 +546,12 @@ export function createLearningStore(
       const source = storage.getItem(STORAGE_KEY);
       if (source === null) return snapshot();
       const parsed = parseLearningJson(source);
-      if (parsed.ok) current = parsed.state;
-      else {
+      if (parsed.ok) {
+        current = parsed.state;
+        // Loading never writes. A valid v1 record remains intact until the user
+        // next saves, imports or explicitly resets; exports are already v2.
+        if (parsed.migrated) notice = MIGRATION_NOTICE;
+      } else {
         original = source;
         status = "recovery";
         notice = `本地记录无法读取：${parsed.error} 原记录已保留；可下载原记录、导入有效备份，或确认后清空本课记录。当前修改暂存在内存中。`;
@@ -477,7 +599,7 @@ export function createLearningStore(
         original = null;
         canPersist = true;
         status = "saved";
-        notice = null;
+        notice = checked.migrated ? MIGRATION_NOTICE : null;
       } catch {
         if (original !== null)
           return snapshot(
@@ -486,11 +608,11 @@ export function createLearningStore(
           );
         canPersist = false;
         status = "memory";
-        notice = MEMORY_NOTICE;
+        notice = checked.migrated ? `${MIGRATION_NOTICE} ${MEMORY_NOTICE}` : MEMORY_NOTICE;
       }
     } else {
       status = "memory";
-      notice = MEMORY_NOTICE;
+      notice = checked.migrated ? `${MIGRATION_NOTICE} ${MEMORY_NOTICE}` : MEMORY_NOTICE;
     }
     return snapshot();
   }

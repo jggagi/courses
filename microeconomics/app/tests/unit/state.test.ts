@@ -3,6 +3,8 @@ import {
   createInitialState,
   createLearningStore,
   defaultLabParameters,
+  LESSON_IDS,
+  ADVANCED_LAB_IDS,
   MAX_IMPORT_BYTES,
   STORAGE_KEY,
   validateLearningState,
@@ -46,7 +48,77 @@ function filledState(): LearningState {
   state.labStates.ML01.revealed = true;
   state.labStates.ML02.scenario.representation = "square";
   state.labStates.ML03.scenario.kind = "complements";
+  state.lessonStates["M12-B"] = "practiced";
+  state.notes["M12-B"] = "交易资源要对账，扩大可行域不代替偏好判断。";
+  state.conceptConfidence["M12-B"] = 3;
+  state.objectiveAttempts["M12-B-number"] = [{ answer: 30, correct: true, at: AT }];
+  state.selfChecks["M12-B-review-tax"] = { answer: "财政收入是转移。", rating: "clear" };
+  state.advancedLabStates.ML04.scenario.F = 30;
+  state.advancedLabStates.ML04.scenario.p = 9;
+  for (const id of ADVANCED_LAB_IDS) {
+    state.advancedLabStates[id].prediction = `${id} 保持 A 不变，改变 B。`;
+    state.advancedLabStates[id].revealed = true;
+    state.advancedLabStates[id].explanation = `${id} 的结果只在所列假设下成立。`;
+  }
+  state.capstone = {
+    object: "虚构共享资源市场中的消费者与厂商。",
+    baseline: "资源与参与者信息给定。",
+    counterfactuals: "改变外部损害和信息规则，并分别比较。",
+    boundaries: "合成模型不能给出真实市场的税率。",
+    evidence: "需要观测成本、需求与质量，另行识别因果。",
+    reflection: "效率与公平需要分别说明。",
+  };
   return state;
+}
+
+// Historical Phase 1 export shape, written independently of v2 defaults.
+function legacyFixture() {
+  const parameters = {
+    m: 120, px: 3, py: 2, kind: "cd", alpha: 0.5,
+    a: 1, b: 1, x: 20, y: 30, secondX: 20, secondY: 5,
+    representation: "u", unitScale: 1,
+  };
+  return {
+    schemaVersion: 1,
+    courseId: "microeconomics",
+    lastLessonId: "M03-B",
+    lessonStates: {
+      "M01-A": "self_checked", "M01-B": "practiced",
+      "M02-A": "in_progress", "M02-B": "not_started",
+      "M03-A": "practiced", "M03-B": "in_progress",
+    },
+    objectiveAttempts: {
+      "M01-A-number": [
+        { answer: 7, correct: false, at: AT },
+        { answer: 6, correct: true, at: LATER },
+      ],
+      "M02-A-choice": [{ answer: "ordinal", correct: true, at: AT }],
+    },
+    selfChecks: {
+      "M01-A-explain": { answer: "最好被放弃的选择也是成本。", rating: "clear" },
+    },
+    notes: { "M03-B": "原来的笔记与隐私文本。" },
+    labStates: {
+      ML01: {
+        baseline: { ...parameters }, scenario: { ...parameters, px: 6 },
+        prediction: "x 截距减半。", revealed: true,
+      },
+      ML02: {
+        baseline: { ...parameters, x: 10, y: 10 },
+        scenario: { ...parameters, x: 10, y: 10, representation: "square" },
+        prediction: "排序相同。", revealed: true,
+      },
+      ML03: {
+        baseline: { ...parameters }, scenario: { ...parameters, kind: "complements" },
+        prediction: "在拐角选择。", revealed: false,
+      },
+    },
+    conceptConfidence: {
+      "M01-A": 4, "M01-B": null, "M02-A": 3,
+      "M02-B": null, "M03-A": null, "M03-B": 2,
+    },
+    updatedAt: LATER,
+  };
 }
 
 describe("local learning state", () => {
@@ -54,9 +126,14 @@ describe("local learning state", () => {
     const state = createInitialState(AT);
     expect(validateLearningState(state).ok).toBe(true);
     expect(Object.values(state.lessonStates)).toEqual(
-      Array(6).fill("not_started"),
+      Array(24).fill("not_started"),
     );
     expect(state.lastLessonId).toBeNull();
+    expect(state.schemaVersion).toBe(2);
+    expect(Object.keys(state.advancedLabStates)).toEqual(ADVANCED_LAB_IDS);
+    expect(state.capstone).toEqual({
+      object: "", baseline: "", counterfactuals: "", boundaries: "", evidence: "", reflection: "",
+    });
     expect(state.labStates.ML01.baseline).toMatchObject({
       m: 120,
       px: 3,
@@ -73,6 +150,8 @@ describe("local learning state", () => {
     state.labStates.ML01.scenario.px = 6;
     expect(state.labStates.ML01.baseline.px).toBe(3);
     expect(state.labStates.ML03.scenario.px).toBe(3);
+    state.advancedLabStates.ML04.scenario.F = 30;
+    expect(state.advancedLabStates.ML04.baseline.F).toBe(20);
   });
 
   it("restores attempts, notes, confidence, prediction, reveal and A/B after a new store loads", () => {
@@ -104,6 +183,8 @@ describe("local learning state", () => {
     });
     expect(second.importJson(exported).ok).toBe(true);
     expect(second.load().state).toEqual(first.load().state);
+    expect(JSON.parse(exported).schemaVersion).toBe(2);
+    expect(second.load().state.capstone.evidence).toContain("另行识别因果");
   });
 
   it("rejects invalid JSON and cross-course import without modifying the current record", () => {
@@ -123,7 +204,7 @@ describe("local learning state", () => {
 
   it.each([
     "{broken",
-    JSON.stringify({ ...createInitialState(AT), schemaVersion: 2 }),
+    JSON.stringify({ ...createInitialState(AT), schemaVersion: 999 }),
   ])(
     "protects unreadable originals and permits a recovery export (%s)",
     (raw) => {
@@ -262,12 +343,17 @@ describe("local learning state", () => {
     candidate.notes["M01-A"] = malicious;
     candidate.selfChecks["M01-A-explain"].answer = malicious;
     candidate.labStates.ML01.prediction = malicious;
+    candidate.advancedLabStates.ML04.prediction = malicious;
+    candidate.advancedLabStates.ML04.explanation = malicious;
+    candidate.capstone.reflection = malicious;
     const store = createLearningStore({
       storage: new FakeStorage(),
       now: () => AT,
     });
     expect(store.importJson(JSON.stringify(candidate)).ok).toBe(true);
     expect(store.load().state.notes["M01-A"]).toBe(malicious);
+    expect(store.load().state.advancedLabStates.ML04.explanation).toBe(malicious);
+    expect(store.load().state.capstone.reflection).toBe(malicious);
     expect(
       (globalThis as typeof globalThis & { executed?: boolean }).executed,
     ).toBeUndefined();
@@ -294,9 +380,9 @@ describe("local learning state", () => {
       },
     ],
     [
-      "planned lesson",
+      "unknown lesson",
       (state: Record<string, unknown>) => {
-        state.lastLessonId = "M04-A";
+        state.lastLessonId = "M13-A";
       },
     ],
     [
@@ -332,7 +418,7 @@ describe("local learning state", () => {
     [
       "unknown note lesson",
       (state: Record<string, unknown>) => {
-        state.notes = { "M12-B": "not implemented" };
+        state.notes = { "M13-B": "unknown lesson" };
       },
     ],
     [
@@ -430,6 +516,139 @@ describe("local learning state", () => {
       ok: false,
       error: expect.stringContaining("1 MiB"),
     });
+  });
+
+
+  it("loads a real v1 export without overwriting it and preserves all historical records", () => {
+    const storage = new FakeStorage();
+    const legacy = legacyFixture();
+    const raw = JSON.stringify(legacy);
+    storage.setItem(STORAGE_KEY, raw);
+    storage.setItem("courses:macroeconomics:v1", "other private records");
+    const store = createLearningStore({ storage, now: () => AT });
+    const loaded = store.load();
+    expect(loaded).toMatchObject({ ok: true, status: "saved", notice: expect.stringContaining("已迁移") });
+    expect(loaded.state.schemaVersion).toBe(2);
+    expect(loaded.state.lastLessonId).toBe("M03-B");
+    expect(loaded.state.objectiveAttempts).toEqual(legacy.objectiveAttempts);
+    expect(loaded.state.selfChecks).toEqual(legacy.selfChecks);
+    expect(loaded.state.notes).toEqual(legacy.notes);
+    expect(loaded.state.labStates).toEqual(legacy.labStates);
+    for (const [id, status] of Object.entries(legacy.lessonStates))
+      expect(loaded.state.lessonStates[id as keyof LearningState["lessonStates"]]).toBe(status);
+    expect(loaded.state.lessonStates["M12-B"]).toBe("not_started");
+    expect(loaded.state.conceptConfidence["M01-A"]).toBe(4);
+    expect(loaded.state.conceptConfidence["M12-B"]).toBeNull();
+    expect(storage.getItem(STORAGE_KEY)).toBe(raw);
+    expect(JSON.parse(store.exportJson()).schemaVersion).toBe(2);
+    expect(store.exportOriginal()).toBeNull();
+    expect(store.save(loaded.state).ok).toBe(true);
+    expect(JSON.parse(storage.getItem(STORAGE_KEY)!).schemaVersion).toBe(2);
+    expect(storage.getItem("courses:macroeconomics:v1")).toBe("other private records");
+    expect(createLearningStore({ storage, now: () => AT }).load().state.labStates).toEqual(legacy.labStates);
+  });
+
+  it("imports historical JSON explicitly and exports a valid complete v2 record", () => {
+    const store = createLearningStore({ storage: new FakeStorage(), now: () => AT });
+    expect(store.importJson(JSON.stringify(legacyFixture()))).toMatchObject({
+      ok: true, status: "saved", notice: expect.stringContaining("已迁移"),
+    });
+    const exported = JSON.parse(store.exportJson());
+    expect(exported.schemaVersion).toBe(2);
+    expect(Object.keys(exported.lessonStates)).toHaveLength(24);
+    expect(Object.keys(exported.advancedLabStates)).toHaveLength(8);
+    expect(validateLearningState(exported).ok).toBe(true);
+  });
+
+  it("shows migration and backup notices when a legacy import can only live in memory", () => {
+    const store = createLearningStore({ storage: null, now: () => AT });
+    const result = store.importJson(JSON.stringify(legacyFixture()));
+    expect(result).toMatchObject({ ok: true, status: "memory" });
+    expect(result.notice).toContain("已迁移");
+    expect(result.notice).toContain("关闭或刷新后可能丢失");
+    expect(JSON.parse(store.exportJson()).schemaVersion).toBe(2);
+  });
+
+  it.each([
+    ["missing legacy lesson", (state: Record<string, unknown>) => { delete (state.lessonStates as Record<string, unknown>)["M03-B"]; }],
+    ["future lesson disguised as v1", (state: Record<string, unknown>) => { (state.lessonStates as Record<string, unknown>)["M04-A"] = "not_started"; }],
+    ["missing legacy confidence", (state: Record<string, unknown>) => { delete (state.conceptConfidence as Record<string, unknown>)["M02-B"]; }],
+    ["new lab disguised as v1", (state: Record<string, unknown>) => { state.advancedLabStates = {}; }],
+    ["invalid legacy attempt", (state: Record<string, unknown>) => { state.objectiveAttempts = { "M01-A-unknown": [] }; }],
+    ["future question disguised as v1", (state: Record<string, unknown>) => { state.objectiveAttempts = { "M04-A-number": [] }; }],
+    ["future note disguised as v1", (state: Record<string, unknown>) => { state.notes = { "M04-A": "x" }; }],
+    ["missing legacy lab", (state: Record<string, unknown>) => { delete (state.labStates as Record<string, unknown>).ML03; }],
+  ])("does not migrate corrupt v1 records: %s", (_label, mutate) => {
+    const candidate = legacyFixture() as unknown as Record<string, unknown>;
+    mutate(candidate);
+    const raw = JSON.stringify(candidate);
+    const storage = new FakeStorage();
+    storage.setItem(STORAGE_KEY, raw);
+    const store = createLearningStore({ storage, now: () => AT });
+    expect(store.load()).toMatchObject({ ok: false, status: "recovery" });
+    expect(store.exportOriginal()).toBe(raw);
+    expect(store.save(store.load().state).status).toBe("recovery");
+    expect(storage.getItem(STORAGE_KEY)).toBe(raw);
+  });
+
+  it("accepts all 96 lesson checks and the four explicit cross-module reviews", () => {
+    const state = createInitialState(AT);
+    for (const lesson of LESSON_IDS)
+      for (const suffix of ["explain", "choice", "number", "transfer"])
+        state.selfChecks[`${lesson}-${suffix}`] = { answer: "自评文本", rating: "partial" };
+    for (const topic of ["cost", "tax", "game", "risk"])
+      state.selfChecks[`M12-B-review-${topic}`] = { answer: "迁移解释", rating: "clear" };
+    expect(Object.keys(state.selfChecks)).toHaveLength(100);
+    expect(validateLearningState(state).ok).toBe(true);
+    state.selfChecks["M12-B-review-invented"] = { answer: "x", rating: "clear" };
+    expect(validateLearningState(state).ok).toBe(false);
+  });
+
+  it("persists meaningful no-result boundaries such as zero-income log utility", () => {
+    const state = createInitialState(AT);
+    state.advancedLabStates.ML10.scenario.y1 = 0;
+    state.advancedLabStates.ML10.scenario.y2 = 0;
+    state.advancedLabStates.ML10.scenario.noBorrow = 1;
+    state.advancedLabStates.ML10.prediction = "零收入没有正消费可行点。";
+    state.advancedLabStates.ML10.revealed = true;
+    expect(validateLearningState(state).ok).toBe(true);
+    const store = createLearningStore({ storage: new FakeStorage(), now: () => AT });
+    expect(store.importJson(JSON.stringify(state)).ok).toBe(true);
+    expect(store.load().state.advancedLabStates.ML10.scenario.y1).toBe(0);
+    expect(store.load().state.advancedLabStates.ML10.scenario.noBorrow).toBe(1);
+  });
+
+  it("resets later lesson checks including reviews while preserving capstone and lab records", () => {
+    const store = createLearningStore({ storage: new FakeStorage(), now: () => AT });
+    store.save(filledState());
+    const before = store.load().state;
+    const reset = store.resetLesson("M12-B").state;
+    expect(reset.notes["M12-B"]).toBeUndefined();
+    expect(reset.objectiveAttempts["M12-B-number"]).toBeUndefined();
+    expect(reset.selfChecks["M12-B-review-tax"]).toBeUndefined();
+    expect(reset.conceptConfidence["M12-B"]).toBeNull();
+    expect(reset.advancedLabStates).toEqual(before.advancedLabStates);
+    expect(reset.capstone).toEqual(before.capstone);
+    expect(store.reset().state.capstone.object).toBe("");
+    expect(store.load().state.advancedLabStates.ML04.scenario.F).toBe(20);
+  });
+
+  it.each([
+    ["missing advanced lab", (state: LearningState) => { delete (state.advancedLabStates as Partial<LearningState["advancedLabStates"]>).ML11; }],
+    ["unknown advanced field", (state: LearningState) => { state.advancedLabStates.ML04.scenario.imaginary = 1; }],
+    ["missing advanced parameter", (state: LearningState) => { delete state.advancedLabStates.ML04.scenario.F; }],
+    ["invalid advanced domain", (state: LearningState) => { state.advancedLabStates.ML04.scenario.d = 0; }],
+    ["nonfinite advanced parameter", (state: LearningState) => { state.advancedLabStates.ML04.scenario.F = Infinity; }],
+    ["invalid borrowing switch", (state: LearningState) => { state.advancedLabStates.ML10.scenario.noBorrow = 0.5; }],
+    ["invalid statutory payer switch", (state: LearningState) => { state.advancedLabStates.ML05.scenario.legalPayer = 0.5; }],
+    ["wrong advanced reveal", (state: LearningState) => { (state.advancedLabStates.ML04 as unknown as Record<string, unknown>).revealed = "yes"; }],
+    ["HTML capstone object", (state: LearningState) => { (state.capstone as unknown as Record<string, unknown>).object = { html: "<b>x</b>" }; }],
+    ["missing capstone field", (state: LearningState) => { delete (state.capstone as Partial<LearningState["capstone"]>).boundaries; }],
+    ["unknown capstone field", (state: LearningState) => { (state.capstone as unknown as Record<string, unknown>).grade = 100; }],
+  ])("strictly rejects complete-course corruption: %s", (_label, mutate) => {
+    const state = createInitialState(AT);
+    mutate(state);
+    expect(validateLearningState(state).ok).toBe(false);
   });
 
   it("returns detached snapshots so outside mutation cannot alter unsaved state", () => {
