@@ -462,6 +462,7 @@ function LedgerLab({
         <label>
           交易类型
           <select
+            aria-label="交易类型"
             value={type}
             onChange={(event) => {
               const next = event.currentTarget.value as LedgerEvent["type"];
@@ -1388,6 +1389,7 @@ function PriceLab({
         <label>
           指数显示刻度
           <select
+            aria-label="指数显示刻度"
             value={value.input.normalization}
             onChange={(event) =>
               setInput({
@@ -1403,6 +1405,7 @@ function PriceLab({
         <label>
           实际产出的价格权重基期
           <select
+            aria-label="实际产出的价格权重基期"
             value={value.input.priceBase}
             onChange={(event) =>
               setInput({
@@ -1421,6 +1424,7 @@ function PriceLab({
         <label>
           固定消费篮子的数量基期
           <select
+            aria-label="固定消费篮子的数量基期"
             value={value.input.basketBase}
             onChange={(event) =>
               setInput({
