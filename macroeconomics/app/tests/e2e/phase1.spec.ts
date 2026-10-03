@@ -60,7 +60,7 @@ async function classifyActivities(page: Page) {
   const controls = page.locator('select[aria-label$=" 分类"]');
   for (const control of await controls.all()) {
     const label = await control.getAttribute('aria-label') || '';
-    const category = /进口/.test(label) ? 'import' : /前期/.test(label) ? 'previous' : /转移/.test(label) ? 'transfer' : /股票|二手/.test(label) ? 'financial' : 'current';
+    const category = /进口/.test(label) ? 'import' : /前期/.test(label) ? 'previous' : /转移/.test(label) ? 'transfer' : /股票|二手/.test(label) ? 'financial' : /机器/.test(label) ? 'capital' : /未售/.test(label) ? 'inventory' : /原料商|加工商/.test(label) ? 'intermediate' : 'current';
     await control.selectOption(category);
   }
 }
@@ -128,8 +128,9 @@ test('six complete lessons record predictions, separate objective attempts and r
     await choice.getByRole('radio').nth(correctChoice).check();
     await choice.getByRole('button', { name: '提交检查' }).click();
     await expect(choice.locator('[aria-live]')).toContainText('对');
-    await page.getByText(`${id.slice(0, 3)} 模型卡 · 不看原文，重建一次`, { exact: true }).click();
-    await page.getByLabel(`${id.slice(0, 3)} 模型卡 研究对象`, { exact: true }).fill('记录模型的对象与边界。');
+    const card = page.getByLabel(`${id.slice(0, 3)} 模型卡 研究对象`, { exact: true });
+    if (!await card.isVisible()) await page.getByText(`${id.slice(0, 3)} 模型卡 · 不看原文，重建一次`, { exact: true }).click();
+    await card.fill('记录模型的对象与边界。');
   }
   await page.getByRole('link', { name: '个人记录与导入 / 导出', exact: true }).click();
   for (const [id] of lessons) {
@@ -166,12 +167,12 @@ test('LA01 replays wage 20, service 10 and repayment 5, freezes A and undoes cor
   await ledgerRow(page, 'F 贷款负债', '20', '15');
   await ledgerRow(page, 'B 存款负债总额', '140', '135');
   await ledgerRow(page, 'B 权益', '40');
-  await page.getByLabel('交易类型', { exact: true }).selectOption('repayment');
+  await page.getByRole('combobox', { name: '交易类型', exact: true }).selectOption('repayment');
   await page.getByLabel('事件金额', { exact: true }).fill('21');
   await page.getByRole('button', { name: '添加事件', exact: true }).click();
   await expect(page.getByRole('alert')).toContainText(/贷款|本金/);
   await expect(page.locator('ol li')).toHaveCount(2);
-  await page.getByLabel('实验解释', { exact: true }).fill('撤销按剩余事件重放，不修改已冻结的 A。');
+  await page.getByRole('textbox', { name: '实验解释', exact: true }).fill('撤销按剩余事件重放，不修改已冻结的 A。');
   await page.getByRole('button', { name: '重置实验', exact: true }).click();
   await expect(page.getByLabel('实验预测与理由')).toHaveValue('工资和消费不改总存款，本金偿还减少5。');
   await expect(page.locator('ol li')).toHaveCount(0);
@@ -237,7 +238,7 @@ test('LA03 derives its oracle from p/q, compares presets, normalizes and handles
   await expect(row0).toHaveText(['40', '40', '100', '100', '未定义', '未定义', '未定义', '未定义']);
   await expect(row1).toHaveText(['61', '44', '138.636364', '137.5', '52.5%', '10%', '38.636364%', '37.5%']);
   await expect(row2).toHaveText(['62.22', '44', '141.409091', '140.25', '2%', '0%', '2%', '2%']);
-  await page.getByLabel('指数显示刻度', { exact: true }).selectOption('1000');
+  await page.getByRole('combobox', { name: '指数显示刻度', exact: true }).selectOption('1000');
   await page.getByRole('button', { name: '运行实验', exact: true }).click();
   await expect(row2.nth(3)).toHaveText('1402.5');
   await expect(row2.nth(7)).toHaveText('2%');
@@ -252,7 +253,7 @@ test('LA03 derives its oracle from p/q, compares presets, normalizes and handles
   await page.getByRole('button', { name: '预设：改变组合', exact: true }).click();
   await page.getByRole('button', { name: '运行实验', exact: true }).click();
   await expect(page.getByTestId('price-results')).toBeVisible();
-  await page.getByLabel('实际产出的价格权重基期', { exact: true }).selectOption('1');
+  await page.getByRole('combobox', { name: '实际产出的价格权重基期', exact: true }).selectOption('1');
   await page.getByRole('button', { name: '运行实验', exact: true }).click();
   await expect(page.getByTestId('price-results')).toContainText('A 与 B 的权重基期不同');
   await page.getByRole('button', { name: '预设：通胀放缓但价格继续上升', exact: true }).click();
@@ -287,7 +288,7 @@ test('notes, predictions and raw events survive deep-link refresh and a real JSO
   await page.getByRole('button', { name: '保存实验预测', exact: true }).click();
   await page.getByRole('button', { name: '执行默认三步（20 / 10 / 5）', exact: true }).click();
   await page.getByRole('button', { name: '运行实验', exact: true }).click();
-  await page.getByLabel('实验解释', { exact: true }).fill('结果135来自偿还本金，不是工资烧掉存款。');
+  await page.getByRole('textbox', { name: '实验解释', exact: true }).fill('结果135来自偿还本金，不是工资烧掉存款。');
   await page.reload();
   await expect(page).toHaveURL(/#\/lab\/LA01$/);
   await ledgerRow(page, 'B 存款负债总额', '135');
@@ -411,13 +412,13 @@ test('the lesson and the full LA01 event trajectory work with keyboard input and
   await page.keyboard.press('Space');
   await expect(explanation.getByRole('checkbox')).toBeChecked();
   await keyboardActivate(page.getByRole('link', { name: '打开 LA01，先预测再实验', exact: true }));
-  const labPrediction = page.getByLabel('实验预测与理由', { exact: true });
+  const labPrediction = page.getByRole('textbox', { name: '实验预测与理由', exact: true });
   await labPrediction.focus();
   await labPrediction.pressSequentially('Total deposits fall only on repayment.');
   await labPrediction.press('Tab');
   await expect(page.getByRole('button', { name: '保存实验预测', exact: true })).toBeFocused();
   await page.keyboard.press('Enter');
-  const eventType = page.getByLabel('交易类型', { exact: true });
+  const eventType = page.getByRole('combobox', { name: '交易类型', exact: true });
   const amount = page.getByLabel('事件金额', { exact: true });
   for (const [downCount, number] of [[0, '20'], [1, '10'], [2, '5']] as const) {
     await eventType.focus();
