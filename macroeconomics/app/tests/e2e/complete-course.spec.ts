@@ -1,9 +1,11 @@
 import { test, expect, type Page } from '@playwright/test';
-import { readFile } from 'node:fs/promises';
+import { mkdir, readFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import { lessons } from '../../src/content';
 
 const STORAGE_KEY = 'courses:macroeconomics:v1';
 const MICRO_KEY = 'courses:microeconomics:v1';
+const screenshotDirectory = fileURLToPath(new URL('../screenshots/', import.meta.url));
 const extensionIds = Array.from({ length: 9 }, (_, i) => `A${String(i + 4).padStart(2, '0')}`)
   .flatMap(moduleId => [`${moduleId}-A`, `${moduleId}-B`]);
 const externalByPage = new WeakMap<Page, string[]>();
@@ -59,6 +61,11 @@ async function predictAndRun(page: Page, prediction: string) {
   await page.getByLabel('实验预测与理由', { exact: true }).fill(prediction);
   await page.getByRole('button', { name: '保存实验预测', exact: true }).click();
   await page.getByRole('button', { name: '运行实验', exact: true }).click();
+}
+async function screenshot(page: Page, name: string) {
+  await mkdir(screenshotDirectory, { recursive: true });
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await page.screenshot({ path: `${screenshotDirectory}/${name}`, fullPage: true });
 }
 async function noOverflow(page: Page) {
   const sizes = await page.evaluate(() => ({ width: innerWidth, document: document.documentElement.scrollWidth, body: document.body.scrollWidth }));
@@ -334,8 +341,7 @@ test('LA08 calculates debt amounts and exact ratios and refuses the zero-GDP gro
   await expect(page.getByRole('alert')).toContainText(/增长率.*大于/);
   await expect(page.getByRole('button', { name: '运行实验', exact: true })).toBeDisabled();
   expect(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY)).toBe(validRaw);
-  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
-  await page.screenshot({ path: test.info().outputPath('complete-error-la08.png'), fullPage: true });
+  await screenshot(page, 'complete-error-la08.png');
 });
 
 test('LA09 separates current-account flows from valuation changes and exchange-rate movements from trade-volume responses', async ({ page }) => {
@@ -392,8 +398,7 @@ test('new experiment inputs and scrollable numeric alternatives work with keyboa
   await expect.poll(() => numericTable.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
   await expect(page.getByTestId('la04-lab').getByRole('img')).toHaveCount(1);
   for (const svg of await page.getByTestId('la04-lab').getByRole('img').all()) expect(await svg.getAttribute('aria-label')).toBeTruthy();
-  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
-  await page.screenshot({ path: test.info().outputPath('complete-mobile-la04.png'), fullPage: true });
+  await screenshot(page, 'complete-mobile-la04.png');
   await page.setViewportSize({ width: 1440, height: 1000 });
   for (const id of ['LA05', 'LA06', 'LA07', 'LA08', 'LA09']) {
     await openLab(page, id);
@@ -403,6 +408,111 @@ test('new experiment inputs and scrollable numeric alternatives work with keyboa
     await expect(page.getByTestId(`${id.toLowerCase()}-results`)).toBeVisible();
   }
   expect(await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(true);
-  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
-  await page.screenshot({ path: test.info().outputPath('complete-desktop-la09.png'), fullPage: true });
+  await screenshot(page, 'complete-desktop-la09.png');
+});
+
+const REPORT_SECTIONS = ['发生了什么', '如何测量', '核算约束', '机制比较', '支持与反对的证据', '政策作用及代价', '目前不知道'];
+const CAPSTONE_RUBRIC = ['区分定义、核算、行为与价值判断', '完成名义—实际转换和账表对账', '比较至少两个模型的机制与边界', '记录参数敏感性与可区分解释的证据', '注明合成数据、来源与观测时期', '明确不确定性并避免把反事实当预测'];
+
+async function capstoneRow(page: Page, table: string, label: string | RegExp, values: string[]) {
+  const row = page.getByTestId(table).getByRole('row').filter({ has: page.getByRole('rowheader', { name: label, exact: typeof label === 'string' }) });
+  for (let index = 0; index < values.length; index++) await expect(row.getByRole('cell').nth(index)).toHaveText(values[index]);
+}
+
+test('the capstone recomputes measurement, balances, four mechanisms and sensitivity and preserves the report through refresh and export', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  await page.goto('/#/lesson/A12-B');
+  await page.getByLabel('学习笔记', { exact: true }).fill('A12-B测试笔记：比较机制与证据。');
+  await page.getByRole('link', { name: '终课作品 · 宏观诊断', exact: true }).click();
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('宏观诊断工作台');
+  await capstoneRow(page, 'capstone-measurement', '1期', ['67.1', '44', '152.5']);
+  await capstoneRow(page, 'capstone-balance', 'A', ['13', '79', '90', '2']);
+  await capstoneRow(page, 'capstone-balance', 'B', ['27', '80', '97', '10']);
+  // Independent arithmetic: k1=1.1, y1=A*sqrt(k1); demand multiplier=2.5;
+  // joint demand(-1)/cost(+1) gives pi1=2.75, and loss8 leaves A equity2.
+  await capstoneRow(page, 'capstone-comparison', /^长期供给/, ['1.04880885', '1.25857062', '1.37869504', '产出/工人/期']);
+  await capstoneRow(page, 'capstone-comparison', /^短期需求/, ['170', '145', '132.5', '货币单位/期']);
+  await capstoneRow(page, 'capstone-comparison', /^成本与预期/, ['2', '2.75', '3.125', '百分数']);
+  await capstoneRow(page, 'capstone-comparison', /^金融约束/, ['10', '2', '-2', '货币单位']);
+  await page.getByLabel('作品标题', { exact: true }).fill('教学测试：成本冲击与需求不足的机制比较');
+  for (const section of REPORT_SECTIONS) await page.getByLabel(`终课报告 ${section}`, { exact: true }).fill(`${section}：只使用教学合成情景，区分对象、核算、条件与可检验证据。`);
+  await page.getByLabel('终课不确定性清单', { exact: true }).fill('潜在产出、实际政策规则和冲击来源未经现实识别。');
+  for (const criterion of CAPSTONE_RUBRIC) await page.getByRole('checkbox', { name: criterion, exact: true }).check();
+  await expect(page.getByText('6 / 6 项由你自评', { exact: false })).toBeVisible();
+  const beforeRefresh = await readState(page);
+  expect(beforeRefresh.capstone.models).toHaveLength(4);
+  expect(Object.values(beforeRefresh.capstone.rubric).filter(Boolean)).toHaveLength(6);
+  await page.reload();
+  await expect(page.getByLabel('作品标题', { exact: true })).toHaveValue('教学测试：成本冲击与需求不足的机制比较');
+  for (const section of REPORT_SECTIONS) await expect(page.getByLabel(`终课报告 ${section}`, { exact: true })).toHaveValue(beforeRefresh.capstone.report[section]);
+  expect((await readState(page)).capstone).toEqual(beforeRefresh.capstone);
+  await noOverflow(page);
+  await screenshot(page, 'complete-desktop-capstone.png');
+  const reportDownload = page.waitForEvent('download');
+  await page.getByRole('button', { name: '导出作品文本', exact: true }).click();
+  const reportPath = test.info().outputPath('synthetic-capstone.txt');
+  await (await reportDownload).saveAs(reportPath);
+  const report = await readFile(reportPath, 'utf8');
+  expect(report).toContain('教学合成情景 synthetic');
+  expect(report).toContain('敏感性');
+  const nominalMatch = report.match(/名义—实际：第1期 N=([^，]+)，R=([^\n]+)/);
+  expect(nominalMatch).not.toBeNull();
+  expect(Number(nominalMatch![1])).toBeCloseTo(67.1, 8);
+  expect(Number(nominalMatch![2])).toBeCloseTo(44, 8);
+  for (const section of REPORT_SECTIONS) expect(report).toContain(beforeRefresh.capstone.report[section]);
+  await page.getByRole('checkbox', { name: '长期供给 / 资本与技术', exact: true }).uncheck();
+  await page.getByRole('checkbox', { name: '金融约束 / 银行损失', exact: true }).uncheck();
+  await expect(page.getByTestId('capstone-comparison').locator('tbody tr')).toHaveCount(2);
+  await expect(page.getByRole('button', { name: '导出作品文本', exact: true })).toBeEnabled();
+  await page.getByRole('checkbox', { name: '短期需求 / 计划支出', exact: true }).uncheck();
+  await expect(page.getByRole('alert')).toContainText('至少两个模型');
+  await expect(page.getByRole('button', { name: '导出作品文本', exact: true })).toBeDisabled();
+  await page.getByRole('checkbox', { name: '短期需求 / 计划支出', exact: true }).check();
+  const saved = await readState(page);
+  await page.getByRole('link', { name: '导出含全部原始参数的学习 JSON', exact: true }).click();
+  const jsonDownload = page.waitForEvent('download');
+  await page.getByRole('button', { name: '导出本课 JSON', exact: true }).click();
+  const jsonPath = test.info().outputPath('capstone-roundtrip.json');
+  await (await jsonDownload).saveAs(jsonPath);
+  const exported = JSON.parse(await readFile(jsonPath, 'utf8'));
+  expect(exported.capstone).toEqual(saved.capstone);
+  page.once('dialog', dialog => dialog.accept());
+  await page.getByRole('button', { name: '清空本课全部记录', exact: true }).click();
+  await importJSON(page, exported, 'capstone-roundtrip.json');
+  await page.goto('/#/capstone');
+  await expect(page.getByLabel('终课不确定性清单', { exact: true })).toHaveValue(saved.capstone.uncertainty);
+  expect((await readState(page)).capstone).toEqual(saved.capstone);
+  page.once('dialog', dialog => dialog.accept());
+  await page.getByRole('button', { name: '重置终课作品', exact: true }).click();
+  expect((await readState(page)).notes['note:A12-B']).toBe('A12-B测试笔记：比较机制与证据。');
+  await expect(page.getByLabel('终课报告 发生了什么', { exact: true })).toHaveValue('');
+});
+
+test('invalid capstone drafts and invalid bank benchmark imports leave valid local records intact', async ({ page }) => {
+  await page.goto('/#/capstone');
+  const validRaw = await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY);
+  await page.getByLabel('终课历史贷款损失', { exact: true }).fill('41');
+  await expect(page.getByRole('alert')).toContainText('creditLoss');
+  await expect(page.getByRole('button', { name: '导出作品文本', exact: true })).toBeDisabled();
+  expect(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY)).toBe(validRaw);
+  await page.getByLabel('终课历史贷款损失', { exact: true }).fill('8');
+  await expect(page.getByRole('button', { name: '导出作品文本', exact: true })).toBeEnabled();
+  await page.goto('/#/records');
+  const valid = await readState(page);
+  const validBeforeImport = await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY);
+  valid.labStates.LA07.baseline.initial.A.equity += 1;
+  await page.getByLabel('导入本课 JSON', { exact: true }).setInputFiles({ name: 'unbalanced-bank-baseline.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(valid)) });
+  await expect(page.getByRole('status')).toContainText(/银行资产|账表|资产应等于/);
+  expect(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY)).toBe(validBeforeImport);
+  await page.goto('/#/capstone');
+  await page.setViewportSize({ width: 390, height: 844 });
+  await noOverflow(page);
+  await page.getByLabel('终课需求冲击', { exact: true }).focus();
+  await page.keyboard.press('ControlOrMeta+A');
+  await page.keyboard.type('0');
+  await capstoneRow(page, 'capstone-comparison', /^成本与预期/, ['2', '3', '3.5', '百分数']);
+  await noOverflow(page);
+  await page.reload();
+  await expect(page.getByLabel('终课需求冲击', { exact: true })).toHaveValue('0');
+  await screenshot(page, 'complete-mobile-capstone.png');
 });
