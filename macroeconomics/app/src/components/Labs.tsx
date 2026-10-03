@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { LearningState } from '../persistence';
 import { computeAccounts, computePrices, defaultAccountsInput, defaultPriceInput, initialLedger, pricePresets, replayLedger, validateLedger } from '../models';
 import type { AccountsInput, AccountsResult, ActivityRecord, LedgerEvent, LedgerState, PriceInput } from '../models';
@@ -10,8 +10,8 @@ type LabId = 'LA01' | 'LA02' | 'LA03';
 type Errors = Record<string, string>;
 const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value)) as T;
 const numberText = (value: number | null) => value === null ? '未定义' : Number.isFinite(value) ? Number(value.toFixed(6)).toString() : '未定义';
-const percentText = (value: number | null) => value === null ? '未定义' : `${numberText(value * 100)}%`;
-const relative = (value: number | null, baseline: number | null) => value === null || baseline === null || baseline === 0 ? null : value / baseline - 1;
+const percentText = (value: number | null) => value === null ? '未定义' : !Number.isFinite(value * 100) ? '超出数值范围' : `${numberText(value * 100)}%`;
+const relative = (value: number | null, baseline: number | null) => { if (value === null || baseline === null || baseline === 0) return null; const ratio = value / baseline - 1; return Number.isFinite(ratio) ? ratio : null; };
 const message = (error: unknown) => error instanceof Error ? error.message : '输入无法计算，请检查参数。';
 const canRun = (value: Common<unknown>) => value.prediction.trim() !== '' || value.skipped;
 function calculate<T>(fn: () => T): { result?: T; error?: string } {
@@ -148,13 +148,16 @@ function LedgerLab({ value, onChange }: { value: Common<LedgerInput>; onChange: 
 }
 
 const classifications = [
-  ['current', '当期本国生产／最终使用'], ['import', '进口消费：C 与 M 同增'], ['previous', '前期库存销售：C 增、I 减'], ['financial', '旧资产／金融交易'], ['transfer', '纯转移'],
+  ['intermediate', '当期本国中间产品'], ['current', '当期本国最终产品／使用'], ['capital', '当期本国资本形成'], ['inventory', '本期生产未售存货'], ['import', '进口消费：C 与 M 同增'], ['previous', '前期库存销售：C 增、I 减'], ['financial', '旧资产／金融交易'], ['transfer', '纯转移'],
 ] as const;
 function classification(activity: ActivityRecord): string {
   if (activity.kind === 'transfer') return 'transfer';
   if (activity.kind === 'financial') return 'financial';
   if (activity.period === 'previous') return 'previous';
   if (activity.origin === 'foreign') return 'import';
+  if (activity.use === 'intermediate') return 'intermediate';
+  if (activity.use === 'capital') return 'capital';
+  if (activity.use === 'inventory') return 'inventory';
   return 'current';
 }
 function activityFlowRows(result: AccountsResult): FlowRow[] {
@@ -174,7 +177,7 @@ function AccountsLab({ value, onChange }: { value: AccountsLabValue; onChange: (
   const check = calculate(() => computeAccounts(value.input));
   const a = calculate(() => computeAccounts(value.baseline));
   const b = value.hasRun && canRun(value) && !Object.keys(errors).length ? check.result : undefined;
-  const pendingActivities = check.result?.activities.filter(activity => (activity.kind !== 'production' || activity.use === 'capital') && activity.amount > 0) ?? [];
+  const pendingActivities = check.result?.activities.filter(activity => activity.amount > 0) ?? [];
   const clearErrors = () => { setErrors({}); setActionError(undefined); setResetKey(key => key + 1); };
   const setInput = (patch: Partial<AccountsInput>) => { setActionError(undefined); onChange({ ...value, input: { ...value.input, ...patch }, hasRun: false }); };
   const setFieldError = (key: string, error: string | null) => setErrors(previous => { const next = { ...previous }; if (error) next[key] = error; else delete next[key]; return next; });
@@ -275,11 +278,12 @@ function PriceLab({ value, onChange }: { value: Common<PriceInput>; onChange: (n
     <div className="button-row"><button type="button" onClick={run}>运行实验</button></div>
     <CompareControls value={value} onChange={onChange} defaultInput={defaultPriceInput} clearErrors={clearErrors} invalid={!!check.error || !!Object.keys(errors).length} />
     {b && a.result && <div data-testid="price-results">
+      {value.input.periods.length !== value.baseline.periods.length && <p className="notice">A 有 {value.baseline.periods.length} 个时期，B 有 {value.input.periods.length} 个时期。图与表以 B 的时期为轴，仅共同存在的时期可作 A/B 比较；缺少的 A 观察显示未定义，A 其余原始时期仍保存在基准中。</p>}
       {differentWeights && <p className="notice">A 与 B 的权重基期不同：A 价格／篮子基期为 {value.baseline.priceBase}／{value.baseline.basketBase}，B 为 {value.input.priceBase}／{value.input.basketBase}。实际值和指数的差异同时含度量变化，不能全部解释成经济冲击。</p>}
       <p>定义：N＝Σpₜqₜ；R＝Σp基期qₜ；D＝刻度×N／R；L＝刻度×Σpₜq篮子／Σp篮子基期q篮子。价格基期第{b.priceBase}期，篮子数量基期第{b.basketBase}期，基准篮子价值 {numberText(b.basketValue)}。增长＝本期／上期−1；一年一期，因此这里的同比也等于相邻期变化。</p>
       <fieldset className="controls"><legend>图表口径</legend><label><input type="radio" name="price-view" value="level" checked={view === 'level'} onChange={() => setView('level')} />水平</label><label><input type="radio" name="price-view" value="growth" checked={view === 'growth'} onChange={() => setView('growth')} />增长／通胀</label></fieldset>
       <div className="grid">{metrics.map(metric => <SeriesChart key={metric.key} title={`${metric.label}${view === 'growth' ? '的同比增长／通胀' : '水平'}`} unit={view === 'growth' ? '%' : metric.unit} periods={b.periods.map(period => `第${period.period}期`)} series={[
-        { label: 'A 基准（虚线）', style: 'dashed', values: a.result!.periods.map(period => view === 'level' ? period[metric.key] : period[metric.growth] === null ? null : period[metric.growth]! * 100) },
+        { label: 'A 基准（虚线）', style: 'dashed', values: b.periods.map((_, index) => { const period = a.result!.periods[index]; return !period ? null : view === 'level' ? period[metric.key] : period[metric.growth] === null ? null : period[metric.growth]! * 100; }) },
         { label: 'B 实验（实线）', style: 'solid', values: b.periods.map(period => view === 'level' ? period[metric.key] : period[metric.growth] === null ? null : period[metric.growth]! * 100) },
       ]} />)}</div>
       <div className="table-scroll" tabIndex={0}><table><caption>B 实验结果：名义／实际／两种指数及同比（指数共用显示刻度）</caption><thead><tr><th>时期</th><th>N 名义</th><th>R 实际</th><th>D 平减指数</th><th>L 固定篮子指数</th><th>名义同比</th><th>实际同比</th><th>D 通胀</th><th>L 通胀</th></tr></thead><tbody>{b.periods.map(period => <tr key={period.period} data-testid={`price-row-${period.period}`}><th>第{period.period}期</th><td>{numberText(period.N)}</td><td>{numberText(period.R)}</td><td>{numberText(period.D)}</td><td>{numberText(period.L)}</td><td>{percentText(period.gN)}</td><td>{percentText(period.gR)}</td><td>{percentText(period.piD)}</td><td>{percentText(period.piL)}</td></tr>)}</tbody></table></div>
@@ -296,7 +300,13 @@ function PriceLab({ value, onChange }: { value: Common<PriceInput>; onChange: (n
 }
 
 export default function Labs({ id, state, onChange }: { id: LabId; state: LearningState['labStates']; onChange: (next: LearningState['labStates']) => void }) {
-  if (id === 'LA01') return <LedgerLab value={state.LA01} onChange={next => onChange({ ...state, LA01: next })} />;
-  if (id === 'LA02') return <AccountsLab value={state.LA02} onChange={next => onChange({ ...state, LA02: next })} />;
-  return <PriceLab value={state.LA03} onChange={next => onChange({ ...state, LA03: next })} />;
+  const expectedState = useRef(state);
+  const restoredVersion = useRef(0);
+  // 显式导入／整课清空是外部替换；同时清除尚未写入状态的非法数字草稿与错误。
+  if (expectedState.current !== state) { expectedState.current = state; restoredVersion.current += 1; }
+  const change = (next: LearningState['labStates']) => { expectedState.current = next; onChange(next); };
+  const key = `${id}-${restoredVersion.current}`;
+  if (id === 'LA01') return <LedgerLab key={key} value={state.LA01} onChange={next => change({ ...state, LA01: next })} />;
+  if (id === 'LA02') return <AccountsLab key={key} value={state.LA02} onChange={next => change({ ...state, LA02: next })} />;
+  return <PriceLab key={key} value={state.LA03} onChange={next => change({ ...state, LA03: next })} />;
 }
