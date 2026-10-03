@@ -73,6 +73,7 @@ async function runAccounts(page: Page) {
 
 async function screenshot(page: Page, name: string) {
   await mkdir(screenshotDirectory, { recursive: true });
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
   await page.screenshot({ path: `${screenshotDirectory}/${name}`, fullPage: true });
 }
 
