@@ -629,6 +629,13 @@ function LessonPage({
               </Panel>
               <Lab
                 id={lesson.labId}
+                onExplain={() => {
+                  const notes = document.querySelector<HTMLTextAreaElement>(
+                    'textarea[aria-label="本节学习笔记"]',
+                  );
+                  notes?.scrollIntoView({ block: "center" });
+                  notes?.focus();
+                }}
                 state={state.labStates[lesson.labId]}
                 update={(lab) =>
                   save({

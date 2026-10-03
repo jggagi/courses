@@ -97,10 +97,12 @@ export function Lab({
   id,
   state,
   update,
+  onExplain,
 }: {
   id: LabId;
   state: LabState;
   update: (s: LabState) => void;
+  onExplain: () => void;
 }) {
   const p = state.scenario,
     a = state.baseline;
@@ -129,6 +131,50 @@ export function Lab({
             ? "先比较两组组合：更换表示会改变排序吗？更换偏好与更换表示是两个不同操作。"
             : "先手选一个组合，再预测价格变化后的选择。求解器同时生成图形、答案和需求表。"}
       </p>
+      {!state.revealed && id !== "ML01" && (
+        <fieldset>
+          <legend>先选组合，运行后再揭示排序或最优解</legend>
+          <p className="small">
+            {id === "ML03"
+              ? `给定预算 m=${p.m}、px=${p.px}、py=${p.py}，偏好为 ${preferenceNames[p.kind]}（α=${p.alpha}）。先用下面的数量手选组合，再写预测。`
+              : `给定 ${preferenceNames[p.kind]} 偏好（α=${p.alpha}），选择要比较的两组数量。`}
+          </p>
+          <div className="controls">
+            <NumberField
+              label={id === "ML02" ? "组合 A 的 x" : "手选组合 x"}
+              value={p.x}
+              min={0}
+              max={id === "ML02" ? 60 : 10000}
+              onChange={(x) => set({ x })}
+            />
+            <NumberField
+              label={id === "ML02" ? "组合 A 的 y" : "手选组合 y"}
+              value={p.y}
+              min={0}
+              max={id === "ML02" ? 60 : 10000}
+              onChange={(y) => set({ y })}
+            />
+            {id === "ML02" && (
+              <>
+                <NumberField
+                  label="组合 B 的 x"
+                  value={p.secondX}
+                  min={0}
+                  max={60}
+                  onChange={(secondX) => set({ secondX })}
+                />
+                <NumberField
+                  label="组合 B 的 y"
+                  value={p.secondY}
+                  min={0}
+                  max={60}
+                  onChange={(secondY) => set({ secondY })}
+                />
+              </>
+            )}
+          </div>
+        </fieldset>
+      )}
       <label>
         实验预测与理由
         <textarea
@@ -324,6 +370,12 @@ export function Lab({
           )}
           {notice && <p role="alert">{notice}</p>}
           <LabResults id={id} state={state} />
+          <p>
+            实验后的解释：哪一个外生条件或组合变了？结果为何改变，是否符合预测？指出一个结论不成立的条件，把解释补入本节学习笔记。
+          </p>
+          <button className="secondary" onClick={onExplain}>
+            在本节笔记中记录实验解释
+          </button>
           <div className="actions">
             <button
               className="secondary"

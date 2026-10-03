@@ -21,3 +21,20 @@ CD 解由预算等式和适用的内点条件推导为 x*=αm/px、y*=(1−α)m/
 理论 oracle 使用绝对/相对 1e−8 容差。独立 CD 网格测试不调用内核效用或解析解：用 400 个 x 分段，并在每个 x 的剩余预算中独立扫描 400 个 y 分段，直接计算 x^α·y^(1−α)。该网格是有限近似，数量容差按各轴最大购买数量/400 明确给出，目标值差容差为解析效用的 1e−4；不能把这些网格容差用于解析答案或 UI 求解。另检验所有预算、偏好表示变换、零预算、线性并列集合、互补拐角、轴上 MRS、连续价格扫描与非法域。
 
 原设计中的首期数学 oracle 无需修正。实验均为 synthetic 教学参数；这些偏好族的比较静态不能解释为所有现实商品的经验定律。
+
+## 本地实现与已核验的依赖 API
+
+2026-10-03 通过 npm registry 查询可用稳定版本，并核验官方文档。锁文件固定 React/React DOM 19.3.0、Vite 8.3.2、React 插件 6.1.1、TypeScript 7.0.2、Vitest 5.0.3、Playwright Test 1.63.0。实际执行环境为 Node 24.19.0、npm 11.9.0；没有引入运行时 CDN 或第三方素材。
+
+- React `react-dom/client` 的 `createRoot` / `render`：[官方文档](https://raw.githubusercontent.com/reactjs/react.dev/main/src/content/reference/react-dom/client/createRoot.md)。
+- Vite 独立应用与相对 `base: './'`：[入门](https://raw.githubusercontent.com/vitejs/vite/main/docs/guide/index.md)、[共享配置](https://raw.githubusercontent.com/vitejs/vite/main/docs/config/shared-options.md)。
+- React 插件 `plugins: [react()]`：[官方 README](https://raw.githubusercontent.com/vitejs/vite-plugin-react/main/packages/plugin-react/README.md)。
+- Vitest 单次 `vitest run` 与独立配置：[入门](https://raw.githubusercontent.com/vitest-dev/vitest/main/docs/guide/index.md)、[配置](https://raw.githubusercontent.com/vitest-dev/vitest/main/docs/config/index.md)。
+- Playwright `defineConfig`、`webServer`、真实浏览器与视口：[官方测试配置](https://raw.githubusercontent.com/microsoft/playwright/main/docs/src/test-configuration-js.md)。
+- TypeScript `jsx: react-jsx`：[官方配置说明](https://raw.githubusercontent.com/microsoft/TypeScript-Website/v2/packages/tsconfig-reference/copy/en/options/jsx.md)。
+
+课程通过 typed 本地内容组织连续文章，实验放在正文 `experiment` 段落处。ML02/ML03 在揭示前可选择组合；三实验先保存或显式跳过预测。运行后给出机制反馈、反例与实验解释入口，学习者在本节笔记记录自己的解释。自由解释使用参考答案和自评 rubric，不做关键词评分。客观数值题通过 `getNumericAnswer` 调用同一经济学内核。
+
+实验 A/B 共享图轴；基准的预算、偏好与最优点各自保留。预算图使用同一几何内核，线性多值需求在并列处断开单值分支并显示完整区间；需求表取 A/B 并列价格的并集。○/● 与虚线/实线区分图层，颜色之外仍可辨认。非法数值保持未应用状态，错误说明使用稳定可访问名称及描述关联。
+
+状态 schema 1 校验字段、课程 ID、域、ISO 时间与 1 MiB 导入大小；损坏或未知版本不被普通学习操作覆盖。浏览器写入配额失败时保留删除能力，只有显式确认的 reset 清理本课 key。所有用户文字经 React 纯文本/textarea 渲染，导出仅由用户点击触发。
