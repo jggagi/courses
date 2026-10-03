@@ -1,4 +1,4 @@
-export type LabId = "ML01" | "ML02" | "ML03";
+export type LabId = "ML01" | "ML02" | "ML03" | "ML04" | "ML05" | "ML06" | "ML07" | "ML08" | "ML09" | "ML10" | "ML11";
 export type ReferenceId = "MIC-MIT" | "MIC-CORE";
 export interface Section {
   id: string;
@@ -24,12 +24,14 @@ export type CalculationId =
   | "utility-square"
   | "mrs-cd"
   | "choice-cd-x"
-  | "demand-cd-x";
+  | "demand-cd-x"
+  | "advanced-lab";
 export interface NumericQuestion extends QuestionBase {
   kind: "numeric";
   calculation: CalculationId;
   unit: string;
   tolerance: number;
+  model?: { labId: LabId; parameters: Record<string, number>; metric: string };
 }
 export interface SelfExplanationQuestion extends QuestionBase {
   kind: "self-explanation";
