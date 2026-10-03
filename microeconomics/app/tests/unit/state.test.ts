@@ -146,6 +146,20 @@ describe('local learning state', () => {
     expect(store.load().state.labStates.ML01.revealed).toBe(true);
   });
 
+  it('can explicitly delete a previously saved record after a write quota failure', () => {
+    const storage = new FakeStorage();
+    storage.setItem(STORAGE_KEY, JSON.stringify(filledState()));
+    storage.setItem('courses:macroeconomics:v1', 'keep');
+    storage.setItem = () => { throw new Error('QuotaExceededError'); };
+    const store = createLearningStore({ storage, now: () => AT });
+    const next = store.load().state;
+    next.notes['M01-A'] = 'Only held in memory now';
+    expect(store.save(next).status).toBe('memory');
+    expect(store.reset().ok).toBe(true);
+    expect(storage.getItem(STORAGE_KEY)).toBeNull();
+    expect(storage.getItem('courses:macroeconomics:v1')).toBe('keep');
+  });
+
   it('reports a failed deletion and keeps the original record', () => {
     const storage = new FakeStorage();
     storage.setItem(STORAGE_KEY, JSON.stringify(filledState()));

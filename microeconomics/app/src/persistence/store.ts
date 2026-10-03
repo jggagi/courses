@@ -239,7 +239,9 @@ function browserStorage(): StorageLike | null {
 /** Pass storage:null for memory-only use; omit storage to use browser localStorage. */
 export function createLearningStore(options: { storage?: StorageLike | null; now?: () => string } = {}): LearningStore {
   const now = options.now ?? (() => new Date().toISOString());
-  let storage = options.storage === undefined ? browserStorage() : options.storage;
+  const storage = options.storage === undefined ? browserStorage() : options.storage;
+  // Keep the handle for an explicit reset even if quota prevents ordinary saves.
+  let canPersist = storage !== null;
   let current = createInitialState(now());
   let loaded = false;
   let status: StoreResult['status'] = storage === null ? 'memory' : 'saved';
@@ -265,7 +267,7 @@ export function createLearningStore(options: { storage?: StorageLike | null; now
         return snapshot(false, parsed.error);
       }
     } catch {
-      storage = null;
+      canPersist = false;
       status = 'memory';
       notice = MEMORY_NOTICE;
     }
@@ -274,13 +276,13 @@ export function createLearningStore(options: { storage?: StorageLike | null; now
   function persist(): StoreResult {
     // Never silently overwrite corrupt or newer-format records during normal learning.
     if (original !== null) return snapshot();
-    if (storage !== null) {
+    if (storage !== null && canPersist) {
       try {
         storage.setItem(STORAGE_KEY, JSON.stringify(current));
         status = 'saved';
         notice = null;
       } catch {
-        storage = null;
+        canPersist = false;
         status = 'memory';
         notice = MEMORY_NOTICE;
       }
@@ -304,11 +306,12 @@ export function createLearningStore(options: { storage?: StorageLike | null; now
       try {
         storage.setItem(STORAGE_KEY, JSON.stringify(current));
         original = null;
+        canPersist = true;
         status = 'saved';
         notice = null;
       } catch {
         if (original !== null) return snapshot(false, '有效备份已在内存中打开，但浏览器未能写入；本地原记录仍保留。请导出当前记录。');
-        storage = null;
+        canPersist = false;
         status = 'memory';
         notice = MEMORY_NOTICE;
       }
@@ -326,8 +329,11 @@ export function createLearningStore(options: { storage?: StorageLike | null; now
     }
     original = null;
     current = createInitialState(now());
-    status = storage === null ? 'memory' : 'saved';
-    notice = storage === null ? MEMORY_NOTICE : null;
+    // Deletion can succeed despite a previous read/write error. Future writes may
+    // now succeed after quota has been freed, so retry on the next ordinary save.
+    canPersist = storage !== null;
+    status = canPersist ? 'saved' : 'memory';
+    notice = canPersist ? null : MEMORY_NOTICE;
     return snapshot();
   }
   function resetLesson(id: LessonId): StoreResult {
