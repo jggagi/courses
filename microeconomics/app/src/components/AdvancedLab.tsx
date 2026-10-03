@@ -202,7 +202,7 @@ export function AdvancedLab({ id, value, onChange }: {
       </div>
       {!savedPrediction && !value.revealed && <p className="small">先保存一条预测，再单独运行；也可明确跳过预测。</p>}
       {invalid && <p role="alert" className="field-error">有输入未通过有效域检查，旧结果已隐藏。修正所有标记的参数后才能运行。</p>}
-      {notice && <p role="status" className="advanced-notice">{notice}</p>}
+      {notice && <p role={notice.startsWith("参数无法计算") ? "alert" : "status"} className="advanced-notice">{notice}</p>}
       {value.revealed && !invalid && <AdvancedResults id={id} baseline={value.baseline} scenario={value.scenario} />}
       <label className="notes-label">
         实验解释：对象、机制、条件，以及预测需要怎样修正？
@@ -292,6 +292,7 @@ function AdvancedResults({ id, baseline, scenario }: { id: AdvancedLabId; baseli
       {id === "ML07" && <>
         <PayoffTable name="A 基准" result={a} />
         <PayoffTable name="B 实验" result={b} />
+        <p className="small">在囚徒困境预设中，策略 0 表示合作，策略 1 表示不合作；协调预设的 0/1 代表两种共同标准，正反面零和预设的 0/1 代表两面。</p>
         <p className="small">最佳回应先固定对手策略，再比较自己的收益；Pareto 改善比较双方的结果，不等同于单方偏离。没有纯策略均衡并不表示不存在混合策略均衡。</p>
       </>}
       {id === "ML09" && <p>下表逐轮保留初始信念、报价和参与集合。报价更新来自规定的信念规则；认证交易另行计入认证费用。</p>}
