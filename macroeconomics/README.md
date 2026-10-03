@@ -33,6 +33,12 @@
 
 默认全用教学合成数据，时期写“第0期/第1期/第2期”而非伪装历史。无需金融账户、个人资产或云端 API。源码、依赖、锁文件与测试全部在本目录 `app/` 内，另一门课无需启动。
 
+## 私人 ChatGPT Site
+
+后续按用户请求发布：[宏观经济学 · Phase 1](https://macroeconomics-phase1-jggagi.jggagi.chatgpt.site)。访问权限保持私人，学习记录仍仅保存于当前浏览器。
+
+原地址的学习记录不会自动跨站点恢复；请先在原应用“学习记录”页导出 JSON，再到本站导入。Site 标识保存在 `app/.openai/hosting.json`，发布版本与验证记录见 [DELIVERY.md](DELIVERY.md)。
+
 ## 本地运行
 
 需要 Node.js 24（依赖 engines 允许的其他兼容版本亦可）与 npm：
@@ -61,4 +67,4 @@ npm run test:e2e
 
 LA01 只展开 H/F/B，准备金发行方在边界之外；LA02 是核算实验，不模拟政策行为；LA03 是固定价格/篮子模型，不复现官方链式与质量调整。没有后台、遥测、登录、自动外链请求、实时数据或 LLM 判卷。
 
-实际验证结果与截图见 [DELIVERY.md](DELIVERY.md)，精度和模型边界见 [IMPLEMENTATION_NOTES.md](IMPLEMENTATION_NOTES.md)。没有自动合并或部署，未扩展 Phase 2。
+实际验证结果与截图见 [DELIVERY.md](DELIVERY.md)，精度和模型边界见 [IMPLEMENTATION_NOTES.md](IMPLEMENTATION_NOTES.md)。没有自动合并，未扩展 Phase 2；私人站点仅在用户后续明确请求后发布。

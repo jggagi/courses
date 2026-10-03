@@ -63,3 +63,17 @@ LA01准备金发行方在模型边界之外；无利息、税、重估或新增�
 只实际验证 Chromium，未声称验证其他浏览器或所有辅助技术。客观题反馈来自明确答案；自由回答、模型卡与信心由学习者自评，不能解释为科学掌握率。本地记录依赖当前浏览器，存储不可用会提示内存模式，关闭前需用户主动导出；没有账号、后端或云同步。
 
 Phase 1 必做范围已完成。A04–A12、LA04–LA09、真实数据、政策/投资预测、AI导师等均未实现；没有扩展 Phase 2。后续等待学习反馈。
+
+## 后续请求：ChatGPT Sites
+
+2026-10-03，用户在首期交付后明确请求使用 ChatGPT Site，随后发布为私人站点：
+
+- 地址：https://macroeconomics-phase1-jggagi.jggagi.chatgpt.site
+- Site project ID：`appgprj_6ac116886a9081919efc64bfd0f76696`。
+- 发布源代码 commit：`43b0feb3cb7d9b162792e5b3a5b0205263f95802`，已推送到独立 Sites 源仓库；发布包包含该提交的 `.openai/hosting.json` 和 `dist/`。
+- 保存版本：`appgprj_6ac116886a9081919efc64bfd0f76696~appgver_7f1844947f048191af0d2023b7dad613`；部署：`appgdep_6ac1174aa42c8191ad2ee2c1c3989294`。原生 Sites 返回 `succeeded`，无失败信息。
+- 源课程仍在 `codex/macroeconomics-phase1` 分支；未合并 PR。原首期“未部署”记录指此次后续请求之前的交付状态。
+
+只为托管新增 Site 标识、独立图标和 HTML 描述；教学运行时 JS 与原验收产物的 SHA-256 一致。发布副本实际再次通过 `npm run typecheck` 和 `npm run build`，其余110项单元测试、16项内容检查及12项 Chromium E2E使用上文同一实现的验证结果。未重复声称进行线上浏览器验证。当前环境未提供 Sites 配套本地脚本，使用等价的本地 Git/静态产物打包流程，验证远端源 commit 与发布源一致后通过原生 Sites 工具上传。
+
+私人站点的访问控制由 Sites 提供，课程本身未增加账号后台、数据服务或云同步。学习记录仍仅在当前浏览器 origin 的 `courses:macroeconomics:v1` 中保存；从原地址迁移时，请先在原应用“学习记录”页显式导出 JSON，再在本站导入。导出包含私人笔记，不应提交到仓库。A04–A12仍仅为规划目录，没有扩展 Phase 2。
