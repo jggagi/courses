@@ -189,3 +189,220 @@ test('a complete set of notes and model cards exceeds the first-release dictiona
   await (await exported).saveAs(path);
   expect(JSON.parse(await readFile(path, 'utf8')).notes).toEqual(full.notes);
 });
+
+async function summary(page: Page, id: string, label: string, expectedB: string, expectedA?: string) {
+  const row = page.getByTestId(`${id.toLowerCase()}-summary`).getByRole('row').filter({ has: page.getByRole('rowheader', { name: label, exact: true }) });
+  await expect(row.getByRole('cell').nth(1)).toHaveText(expectedB);
+  if (expectedA !== undefined) await expect(row.getByRole('cell').nth(0)).toHaveText(expectedA);
+}
+async function dataRow(page: Page, id: string, label: string, values: string[]) {
+  const row = page.getByTestId(`${id.toLowerCase()}-results`).getByRole('row').filter({ has: page.getByRole('rowheader', { name: label, exact: true }) });
+  const cells = row.getByRole('cell');
+  for (let index = 0; index < values.length; index++) await expect(cells.nth(index)).toHaveText(values[index]);
+}
+async function runAgain(page: Page) {
+  await page.getByRole('button', { name: '运行实验', exact: true }).click();
+}
+
+test('LA04 shows the actual transition, savings level effects and undefined fixed-A reference under ongoing technical growth', async ({ page }) => {
+  await openLab(page, 'LA04');
+  await predictAndRun(page, '更高储蓄率先降低本期消费，再改变资本路径与稳态水平。');
+  await summary(page, 'LA04', '稳态 k*', '4', '4');
+  await summary(page, 'LA04', '稳态 y*', '2');
+  await summary(page, 'LA04', '稳态 c*', '1.6');
+  await dataRow(page, 'LA04', '0期', ['1', '1', '1', '1', '1', '0.8', '1.1']);
+  await page.getByRole('button', { name: '提高储蓄率至40%', exact: true }).click();
+  await runAgain(page);
+  await summary(page, 'LA04', '稳态 k*', '16', '4');
+  await summary(page, 'LA04', '稳态 c*', '2.4', '1.6');
+  await dataRow(page, 'LA04', '0期', ['1', '1', '1', '1', '1', '0.6', '1.3']);
+  await page.getByRole('button', { name: '设A为当前情景', exact: true }).click();
+  const frozen = (await readState(page)).labStates.LA04.baseline;
+  await page.getByRole('button', { name: '持续技术增长2%', exact: true }).click();
+  await runAgain(page);
+  await summary(page, 'LA04', '稳态 k*', '未定义', '16');
+  await expect(page.getByRole('alert')).toContainText('固定A');
+  expect((await readState(page)).labStates.LA04.baseline).toEqual(frozen);
+  await page.getByLabel('实验解释', { exact: true }).fill('长期技术趋势需要新标准化，不沿用固定A稳态。');
+  await page.getByRole('button', { name: '重置实验', exact: true }).click();
+  await expect(page.getByLabel('实验预测与理由', { exact: true })).toHaveValue('更高储蓄率先降低本期消费，再改变资本路径与稳态水平。');
+  await runAgain(page);
+  await summary(page, 'LA04', '稳态 k*', '4', '4');
+  await expect(page.getByLabel('实验解释', { exact: true })).toHaveValue('长期技术趋势需要新标准化，不沿用固定A稳态。');
+});
+
+test('LA05 keeps realized accounts valid during adjustment and distinguishes government purchases from planned saving changes', async ({ page }) => {
+  await openLab(page, 'LA05');
+  await predictAndRun(page, '消费意愿减少可以降低收入，而外生计划投资下的均衡国民储蓄仍等于30。');
+  await summary(page, 'LA05', '均衡产出 Y*', '170', '170');
+  await summary(page, 'LA05', '均衡消费 C*', '110');
+  await summary(page, 'LA05', '均衡私人储蓄', '40');
+  await summary(page, 'LA05', '均衡政府储蓄', '-10');
+  await summary(page, 'LA05', '均衡国民储蓄', '30');
+  // C80 + actual I(-10) + G30 = realized Y100 even when planned Z140 differs.
+  await dataRow(page, 'LA05', '0期', ['100', '80', '140', '-40', '-10', '-10', '120']);
+  await page.getByRole('button', { name: '政府购买增加10', exact: true }).click();
+  await runAgain(page);
+  await summary(page, 'LA05', '均衡产出 Y*', '195', '170');
+  await page.getByRole('button', { name: '设A为当前情景', exact: true }).click();
+  const frozen = (await readState(page)).labStates.LA05.baseline;
+  await page.getByRole('button', { name: '自主消费减少10', exact: true }).click();
+  await runAgain(page);
+  await summary(page, 'LA05', '均衡产出 Y*', '145', '195');
+  await summary(page, 'LA05', '均衡国民储蓄', '30', '30');
+  expect((await readState(page)).labStates.LA05.baseline).toEqual(frozen);
+  const validRaw = await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY);
+  await page.getByLabel('边际消费倾向 c', { exact: true }).fill('1');
+  await expect(page.getByRole('alert')).toContainText(/0.*c.*1|消费倾向/);
+  await expect(page.getByRole('button', { name: '运行实验', exact: true })).toBeDisabled();
+  await expect(page.getByRole('button', { name: '设A为当前情景', exact: true })).toBeDisabled();
+  expect(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY)).toBe(validRaw);
+});
+
+test('LA06 demand and cost shocks follow the declared timing and leave the frozen demand benchmark intact', async ({ page }) => {
+  await openLab(page, 'LA06');
+  await predictAndRun(page, '成本冲击先提高通胀，政策利率通过上一期变量在下一期影响缺口。');
+  await summary(page, 'LA06', '第1期产出缺口', '1', '1');
+  await summary(page, 'LA06', '第1期通胀', '2.25');
+  await summary(page, 'LA06', '第1期预期通胀', '2.125');
+  await summary(page, 'LA06', '第1期操作利率', '3.875');
+  await page.getByRole('button', { name: '设A为当前情景', exact: true }).click();
+  const frozen = (await readState(page)).labStates.LA06.baseline;
+  await page.getByRole('button', { name: '成本冲击 +1', exact: true }).click();
+  await runAgain(page);
+  await summary(page, 'LA06', '第1期产出缺口', '0', '1');
+  await summary(page, 'LA06', '第1期通胀', '3', '2.25');
+  await summary(page, 'LA06', '第1期预期通胀', '2.5', '2.125');
+  await summary(page, 'LA06', '第1期操作利率', '4.5', '3.875');
+  await dataRow(page, 'LA06', '2期', ['-0.5', '2.375', '2.4375', '3.3125']);
+  expect((await readState(page)).labStates.LA06.baseline).toEqual(frozen);
+  await page.getByRole('button', { name: '无冲击基准', exact: true }).click();
+  await runAgain(page);
+  await dataRow(page, 'LA06', '1期', ['0', '2', '2', '3']);
+});
+
+test('LA07 executes all four bank events, replays undo, rejects unsupported payment and exposes negative equity', async ({ page }) => {
+  await openLab(page, 'LA07');
+  await predictAndRun(page, '发放创造存款；跨行支付转移准备金；偿还减少存款；历史减值减少权益。');
+  await page.getByRole('button', { name: '运行10/7/3/8示例', exact: true }).click();
+  await dataRow(page, 'LA07', 'A', ['13', '79', '90', '2']);
+  await dataRow(page, 'LA07', 'B', ['27', '80', '97', '10']);
+  await summary(page, 'LA07', '系统存款', '187', '180');
+  await summary(page, 'LA07', '系统净贷款', '159', '160');
+  await expect(page.getByTestId('la07-lab').locator('ol li')).toHaveCount(4);
+  await page.getByRole('button', { name: '设A为当前情景', exact: true }).click();
+  const frozen = (await readState(page)).labStates.LA07.baseline;
+  await page.getByRole('button', { name: '撤销最后银行事件', exact: true }).click();
+  await dataRow(page, 'LA07', 'A', ['13', '87', '90', '10']);
+  await summary(page, 'LA07', '系统净贷款', '167', '159');
+  const validRaw = await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY);
+  await page.getByLabel('银行事件金额', { exact: true }).fill('1');
+  await page.getByRole('button', { name: '跨行支付', exact: true }).click();
+  await expect(page.getByRole('alert')).toContainText('存款');
+  await expect(page.getByTestId('la07-lab').locator('ol li')).toHaveCount(3);
+  expect(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY)).toBe(validRaw);
+  await page.getByLabel('银行事件金额', { exact: true }).fill('12');
+  await page.getByRole('button', { name: '确认历史贷款损失', exact: true }).click();
+  await dataRow(page, 'LA07', 'A', ['13', '75', '90', '-2']);
+  await expect(page.getByRole('alert')).toContainText('权益为负');
+  expect((await readState(page)).labStates.LA07.baseline).toEqual(frozen);
+  await page.reload();
+  await dataRow(page, 'LA07', 'A', ['13', '75', '90', '-2']);
+  await page.getByRole('button', { name: '重置实验', exact: true }).click();
+  await expect(page.getByLabel('实验预测与理由', { exact: true })).toHaveValue('发放创造存款；跨行支付转移准备金；偿还减少存款；历史减值减少权益。');
+  await runAgain(page);
+  await dataRow(page, 'LA07', 'A', ['20', '80', '90', '10']);
+});
+
+test('LA08 calculates debt amounts and exact ratios and refuses the zero-GDP growth boundary without overwriting records', async ({ page }) => {
+  await openLab(page, 'LA08');
+  await predictAndRun(page, '比较利率和增长之外，还需保留当期初级赤字口径。');
+  await summary(page, 'LA08', '第1期债务率', '62.17647059', '62.17647059');
+  await dataRow(page, 'LA08', '1期', ['102', '63.42', '62.17647059', '2.4', '1.02']);
+  await page.getByRole('button', { name: '名义增长升至6%', exact: true }).click();
+  await runAgain(page);
+  await summary(page, 'LA08', '第1期债务率', '59.86792453', '62.17647059');
+  await dataRow(page, 'LA08', '1期', ['106', '63.46', '59.86792453', '2.4', '1.06']);
+  await page.getByRole('button', { name: '设A为当前情景', exact: true }).click();
+  const frozen = (await readState(page)).labStates.LA08.baseline;
+  await page.getByRole('button', { name: '初级赤字升至4%', exact: true }).click();
+  await runAgain(page);
+  await summary(page, 'LA08', '第1期债务率', '65.17647059', '59.86792453');
+  expect((await readState(page)).labStates.LA08.baseline).toEqual(frozen);
+  const validRaw = await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY);
+  await page.getByLabel('名义 GDP 增长 g', { exact: true }).fill('-100');
+  await expect(page.getByRole('alert')).toContainText(/增长率.*大于/);
+  await expect(page.getByRole('button', { name: '运行实验', exact: true })).toBeDisabled();
+  expect(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY)).toBe(validRaw);
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await page.screenshot({ path: test.info().outputPath('complete-error-la08.png'), fullPage: true });
+});
+
+test('LA09 separates current-account flows from valuation changes and exchange-rate movements from trade-volume responses', async ({ page }) => {
+  await openLab(page, 'LA09');
+  await predictAndRun(page, '实际贬值只改变相对价格，不在本模型内自动改变进出口量。');
+  await summary(page, 'LA09', '经常账户 CA', '-2', '-2');
+  await summary(page, 'LA09', '外部净资产变化', '2');
+  await summary(page, 'LA09', '实际汇率 q', '7');
+  await dataRow(page, 'LA09', '净出口 NX', ['-5', '货币单位/期']);
+  await dataRow(page, 'LA09', '可支配国民收入 YD', ['103', '货币单位/期']);
+  await dataRow(page, 'LA09', '国民储蓄 S', ['23', '货币单位/期']);
+  await page.getByRole('button', { name: '本币价格每外币7.7', exact: true }).click();
+  await runAgain(page);
+  await summary(page, 'LA09', '实际汇率 q', '7.7', '7');
+  await dataRow(page, 'LA09', 'q相对基准变化', ['10', '%']);
+  await summary(page, 'LA09', '经常账户 CA', '-2', '-2');
+  await page.getByRole('button', { name: '设A为当前情景', exact: true }).click();
+  const frozen = (await readState(page)).labStates.LA09.baseline;
+  await page.getByRole('button', { name: '进口消费同时增加30', exact: true }).click();
+  await runAgain(page);
+  await summary(page, 'LA09', '经常账户 CA', '-32', '-2');
+  await dataRow(page, 'LA09', '净出口 NX', ['-35', '货币单位/期']);
+  expect((await readState(page)).labStates.LA09.baseline).toEqual(frozen);
+  const validRaw = await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY);
+  await page.getByLabel('国内生产 Y', { exact: true }).fill('101');
+  await expect(page.getByRole('alert')).toContainText('生产与最终使用不一致');
+  await expect(page.getByRole('button', { name: '设A为当前情景', exact: true })).toBeDisabled();
+  expect(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY)).toBe(validRaw);
+  await expect(page.locator('main')).not.toContainText(/NaN|Infinity/);
+});
+
+test('new experiment inputs and scrollable numeric alternatives work with keyboard at 390px and 1440px', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.setViewportSize({ width: 390, height: 844 });
+  await openLab(page, 'LA04');
+  await page.getByLabel('实验预测与理由', { exact: true }).focus();
+  await page.keyboard.type('用键盘改变储蓄率并核对完整数字表。');
+  await page.keyboard.press('Tab');
+  await expect(page.getByRole('button', { name: '保存实验预测', exact: true })).toBeFocused();
+  await page.keyboard.press('Enter');
+  await page.getByLabel('储蓄率 s', { exact: true }).focus();
+  await page.keyboard.press('ControlOrMeta+A');
+  await page.keyboard.type('40');
+  await page.getByRole('button', { name: '运行实验', exact: true }).focus();
+  await page.keyboard.press('Enter');
+  await summary(page, 'LA04', '稳态 k*', '16');
+  await noOverflow(page);
+  const numericTable = page.getByTestId('la04-results').locator('..');
+  await numericTable.focus();
+  await expect(numericTable).toBeFocused();
+  expect(await numericTable.evaluate(element => getComputedStyle(element).overflowX)).toBe('auto');
+  expect(await numericTable.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true);
+  await page.keyboard.press('ArrowRight');
+  await expect.poll(() => numericTable.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
+  await expect(page.getByTestId('la04-lab').getByRole('img')).toHaveCount(1);
+  for (const svg of await page.getByTestId('la04-lab').getByRole('img').all()) expect(await svg.getAttribute('aria-label')).toBeTruthy();
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await page.screenshot({ path: test.info().outputPath('complete-mobile-la04.png'), fullPage: true });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  for (const id of ['LA05', 'LA06', 'LA07', 'LA08', 'LA09']) {
+    await openLab(page, id);
+    await page.getByRole('button', { name: '跳过预测', exact: true }).click();
+    await runAgain(page);
+    await noOverflow(page);
+    await expect(page.getByTestId(`${id.toLowerCase()}-results`)).toBeVisible();
+  }
+  expect(await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(true);
+  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+  await page.screenshot({ path: test.info().outputPath('complete-desktop-la09.png'), fullPage: true });
+});
