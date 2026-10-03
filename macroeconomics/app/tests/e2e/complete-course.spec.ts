@@ -246,8 +246,13 @@ test('LA05 keeps realized accounts valid during adjustment and distinguishes gov
   await summary(page, 'LA05', '均衡私人储蓄', '40');
   await summary(page, 'LA05', '均衡政府储蓄', '-10');
   await summary(page, 'LA05', '均衡国民储蓄', '30');
-  // C80 + actual I(-10) + G30 = realized Y100 even when planned Z140 differs.
-  await dataRow(page, 'LA05', '0期', ['100', '80', '140', '-40', '-10', '-10', '120']);
+  // C=20+.6*(100−20)=68; realized I=30+(100−128)=2.
+  // The tax adjustment belongs inside consumption, and eta=.5 gives YNext114.
+  await dataRow(page, 'LA05', '0期', ['100', '68', '128', '-28', '2', '2', '114']);
+  await page.getByLabel('期初产出 Y₀', { exact: true }).fill('50');
+  await runAgain(page);
+  // C38 + actual I(-18) + G30 = Y50; negative inventory investment is retained.
+  await dataRow(page, 'LA05', '0期', ['50', '38', '98', '-48', '-18', '-18', '74']);
   await page.getByRole('button', { name: '政府购买增加10', exact: true }).click();
   await runAgain(page);
   await summary(page, 'LA05', '均衡产出 Y*', '195', '170');
@@ -396,7 +401,7 @@ test('new experiment inputs and scrollable numeric alternatives work with keyboa
   expect(await numericTable.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true);
   await page.keyboard.press('ArrowRight');
   await expect.poll(() => numericTable.evaluate(element => element.scrollLeft)).toBeGreaterThan(0);
-  await expect(page.getByTestId('la04-lab').getByRole('img')).toHaveCount(1);
+  await expect(page.getByTestId('la04-lab').getByRole('img')).toHaveCount(3);
   for (const svg of await page.getByTestId('la04-lab').getByRole('img').all()) expect(await svg.getAttribute('aria-label')).toBeTruthy();
   await screenshot(page, 'complete-mobile-la04.png');
   await page.setViewportSize({ width: 1440, height: 1000 });
@@ -515,4 +520,30 @@ test('invalid capstone drafts and invalid bank benchmark imports leave valid loc
   await page.reload();
   await expect(page.getByLabel('终课需求冲击', { exact: true })).toHaveValue('0');
   await screenshot(page, 'complete-mobile-capstone.png');
+});
+
+test('LA07 continues an imported event sequence with gaps and rejects a payment beyond available reserves', async ({ page }) => {
+  await page.goto('/#/records');
+  const imported = await readState(page);
+  imported.labStates.LA07.input.events = [{ id: 'imported-loan-10', sequence: 10, type: 'loan', amount: 30 }];
+  imported.labStates.LA07.prediction = '新增存款超过准备金不意味着可以无限跨行支付。';
+  imported.labStates.LA07.hasRun = true;
+  await importJSON(page, imported, 'bank-sequence-gap.json');
+  await openLab(page, 'LA07');
+  await dataRow(page, 'LA07', 'A', ['20', '110', '120', '10']);
+  const validBeforePayment = await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY);
+  await page.getByLabel('银行事件金额', { exact: true }).fill('21');
+  await page.getByRole('button', { name: '跨行支付', exact: true }).click();
+  await expect(page.getByRole('alert')).toContainText('准备金');
+  expect(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY)).toBe(validBeforePayment);
+  await page.getByLabel('银行事件金额', { exact: true }).fill('7');
+  await page.getByRole('button', { name: '跨行支付', exact: true }).click();
+  await dataRow(page, 'LA07', 'A', ['13', '110', '113', '10']);
+  await dataRow(page, 'LA07', 'B', ['27', '80', '97', '10']);
+  const validEvents = (await readState(page)).labStates.LA07.input.events;
+  expect(validEvents.map((event: { sequence: number }) => event.sequence)).toEqual([10, 11]);
+  await page.reload();
+  expect((await readState(page)).labStates.LA07.input.events).toEqual(validEvents);
+  await page.getByRole('button', { name: '撤销最后银行事件', exact: true }).click();
+  await dataRow(page, 'LA07', 'A', ['20', '110', '120', '10']);
 });
