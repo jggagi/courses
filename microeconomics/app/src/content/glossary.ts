@@ -1,0 +1,280 @@
+import type { GlossaryEntry, ReferenceEntry } from "./types";
+
+export const glossary: GlossaryEntry[] = [
+  {
+    id: "scarcity",
+    term: "稀缺",
+    english: "scarcity",
+    object: "资源与相互竞争的用途",
+    definition:
+      "可用资源不能同时满足所有想要实现的用途，因而必须作出选择。稀缺总是相对于用途和约束而言。",
+    example:
+      "一天只剩六小时，即使书与工具都免费，也无法同时阅读六小时并制作六小时。",
+    confusion:
+      "稀缺不等于贫穷，也不等于东西罕见；富有的人仍然面对时间和注意力约束。",
+    lessonIds: ["M01-A"],
+    relatedIds: ["opportunity-cost", "feasible-set"],
+  },
+  {
+    id: "opportunity-cost",
+    term: "机会成本",
+    english: "opportunity cost",
+    object: "一项行动与最佳被放弃方案",
+    definition:
+      "选择一项行动时，在同一约束下放弃的最佳替代方案的价值。比较要说明决策时间、可选方案和评价标准。",
+    example:
+      "把第三小时用来阅读，会放弃原本能完成的一小时制作；其价值依赖你的目标。",
+    confusion:
+      "不是只算付款，也不是把所有没有做的事情的价值相加。资源交换率与个人评价也须分开。",
+    lessonIds: ["M01-A", "M01-B"],
+    relatedIds: ["scarcity", "sunk-cost", "relative-price"],
+  },
+  {
+    id: "sunk-cost",
+    term: "沉没成本",
+    english: "sunk cost",
+    object: "决策时点之前已发生且无法收回的付出",
+    definition:
+      "无论下一步选哪个方案都不能改变的过去成本，不应在未来增量比较中再计一次。",
+    example:
+      "不可退的十单位门票已付；留下还是离开，要比较之后两小时的收益与新增成本。",
+    confusion:
+      "可退款或转卖的费用不是完全沉没。已付款可能降低当前财富，不能忽略财富变化，也不能重复扣款。",
+    lessonIds: ["M01-A"],
+    relatedIds: ["opportunity-cost", "budget-line"],
+  },
+  {
+    id: "feasible-set",
+    term: "可行集",
+    english: "feasible set / budget set",
+    object: "所有满足约束的方案的集合",
+    definition:
+      "同时满足非负性、资源及其他约束的全部选择，包含边界与内部；本期货币模型为 px·x+py·y≤m。",
+    example: "预算120，价格3和2时，(10,20)与(20,30)都可行，(30,30)不可行。",
+    confusion:
+      "可行不等于最好，内部点也不是无效点。不可分割商品或最低采购量会改变集合形状。",
+    lessonIds: ["M01-A", "M01-B", "M03-A"],
+    relatedIds: ["budget-line", "interior-corner-kink"],
+  },
+  {
+    id: "budget-line",
+    term: "预算线",
+    english: "budget line",
+    object: "恰好花完货币预算的组合边界",
+    definition:
+      "在正价格下满足 px·x+py·y=m 的非负组合。横轴x、纵轴y时，截距为m/px与m/py，斜率为−px/py。",
+    example: "3x+2y=120的截距是40个x和60个y，每多一个x要在边界上减少1.5个y。",
+    confusion:
+      "预算线不是整个预算集；相对价格变动通常旋转，收入变化在价格固定时平移。",
+    lessonIds: ["M01-B", "M03-A"],
+    relatedIds: ["feasible-set", "relative-price", "mrs"],
+  },
+  {
+    id: "relative-price",
+    term: "相对价格",
+    english: "relative price",
+    object: "两种商品的市场交换率",
+    definition: "px/py表示一个x的支出相当于多少个y的支出，单位是y单位/x单位。",
+    example: "px=3、py=2时，一个x花的钱可以买1.5个y；两价都乘十，比率不变。",
+    confusion:
+      "相对价格来自市场约束，MRS来自偏好；不是每个组合都必须满足两者相等。",
+    lessonIds: ["M01-B", "M02-B", "M03-A"],
+    relatedIds: ["budget-line", "mrs"],
+  },
+  {
+    id: "preference",
+    term: "偏好",
+    english: "preferences",
+    object: "同一决策者对方案的比较关系",
+    definition:
+      "描述两个组合哪个更好，或者是否无差别的排序关系。偏好模型可以纳入他人福祉，并不必然等于自私。",
+    example: "在示例排序中(12,12)优于(10,10)，后者与(20,5)无差别。",
+    confusion:
+      "效用公式是排序的表示，不是创造偏好的机器；改变参数可能改变偏好，改写数值标签不一定。",
+    lessonIds: ["M02-A", "M02-B", "M03-A"],
+    relatedIds: ["ordinal-utility", "indifference-curve"],
+  },
+  {
+    id: "ordinal-utility",
+    term: "序数效用",
+    english: "ordinal utility",
+    object: "偏好排序的数值表示",
+    definition:
+      "效用大小用来表示排序，差值或倍数没有独立的幸福计量含义。确定性选择下严格递增变换保留排序。",
+    example: "u=√(xy)的10、10、12可改写为u²的100、100、144；最佳组合仍相同。",
+    confusion:
+      "u=20不是比u=10幸福一倍，也不能跨人比较。风险期望效用的允许变换更严格。",
+    lessonIds: ["M02-A", "M03-A"],
+    relatedIds: ["preference", "monotone-transformation"],
+  },
+  {
+    id: "monotone-transformation",
+    term: "严格递增变换",
+    english: "strictly increasing transformation",
+    object: "同一排序的表示函数",
+    definition:
+      "若数值a>b必有g(a)>g(b)，g是严格递增的；对既有效用应用这种变换，大小与相等关系都保留。",
+    example:
+      "本期u≥0，因此u²严格保序；u=-2与u=1若平方则4>1，却反转了原来的排序。",
+    confusion: "平方在整个实数域上不是严格递增；改变CD的α也不是表示变换。",
+    lessonIds: ["M02-A"],
+    relatedIds: ["ordinal-utility", "preference"],
+  },
+  {
+    id: "indifference-curve",
+    term: "无差异曲线",
+    english: "indifference curve",
+    object: "同一偏好水平的组合集合",
+    definition:
+      "对同一决策者而言无差别的一组组合，效用表示下是u(x,y)=常数的等值集合。",
+    example: "√(xy)=10经过(10,10)与(20,5)；改为xy=100仍经过同样的点。",
+    confusion:
+      "曲线标签依赖表示，集合本身不依赖标签。曲线可以是直线或折线，不必总光滑。",
+    lessonIds: ["M02-A", "M02-B", "M03-A"],
+    relatedIds: ["ordinal-utility", "mrs", "perfect-complements"],
+  },
+  {
+    id: "mrs",
+    term: "边际替代率",
+    english: "marginal rate of substitution (MRS)",
+    object: "当前组合附近的偏好交换率",
+    definition:
+      "在光滑内点且MUy非零时，以y衡量x的MRS=MUx/MUy，是保持偏好水平时多一点x愿意放弃的y数量。",
+    example: "CD α=.5在(20,5)处MRS=.25，而市场价格比仍可以是1.5。",
+    confusion:
+      "MRS是局部量，不是有限变化的固定换算；互补拐角没有唯一MRS，不应强行输出数值。",
+    lessonIds: ["M02-B", "M03-A"],
+    relatedIds: [
+      "relative-price",
+      "indifference-curve",
+      "interior-corner-kink",
+    ],
+  },
+  {
+    id: "interior-corner-kink",
+    term: "内点 / 角点 / 拐角",
+    english: "interior / corner / kink",
+    object: "最优化解的位置与曲线的可微性",
+    definition:
+      "本期的内点指x,y都严格为正；角点指至少一种商品为零的解；拐角指等值曲线在该点没有唯一切线。",
+    example:
+      "默认CD解(20,30)是正商品内点；线性解(0,60)是角点；互补解(24,24)是拐角。",
+    confusion:
+      "商品内点仍在预算边界上，不能误称预算集的几何内部。互补拐角可有两种商品都为正。",
+    lessonIds: ["M02-B", "M03-A"],
+    relatedIds: ["mrs", "feasible-set", "perfect-complements"],
+  },
+  {
+    id: "perfect-substitutes",
+    term: "完全替代",
+    english: "perfect substitutes",
+    object: "固定边际交换率的偏好模型",
+    definition:
+      "线性效用u=ax+by表示两种商品以固定比率相互替代，a,b>0。最优选择比较每单位货币得到的a/px和b/py。",
+    example: "u=x+y，价格3和2时全买y；两价都为2时，x+y=60整段预算边界都最优。",
+    confusion: "并列时不是计算器没找到唯一答案，而是模型确实给出一个最优集合。",
+    lessonIds: ["M02-B", "M03-A", "M03-B"],
+    relatedIds: ["mrs", "optimal-set"],
+  },
+  {
+    id: "perfect-complements",
+    term: "完全互补",
+    english: "perfect complements",
+    object: "固定配套比例的偏好模型",
+    definition:
+      "u=min(x,y)只由较少的那一种决定偏好水平。两种商品按1:1配套使用，单独增加富余的一边不会提高效用。",
+    example:
+      "左鞋与右鞋一一配套，(10,10)和(20,10)同为10；预算默认解为(24,24)。",
+    confusion:
+      "拐角不是无效模型，不应为满足相切公式把它平滑成CD。配套比例改变须另写模型。",
+    lessonIds: ["M02-B", "M03-A"],
+    relatedIds: ["indifference-curve", "interior-corner-kink"],
+  },
+  {
+    id: "optimal-set",
+    term: "最优选择 / 最优集合",
+    english: "optimal choice / optimal set",
+    object: "给定约束中偏好最高的可行组合",
+    definition:
+      "在可行集内没有其他组合严格更好的选择。答案可能是一个点，也可能是多个并列点组成的集合。",
+    example: "u=x+y且px=py=2、m=120时，所有非负且x+y=60的组合都最优。",
+    confusion:
+      "最优选择依赖假设与评价标准，不自动意味着伦理上最好，也不等于多人市场均衡。",
+    lessonIds: ["M03-A", "M03-B"],
+    relatedIds: ["feasible-set", "preference", "perfect-substitutes"],
+  },
+  {
+    id: "demand",
+    term: "需求",
+    english: "demand",
+    object: "条件固定时价格与最优数量的关系",
+    definition:
+      "固定收入、其他价格和偏好，每个自身价格下重新求最优选择，得到需求关系；在多解模型中关系可以是集合。",
+    example:
+      "默认CD的x*=60/px，px从3到6使x从20到10；经济学图横轴数量、纵轴价格。",
+    confusion:
+      "不是随意画一条向下线，也不是任意历史价格销量散点；个体需求还不是市场需求。",
+    lessonIds: ["M03-B"],
+    relatedIds: [
+      "optimal-set",
+      "comparative-statics",
+      "income-substitution-effects",
+    ],
+  },
+  {
+    id: "comparative-statics",
+    term: "比较静态",
+    english: "comparative statics",
+    object: "不同外生条件下的模型解",
+    definition:
+      "比较某个参数变化前后的最优解或均衡，明确其余条件保持什么不变；不描述过渡过程与回归速度。",
+    example: "固定m、py、α，把px从3提高到6，再比较两次求出的消费组合。",
+    confusion: "解的前后比较不是现实动态稳定性证明，也不是只凭共变识别因果。",
+    lessonIds: ["M03-B"],
+    relatedIds: ["demand", "income-substitution-effects"],
+  },
+  {
+    id: "income-substitution-effects",
+    term: "收入效应与替代效应",
+    english: "income effect / substitution effect",
+    object: "价格变化引起的两种选择机制",
+    definition:
+      "价格变化既改变相对交换率，也改变可负担能力。将总价格效应分成替代与收入部分，必须规定保持效用或购买能力的补偿规则。",
+    example:
+      "x涨价使x相对更贵，也让原来(20,30)不可负担；不能把x减少10全部称为替代效应。",
+    confusion: "CD例中y数量恰好不变不表示购买力未变，也不表示两种机制都为零。",
+    lessonIds: ["M03-B"],
+    relatedIds: ["relative-price", "demand", "comparative-statics"],
+  },
+];
+
+export const references: ReferenceEntry[] = [
+  {
+    id: "MIC-MIT",
+    title: "14.01SC Principles of Microeconomics",
+    organization: "MIT OpenCourseWare",
+    url: "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/",
+    edition: "Fall 2011",
+    checkedAt: "2026-10-03",
+    supports:
+      "消费者、生产者、竞争与福利、市场力量、风险、要素市场、跨期选择及贸易的理论结构。只链接课程入口，不复制讲义、图形或题库。",
+    readingRoute:
+      "M01–M03查 Consumer Theory / Deriving Demand；M04–M06查 Producer Theory / Competition / Welfare；M07–M08查 Monopoly / Oligopoly；M09查 Welfare；M10–M12查 Uncertainty / Factor Markets / Capital / International Trade / Equity and Efficiency。先做本课模型卡，再按问题查读。",
+    licenseNote:
+      "外部材料用于主动点击后的阅读与核验。入口可免费阅读不等于任意再发布；本应用不复用其图片或题库。课程中的历史政策和数据不作为当前事实。",
+  },
+  {
+    id: "MIC-CORE",
+    title: "The Economy 2.0: Microeconomics",
+    organization: "CORE Econ",
+    url: "https://books.core-econ.org/the-economy/microeconomics/0-3-contents.html",
+    edition: "The Economy 2.0 在线目录",
+    checkedAt: "2026-10-03",
+    supports:
+      "稀缺、技术、企业与市场、策略互动、制度、信息、劳动与分配，以及将约束与偏好置于现实问题中的解释。",
+    readingRoute:
+      "M01–M03查 Units 2–3；M04查 Units 2/7；M05–M06查 Units 8/10；M07查 Unit 7；M08查 Units 4–5；M09查 Units 4/10；M10–M11查 Units 3/6/9；M12查 Units 2/5/10。对实证命题继续查原研究与时期；不同教材的机制不可消除成无条件结论。",
+    licenseNote:
+      "本地课程文案、例题和合成参数为原创表达，不代表CORE背书；外部内容仅链接。若以后复用素材须核验当时的许可与署名要求。",
+  },
+];

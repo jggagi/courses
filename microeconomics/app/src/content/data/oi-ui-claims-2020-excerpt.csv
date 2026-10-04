@@ -1,0 +1,7 @@
+year,month,day_endofweek,initclaims_count_regular,contclaims_count_regular,initclaims_count_pua,contclaims_count_peuc,contclaims_count_pua,initclaims_count_combined,contclaims_count_combined,initclaims_rate_regular,contclaims_rate_regular,initclaims_rate_pua,contclaims_rate_peuc,contclaims_rate_pua,initclaims_rate_combined,contclaims_rate_combined
+2020,2,29,214913,2079767,0,0,0,214913,2079767,.132,1.28,0,0,0,.132,1.28
+2020,3,14,250184,1954796,0,0,0,250184,1954796,.153,1.2,0,0,0,.153,1.2
+2020,3,28,5931944,3387289,0,0,0,5931944,3387289,3.64,2.08,0,0,0,3.64,2.08
+2020,4,11,4847432,12341219,78893,33850,236753,4926325,12611822,2.97,7.57,.0484,.0208,.145,3.02,7.73
+2020,5,9,2298881,20631926,889228,253292,8135559,3188109,29020777,1.41,12.7,.545,.155,4.99,1.95,17.8
+2020,6,6,1537093,18852886,683242,938025,11200356,2220335,30991267,.942,11.6,.419,.575,6.87,1.36,19

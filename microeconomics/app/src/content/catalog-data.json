@@ -1,0 +1,1187 @@
+{
+  "catalog": [
+    {
+      "id": "M01-A",
+      "moduleId": "M01",
+      "title": "经济学从“哪些选择存在”开始",
+      "summary": "今天只有六小时，花两小时读书的成本只是买书的钱吗？先预测，再写下你的理由和不确定处。",
+      "status": "available"
+    },
+    {
+      "id": "M01-B",
+      "moduleId": "M01",
+      "title": "预算不是一句话，是一个几何对象",
+      "summary": "预算翻倍和一种商品价格减半，允许的选择完全一样吗？先预测两个轴的截距会怎样变化。",
+      "status": "available"
+    },
+    {
+      "id": "M02-A",
+      "moduleId": "M02",
+      "title": "偏好是对象，效用是表示",
+      "summary": "同一方案的效用从10改写成100，说明幸福翻了十倍吗？先预测选择顺序是否改变。",
+      "status": "available"
+    },
+    {
+      "id": "M02-B",
+      "moduleId": "M02",
+      "title": "边际替代率：愿意换多少，不是市场要求换多少",
+      "summary": "已拥有很多x、很少y时，为再得到一点x愿意放弃的y，会与原来相同吗？",
+      "status": "available"
+    },
+    {
+      "id": "M03-A",
+      "moduleId": "M03",
+      "title": "最优点为什么有时相切、有时不相切",
+      "summary": "画出预算线，找到一条相切的无差异曲线，就一定找到了所有偏好模型的答案吗？",
+      "status": "available"
+    },
+    {
+      "id": "M03-B",
+      "moduleId": "M03",
+      "title": "需求是优化结果，不是一条先验装饰线",
+      "summary": "默认CD消费者的x价格翻倍，x数量、y数量与购买力分别怎样变化？先分别预测。",
+      "status": "available"
+    },
+    {
+      "id": "M04-A",
+      "moduleId": "M04",
+      "title": "生产、边际产出与时间范围",
+      "summary": "一台机器旁再增加一名工人，为什么产量增幅可能越来越小？这是否意味着把整个工厂扩大也越来越不划算？",
+      "status": "available"
+    },
+    {
+      "id": "M04-B",
+      "moduleId": "M04",
+      "title": "成本、利润、停产与退出",
+      "summary": "一家企业本期亏损两单位，为什么继续生产可能比停产更好？负经济利润是否等于企业没有现金收入？",
+      "status": "available"
+    },
+    {
+      "id": "M05-A",
+      "moduleId": "M05",
+      "title": "个体计划怎样形成市场均衡",
+      "summary": "十家企业各自选择产量、许多顾客各自选择购买量，怎样才算在同一价格下彼此兼容？",
+      "status": "available"
+    },
+    {
+      "id": "M05-B",
+      "moduleId": "M05",
+      "title": "冲击、比较静态与调整",
+      "summary": "需求增强后价格与销量同时上升，是否证明需求向上？新均衡算得出来，是否就证明市场价格会自动回到那里？",
+      "status": "available"
+    },
+    {
+      "id": "M06-A",
+      "moduleId": "M06",
+      "title": "弹性：百分比响应的比率",
+      "summary": "两条需求线看起来一样陡，顾客对涨价的百分比反应就一样吗？改变数量单位，会不会改变弹性？",
+      "status": "available"
+    },
+    {
+      "id": "M06-B",
+      "moduleId": "M06",
+      "title": "税楔、税负与福利",
+      "summary": "每单位税20由卖家上缴，买家是否就完全不承担？税收收入为什么要加回剩余，却不能再算一次额外产出？",
+      "status": "available"
+    },
+    {
+      "id": "M07-A",
+      "moduleId": "M07",
+      "title": "垄断、边际收益与加价",
+      "summary": "一家服务商能决定售价时，会卖到价格等于边际成本吗？先预测它降价多卖一单位的收入变化。",
+      "status": "available"
+    },
+    {
+      "id": "M07-B",
+      "moduleId": "M07",
+      "title": "数字产品、差异化与创新",
+      "summary": "复制一份文件几乎免费，是否足以推出所有数字服务应永远免费、只会剩一家企业？先拆开这两个预测的机制。",
+      "status": "available"
+    },
+    {
+      "id": "M08-A",
+      "moduleId": "M08",
+      "title": "行动、最佳回应与Nash均衡",
+      "summary": "如果每人都选了对自己最好的回应，结果就一定无法让所有人更好吗？先在同一矩阵中分别找个人改变与双方改变。",
+      "status": "available"
+    },
+    {
+      "id": "M08-B",
+      "moduleId": "M08",
+      "title": "协调、重复互动与规则",
+      "summary": "多玩几次就会合作吗？先预测在能够识别偏离、又可能结束的关系中，哪些条件让未来影响今天的选择。",
+      "status": "available"
+    },
+    {
+      "id": "M09-A",
+      "moduleId": "M09",
+      "title": "私人账本之外的影响",
+      "summary": "所有成交都令买卖双方愿意交易，为什么数量仍可能过多？先找一项没有进入他们边际比较的第三方损害。",
+      "status": "available"
+    },
+    {
+      "id": "M09-B",
+      "moduleId": "M09",
+      "title": "公共品、共有资源与制度工具",
+      "summary": "公共品一定是政府提供的东西吗？治理共享资源时，税、配额和协商为何不能只凭名字判断好坏？先按使用特征分类。",
+      "status": "available"
+    },
+    {
+      "id": "M10-A",
+      "moduleId": "M10",
+      "title": "风险、保险与风险溢价",
+      "summary": "一半机会得到100、一半得到0，与确定得到50，平均财富相同，为什么仍可能偏好后者？先预测，再写出你比较的对象。",
+      "status": "available"
+    },
+    {
+      "id": "M10-B",
+      "moduleId": "M10",
+      "title": "信息不对称与激励",
+      "summary": "二手商品买方看不到质量，平均出价是否会让全部交易消失？先预测哪些卖方留下，并写出报价时买方知道什么。",
+      "status": "available"
+    },
+    {
+      "id": "M11-A",
+      "moduleId": "M11",
+      "title": "劳动、闲暇与收入机制",
+      "summary": "小时工资提高，人一定工作更久吗？先预测，并区分一个人的可行选择、企业的用工需求与工资制度。",
+      "status": "available"
+    },
+    {
+      "id": "M11-B",
+      "moduleId": "M11",
+      "title": "跨期预算、利率与借贷边界",
+      "summary": "总收入一样，收入在今天还是明天到手，会怎样改变今天消费？先分别预测可以借贷与禁止借款的情景。",
+      "status": "available"
+    },
+    {
+      "id": "M12-A",
+      "moduleId": "M12",
+      "title": "比较优势、贸易与整体联系",
+      "summary": "一个经济体生产两种产品都更快，为什么仍可能与较慢的经济体互利交换？先计算放弃的另一产品，而不是只看绝对工时。",
+      "status": "available"
+    },
+    {
+      "id": "M12-B",
+      "moduleId": "M12",
+      "title": "从现实问题到可审查证据",
+      "summary": "一个模拟能产生合理曲线，是否已经证明现实政策有效？先写出模型内会失败的条件，以及现实中哪种证据能区别另一个机制。",
+      "status": "available"
+    }
+  ],
+  "modules": [
+    {
+      "id": "M01",
+      "title": "稀缺与可行世界",
+      "centralQuestion": "为什么“想要什么”必须先与“能选什么”分开？",
+      "prerequisites": [],
+      "modelCard": {
+        "object": "一个决策者、非负数量组合与满足资源约束的可行集。",
+        "known": [
+          "当前预算m或总时间；价格px、py或每项活动的资源耗用。",
+          "变量单位与决策时点；是否可分割、可退款。"
+        ],
+        "unknown": [
+          "哪些组合可行、位于边界或超出约束？",
+          "沿边界增加一种用途，要放弃多少另一用途？"
+        ],
+        "relations": [
+          "px·x+py·y≤m，x,y≥0。",
+          "截距m/px、m/py；预算线斜率−px/py。"
+        ],
+        "derivation": [
+          "先统一单位，再把各项资源使用相加。",
+          "令另一数量为零求截距；整理等式求资源交换率。",
+          "对单个参数变动比较A/B；同比例计价变换通过两边同除验证。"
+        ],
+        "counterexample": [
+          "整数商品、最低采购量与额外时间限制会改变三角形可行集。",
+          "可退票不是纯沉没成本；过去付款可能改变当前财富，但不能重复扣款。"
+        ],
+        "uncertainty": "我仍不确定：有没有遗漏有价值的休息或其他约束？最佳被放弃方案是什么？把自己的问题留在模块笔记。"
+      }
+    },
+    {
+      "id": "M02",
+      "title": "偏好不是效用数字",
+      "centralQuestion": "公式是在表达排序，还是在创造偏好？",
+      "prerequisites": [
+        "M01"
+      ],
+      "modelCard": {
+        "object": "同一决策者对确定性组合的比较关系，及其序数表示。",
+        "known": [
+          "非负组合(x,y)；给定CD、线性或1:1互补偏好。",
+          "当前使用u还是在非负域的u²表示。"
+        ],
+        "unknown": [
+          "两个组合的排序、无差别集合。",
+          "光滑内点处愿意以y交换x的局部比率。"
+        ],
+        "relations": [
+          "严格递增g保留u的大小与相等关系。",
+          "光滑内点且MUy≠0：MRS=MUx/MUy；曲线斜率=−MRS。",
+          "CD：MRS=[α/(1−α)]y/x。"
+        ],
+        "derivation": [
+          "先比较组合，再给排序数值标签。",
+          "用同一组组合检验u与u²的排序不变。",
+          "沿等值集合令du=0，推出局部斜率，并检查可微性与域。"
+        ],
+        "counterexample": [
+          "平方跨正负数不保序；负号反转排序；改变α可改变偏好。",
+          "互补拐角没有唯一MRS；风险期望效用不能套任意递增变换。"
+        ],
+        "uncertainty": "我仍不确定：现实比较是否符合该偏好假设？我的困惑来自排序、标签还是局部变化？"
+      }
+    },
+    {
+      "id": "M03",
+      "title": "最优选择如何长成需求",
+      "centralQuestion": "怎样从约束与偏好推出选择，再推出需求关系？",
+      "prerequisites": [
+        "M01",
+        "M02"
+      ],
+      "modelCard": {
+        "object": "给定条件下的最优组合或集合；固定其余条件的自身价格—数量关系。",
+        "known": [
+          "m、px、py与偏好参数；价格严格为正。",
+          "哪一个条件被改变，哪些保持不变。"
+        ],
+        "unknown": [
+          "最优(x,y)或最优集合，支出与可达到的偏好水平。",
+          "各个px对应的最优x；需求关系怎样随条件改变。"
+        ],
+        "relations": [
+          "CD正预算：预算用完且MRS=px/py，得到x*=αm/px、y*=(1−α)m/py。",
+          "线性比较a/px与b/py；并列时预算边界为最优集合。",
+          "互补：x=y=m/(px+py)；需求由同一求解器逐价扫描。"
+        ],
+        "derivation": [
+          "先定义优化问题，再判断内点、角点、拐角与退化。",
+          "适用时联立预算与边际条件；最后检查可行性和全局性。",
+          "每个价格重新优化，保持其余条件固定，区分沿关系移动与整条关系变化。"
+        ],
+        "counterexample": [
+          "线性角点、整段并列与互补拐角不依赖唯一光滑相切。",
+          "零预算只有原点；总价格效应不能未经补偿直接叫替代效应。",
+          "现实价格与销量的共变不自动识别固定条件下的需求。"
+        ],
+        "uncertainty": "我仍不确定：哪个前提支持这个解？是否漏了边界或多解？哪些结论来自模型，哪些需要现实证据？"
+      }
+    },
+    {
+      "id": "M04",
+      "title": "企业：技术、成本与供给的来源",
+      "centralQuestion": "技术如何变成成本，成本又如何约束运营选择？",
+      "prerequisites": [
+        "M01",
+        "M03"
+      ],
+      "modelCard": {
+        "object": "本期价格接受企业、生产投入可行集与短期产量选择。",
+        "known": [
+          "生产技术、投入机会成本；短期哪些投入固定、哪些费用不可避免。",
+          "C(q)=F+cq+dq²/2，F≥0,c≥0,d>0，外生p≥0；数字synthetic。"
+        ],
+        "unknown": [
+          "最佳产量q、收入、经济利润、MC以及正产量下的AC和AVC。",
+          "生产相对停产的增量贡献；长期退出仍需要另加条件。"
+        ],
+        "relations": [
+          "生产函数给可行产出，成本最小化以投入价格评价可行方法。",
+          "MC=c+dq；q>0时AC=F/q+c+dq/2，AVC=c+dq/2。",
+          "π=pq−F−cq−dq²/2；q*=max(0,(p−c)/d)；π(0)=−F。"
+        ],
+        "derivation": [
+          "先区分固定其他投入的边际产出与同比例改变全部投入的规模报酬。",
+          "以q=√L、劳动价w为例，将L=q²转换为成本，令d=2w。",
+          "由完整利润问题取正产量内部候选并检查q0边界，再比较π(q*)与π(0)。"
+        ],
+        "counterexample": [
+          "边际产出递减可与规模报酬不变同时成立；技术不变而投入价格变仍改变成本。",
+          "仅运营时付的固定开机费会改变π(0)，MC相同也可能改变运营选择。",
+          "零经济利润仍有正常机会回报；短期负利润不决定长期是否退出。"
+        ],
+        "uncertainty": "我仍不确定：费用是否可避免、机会成本是否遗漏、连续技术是否合适、未来退出条件是什么？将这些缺失信息写入自己的模型卡笔记。"
+      }
+    },
+    {
+      "id": "M05",
+      "title": "市场：均衡是相互兼容",
+      "centralQuestion": "如何使各自最优的买卖计划兼容，又如何区分静态解与调整过程？",
+      "prerequisites": [
+        "M03",
+        "M04"
+      ],
+      "modelCard": {
+        "object": "指定边界内的同质商品竞争市场、同价数量计划与清算。",
+        "known": [
+          "n家同型价格接受企业，c,d及不可避免F；市场需求A,B给定。",
+          "Qd=max(0,A−Bp)，Qs=n·max(0,(p−c)/d)；n本期外生、无容量上限。",
+          "每次反事实明确单个冲击及固定条件；全部参数synthetic。"
+        ],
+        "unknown": [
+          "内生均衡价格、总交易量、单家产量与利润。",
+          "零交易分支与可能价格区间；动态路径未由静态模型决定。"
+        ],
+        "relations": [
+          "同价下水平加总数量，竞争均衡还需个体最优与Qs=Qd。",
+          "正交易区域p*=(dA+nc)/(n+dB)，Q*=n(A−Bc)/(n+dB)。",
+          "稳定性需额外规则；示例p下一期=p+λ超额需求，其局部误差乘数1−λ(B+n/d)。"
+        ],
+        "derivation": [
+          "统一商品、时间与数量单位，先算个体供给再同价加总。",
+          "联立行为关系与清算条件，代回检查价格区域、两侧数量和每家最佳选择。",
+          "对A、c、n或F逐项比较，区分移动哪条关系与沿哪条关系；另说明时间规则缺失。"
+        ],
+        "counterexample": [
+          "价格限制产生短缺，成交与受益者需要配给规则。",
+          "价量同升可由需求关系移动引起，不能据两点识别需求斜率。",
+          "同一静态交点可因调价步长不同而稳定或发散；长期n内生需进入退出模型。"
+        ],
+        "uncertainty": "我仍不确定：市场边界是否漏掉替代供给、顾客冲击如何识别、现实如何定价、哪些调整需更长时间？"
+      }
+    },
+    {
+      "id": "M06",
+      "title": "弹性、税收与福利",
+      "centralQuestion": "怎样从双方响应推税负，并把交易收益、财政转移与价值判断分开？",
+      "prerequisites": [
+        "M03",
+        "M05"
+      ],
+      "modelCard": {
+        "object": "线性竞争部分均衡市场中单位税的两端价格、交易与货币剩余。",
+        "known": [
+          "Pb=A−Bq，Ps=C+Dq；A>C≥0,B,D>0，τ≥0；参数synthetic。",
+          "无外部性或其他扭曲、税完整执行；福利采用可加总货币剩余口径。",
+          "财政用途、征收成本与收入分配权重未建模；无交易不声称唯一成交价。"
+        ],
+        "unknown": [
+          "q0、税后q、正交易时Pb与Ps、需求弹性、买卖双方负担。",
+          "CS、PS、税收及DWL；公平评价需要额外标准。"
+        ],
+        "relations": [
+          "q=max(0,(A−C−τ)/(B+D))，q0=(A−C)/(B+D)；有交易时Pb−Ps=τ。",
+          "正价正量需求弹性εd=−Pb/(Bq)；买方价增加Bτ/(B+D)，卖方净价减少Dτ/(B+D)。",
+          "CS=Bq²/2、PS=Dq²/2、T=τq；DWL=(B+D)(q0−q)²/2。"
+        ],
+        "derivation": [
+          "先用百分比响应区分弹性与带单位斜率，检查零交易和局部条件。",
+          "联立两端行为与税楔，检查截断；换法定缴纳方但保持同一假设后结果不变。",
+          "分别核算消费者、生产者与财政，税收只加回一次，再与无税基准总剩余对账。"
+        ],
+        "counterexample": [
+          "线性需求斜率恒定但弹性随点变化，局部收入响应不等于利润变化。",
+          "τ≥A−C时交易0、税收0，无唯一实际成交价。",
+          "负外部性会改变社会成本基准；总剩余更高不保证每个人获益或公平。"
+        ],
+        "uncertainty": "我仍不确定：收入效应是否显著、有哪些未计价损害、税如何执行及使用、谁需要补偿、哪些参数需要现实识别？"
+      }
+    },
+    {
+      "id": "M07",
+      "title": "市场力量、数字产品与创新",
+      "centralQuestion": "复制成本很低时，为什么仍不能只看边际成本？",
+      "prerequisites": [
+        "M04",
+        "M05",
+        "M06"
+      ],
+      "modelCard": {
+        "object": "单一定价企业的条件运营选择、相同资源成本的静态配置对照，以及明示的需求和创新扩展。",
+        "known": [
+          "P=a−bQ，a>c≥0、b>0；成本F+cQ。",
+          "统一单价、固定投入决策时点、市场边界与资源剩余口径。"
+        ],
+        "unknown": [
+          "Qm、Pm、收入、CS、利润、扣F后的资源剩余和DWL。",
+          "F是否可避免，网络反馈、群体定价和研发激励需要哪些新增关系。"
+        ],
+        "relations": [
+          "TR=aQ−bQ²，MR=a−2bQ；条件运营MR=c。",
+          "Qm=(a−c)/(2b)，Qc=(a−c)/b；净资源剩余=(a−c)Q−bQ²/2−F。",
+          "AC=F/Q+c与需求侧网络效应分开，静态选择没有自动证明动态创新。"
+        ],
+        "derivation": [
+          "从总收入推MR，再用二阶条件核对条件运营最优。",
+          "给竞争和垄断扣相同固定资源成本，核对CS+利润及失去交易。",
+          "另列进入、差异化、歧视、网络与研发所需条件，不将参数改变冒充新机制。"
+        ],
+        "counterexample": [
+          "F尚可避免且运营收益不足时应比较不进入，不能沿用沉没成本运营结论。",
+          "兼容、多归属与拥堵使网络规模不自动决定永久单一赢家。"
+        ],
+        "uncertainty": "我仍不确定：固定投入何时可避免？需求是否受网络、替代品和进入改变？创新激励需要哪些现实证据？"
+      }
+    },
+    {
+      "id": "M08",
+      "title": "策略互动与规则",
+      "centralQuestion": "个人最佳选择为何可能共同形成坏结果？",
+      "prerequisites": [
+        "M02",
+        "M05"
+      ],
+      "modelCard": {
+        "object": "同时行动的2×2个人收益矩阵、所有纯策略最佳回应与Nash，以及另行限定的协调和重复机制。",
+        "known": [
+          "每格先行后列的收益、行动含义、共同信息和同时选择时序。",
+          "规则改动的支付者、发现条件与执行方式；重复例的δ、终止与观察假设。"
+        ],
+        "unknown": [
+          "各条件下全部最佳回应和纯均衡集合，包括并列及空集合。",
+          "哪些结果Pareto改善、哪类障碍需要协调、承诺或信息工具。"
+        ],
+        "relations": [
+          "按列比较行收益，按行比较列收益；弱不等式保留全部并列。",
+          "Nash禁止有利单边偏离；Pareto允许共同改变且要求无人变差。",
+          "指定无限重复完全观察例3/(1−δ)≥5+δ/(1−δ)，合作激励δ≥1/2。"
+        ],
+        "derivation": [
+          "枚举四格，分别标记双方回应再求交集。",
+          "以默认、协调、正反面三例核对1、2、0个纯均衡。",
+          "规则明确进入收益、行动或信息，动态条件另立且检查惩罚可信性。"
+        ],
+        "counterexample": [
+          "Pareto较差的DD或BB仍可为Nash，收益总和不替代个人回应。",
+          "无纯均衡不否定混合均衡；有限终期或隐藏行动不可直接套无限重复条件。"
+        ],
+        "uncertainty": "我仍不确定：收益漏了哪些对象？偏离能否被观察，惩罚是否可信，低收益结果来自协调还是激励障碍？"
+      }
+    },
+    {
+      "id": "M09",
+      "title": "外部性、公共品与制度选择",
+      "centralQuestion": "哪些影响没有进入决策者的账本？",
+      "prerequisites": [
+        "M06",
+        "M08"
+      ],
+      "modelCard": {
+        "object": "未内部化的外部损害、私人和社会数量，以及按使用特征分类后的可行制度比较。",
+        "known": [
+          "MB=A−Bq，PMC=C+Dq，边际外部损害eq；明确受影响者和单位。",
+          "容量、排除技术、权利、信息、执行成本和福利及分配标准。"
+        ],
+        "unknown": [
+          "q0、qs、纠正税、政策量和需求积分减生产成本及损害的净收益。",
+          "税、配额、协商与共同供给能否实现目标，实际资源和分配代价是什么。"
+        ],
+        "relations": [
+          "SMC=C+(D+e)q；W=(A−C)q−(B+D+e)q²/2。",
+          "qs=(A−C)/(B+D+e)，τ*=e·qs；税收只是转移。",
+          "公共品分别核对非竞争和非排他；共同g处ΣMBi(g)=MC(g)。"
+        ],
+        "derivation": [
+          "先找第三方影响及未内部化路径，再补社会边际成本。",
+          "从净收益一阶条件推出社会量，将该量的边际损害作为理想税楔。",
+          "比较具有相同信息和执行限制的制度，补充资源成本并单列分配。"
+        ],
+        "counterexample": [
+          "e0退回无外部性；错误或过高税不保证福利改善。",
+          "政府供给不等于公共品；拥堵、隐藏信息、政治激励和执行代价改变制度效果。"
+        ],
+        "uncertainty": "我仍不确定：损害能否量测？是否漏了拥堵和执行资源成本？不同权利及价值标准怎样改变工具选择？"
+      }
+    },
+    {
+      "id": "M10",
+      "title": "风险、信息与激励",
+      "centralQuestion": "结果随机与别人知道更多，各改变了哪一步选择？",
+      "prerequisites": [
+        "M02",
+        "M03",
+        "M08"
+      ],
+      "modelCard": {
+        "object": "两状态彩票偏好；隐藏类型下的买方报价与卖方参与；合同中的隐藏行动。",
+        "known": [
+          "状态财富和概率、√w风险效用；质量类型、价值、保留价值及比例。",
+          "谁在何时拥有信息；全部参与初始信念、等号接受约定和认证费。"
+        ],
+        "unknown": [
+          "EW、EU、CE与风险溢价，保险的成本比较。",
+          "逐轮报价、参与池和认证净收益；需检验的激励条件。"
+        ],
+        "relations": [
+          "EU=Σpu(w)，CE=u⁻¹(EU)，风险溢价EW−CE。",
+          "风险效用只在正仿射变换下保证一般彩票排序不变。",
+          "报价按参与池条件价值；P≥st时接受，认证后vt−f≥st。"
+        ],
+        "derivation": [
+          "区分状态财富平均与状态效用平均，再反求CE。",
+          "按信息时间线形成报价，比较各类型退出阈值，再更新参与信念。",
+          "单独核算认证或信号成本，分别检验参与和激励相容。"
+        ],
+        "counterexample": [
+          "退化彩票无风险溢价；平方风险效用可改变彩票排序。",
+          "初始信念迭代不证明唯一均衡；质量不可见不必让全部交易消失。",
+          "隐藏努力需要新行动模型，可伪造认证不自动支持分离。"
+        ],
+        "uncertainty": "我仍不确定：概率和类型比例从何得到，参与池是否可见，合同会怎样改变努力或模仿？哪些是待检验证据？"
+      }
+    },
+    {
+      "id": "M11",
+      "title": "劳动、资本与跨期选择",
+      "centralQuestion": "时间与日期进入预算后，哪些选择条件沿用，哪些必须重建？",
+      "prerequisites": [
+        "M03",
+        "M04",
+        "M10"
+      ],
+      "modelCard": {
+        "object": "个人劳动与闲暇分配、企业用工及工资制度；两期消费与借贷。",
+        "known": [
+          "T、工资、非劳动收入和闲暇权重；两期收入、r、β与借贷限制。",
+          "效用的正域；企业是否价格接受、统一工资或议价。"
+        ],
+        "unknown": [
+          "劳动、闲暇、消费及不工作边界。",
+          "两期消费、资产头寸与绑定借贷边界；工资形成需另联立市场。"
+        ],
+        "relations": [
+          "c+wℓ≤wT+V，n=T−ℓ；内点ℓ=λ(T+V/w)。",
+          "两期c1+c2/(1+r)≤W；自由解c1=W/(1+β)，c2=β(1+r)W/(1+β)。",
+          "禁借款c1≤y1；统一工资w(n)的边际支出w(n)+n·w′(n)。"
+        ],
+        "derivation": [
+          "由时间与货币预算消去工时，求候选再检查ℓ≤T。",
+          "从每期资源预算消去储蓄，区分交换率r与偏好β。",
+          "求自由借贷候选，再在限制下处理边界；效用域无可行方案则明确报告。"
+        ],
+        "counterexample": [
+          "高非劳动收入可使劳动为零，候选闲暇不能超过T。",
+          "当期零收入且禁借款使log域无可行正消费。",
+          "买方力量、议价、借存利差与额度限制需要改变模型。"
+        ],
+        "uncertainty": "我仍不确定：现实收入与授信是否给定，哪些技术任务互补，工资由何种制度形成，调整成本与风险是否遗漏？"
+      }
+    },
+    {
+      "id": "M12",
+      "title": "贸易、整体与证据",
+      "centralQuestion": "模型怎样连接多个市场，并接受现实反事实与证据的检验？",
+      "prerequisites": [
+        "M05",
+        "M06"
+      ],
+      "modelCard": {
+        "object": "两经济体劳动、生产与贸易消费；一份可审查的机制分析及现实因果问题。",
+        "known": [
+          "劳动资源、各商品单位劳动、指定相对价格和贸易量。",
+          "报告中的数据性质、市场边界、行为假设、评价标准与识别条件。"
+        ],
+        "unknown": [
+          "机会成本、严格互利区间与守恒消费组合。",
+          "分配和补偿需额外结构；现实效果需可信无改变反事实。"
+        ],
+        "relations": [
+          "PPF：ax·x+ay·y≤L；x机会成本ax/ay。",
+          "tradeY=p·tradeX；世界消费等于世界生产，进出口互抵。",
+          "因果效应概念Y(1)−Y(0)；模型计算与经验识别分别提供依据。"
+        ],
+        "derivation": [
+          "比较相对机会成本，推出候选价格区间并核对双方库存。",
+          "计算消费点与各自无贸易边界，区分机会扩大与具体个人福利。",
+          "完成基准、两独立反事实、一反例和替代机制；记录参数供他人复现。",
+          "用独立rubric审查概念、推导、假设、复现、边界和表达，列仍未知的证据。"
+        ],
+        "counterexample": [
+          "相同机会成本无严格互利区间，运输与转岗成本可改变净利得。",
+          "总收益不保证每人受益或补偿执行；指定价格不是整体均衡解。",
+          "前后相关可能来自混杂、样本构成或同期冲击；模拟不替代因果识别。"
+        ],
+        "uncertainty": "我仍不确定：还有哪条替代机制能解释相同结果，什么证据会推翻我的判断，谁承担成本，规范标准是否已经明说？"
+      }
+    }
+  ],
+  "terms": [
+    {
+      "id": "scarcity",
+      "term": "稀缺",
+      "lessonIds": [
+        "M01-A"
+      ]
+    },
+    {
+      "id": "opportunity-cost",
+      "term": "机会成本",
+      "lessonIds": [
+        "M01-A",
+        "M01-B"
+      ]
+    },
+    {
+      "id": "sunk-cost",
+      "term": "沉没成本",
+      "lessonIds": [
+        "M01-A"
+      ]
+    },
+    {
+      "id": "feasible-set",
+      "term": "可行集",
+      "lessonIds": [
+        "M01-A",
+        "M01-B",
+        "M03-A"
+      ]
+    },
+    {
+      "id": "budget-line",
+      "term": "预算线",
+      "lessonIds": [
+        "M01-B",
+        "M03-A"
+      ]
+    },
+    {
+      "id": "relative-price",
+      "term": "相对价格",
+      "lessonIds": [
+        "M01-B",
+        "M02-B",
+        "M03-A"
+      ]
+    },
+    {
+      "id": "preference",
+      "term": "偏好",
+      "lessonIds": [
+        "M02-A",
+        "M02-B",
+        "M03-A"
+      ]
+    },
+    {
+      "id": "ordinal-utility",
+      "term": "序数效用",
+      "lessonIds": [
+        "M02-A",
+        "M03-A"
+      ]
+    },
+    {
+      "id": "monotone-transformation",
+      "term": "严格递增变换",
+      "lessonIds": [
+        "M02-A"
+      ]
+    },
+    {
+      "id": "indifference-curve",
+      "term": "无差异曲线",
+      "lessonIds": [
+        "M02-A",
+        "M02-B",
+        "M03-A"
+      ]
+    },
+    {
+      "id": "mrs",
+      "term": "边际替代率",
+      "lessonIds": [
+        "M02-B",
+        "M03-A"
+      ]
+    },
+    {
+      "id": "interior-corner-kink",
+      "term": "内点 / 角点 / 拐角",
+      "lessonIds": [
+        "M02-B",
+        "M03-A"
+      ]
+    },
+    {
+      "id": "perfect-substitutes",
+      "term": "完全替代",
+      "lessonIds": [
+        "M02-B",
+        "M03-A",
+        "M03-B"
+      ]
+    },
+    {
+      "id": "perfect-complements",
+      "term": "完全互补",
+      "lessonIds": [
+        "M02-B",
+        "M03-A"
+      ]
+    },
+    {
+      "id": "optimal-set",
+      "term": "最优选择 / 最优集合",
+      "lessonIds": [
+        "M03-A",
+        "M03-B"
+      ]
+    },
+    {
+      "id": "demand",
+      "term": "需求",
+      "lessonIds": [
+        "M03-B"
+      ]
+    },
+    {
+      "id": "comparative-statics",
+      "term": "比较静态",
+      "lessonIds": [
+        "M03-B"
+      ]
+    },
+    {
+      "id": "income-substitution-effects",
+      "term": "收入效应与替代效应",
+      "lessonIds": [
+        "M03-B"
+      ]
+    },
+    {
+      "id": "production-function",
+      "term": "生产函数",
+      "lessonIds": [
+        "M04-A"
+      ]
+    },
+    {
+      "id": "marginal-product",
+      "term": "边际产出",
+      "lessonIds": [
+        "M04-A"
+      ]
+    },
+    {
+      "id": "returns-to-scale",
+      "term": "规模报酬",
+      "lessonIds": [
+        "M04-A"
+      ]
+    },
+    {
+      "id": "short-long-run",
+      "term": "短期 / 长期",
+      "lessonIds": [
+        "M04-A",
+        "M04-B",
+        "M05-B"
+      ]
+    },
+    {
+      "id": "economic-profit",
+      "term": "经济利润 / 会计利润",
+      "lessonIds": [
+        "M04-B",
+        "M05-A"
+      ]
+    },
+    {
+      "id": "fixed-variable-cost",
+      "term": "固定成本 / 可变成本",
+      "lessonIds": [
+        "M04-B",
+        "M05-B"
+      ]
+    },
+    {
+      "id": "marginal-average-cost",
+      "term": "边际成本 / 平均成本",
+      "lessonIds": [
+        "M04-A",
+        "M04-B"
+      ]
+    },
+    {
+      "id": "shutdown-exit",
+      "term": "停产 / 退出",
+      "lessonIds": [
+        "M04-B",
+        "M05-B"
+      ]
+    },
+    {
+      "id": "supply",
+      "term": "供给",
+      "lessonIds": [
+        "M04-B",
+        "M05-A"
+      ]
+    },
+    {
+      "id": "market-aggregation",
+      "term": "市场加总",
+      "lessonIds": [
+        "M05-A"
+      ]
+    },
+    {
+      "id": "competitive-equilibrium",
+      "term": "竞争均衡",
+      "lessonIds": [
+        "M05-A",
+        "M05-B"
+      ]
+    },
+    {
+      "id": "market-boundary",
+      "term": "市场边界",
+      "lessonIds": [
+        "M05-A"
+      ]
+    },
+    {
+      "id": "stability",
+      "term": "动态稳定性",
+      "lessonIds": [
+        "M05-B"
+      ]
+    },
+    {
+      "id": "elasticity",
+      "term": "弹性",
+      "lessonIds": [
+        "M06-A",
+        "M06-B"
+      ]
+    },
+    {
+      "id": "income-cross-elasticity",
+      "term": "收入弹性 / 交叉价格弹性",
+      "lessonIds": [
+        "M06-A"
+      ]
+    },
+    {
+      "id": "tax-wedge",
+      "term": "税楔",
+      "lessonIds": [
+        "M06-B"
+      ]
+    },
+    {
+      "id": "tax-incidence",
+      "term": "税负归宿",
+      "lessonIds": [
+        "M06-B"
+      ]
+    },
+    {
+      "id": "consumer-producer-surplus",
+      "term": "消费者剩余 / 生产者剩余",
+      "lessonIds": [
+        "M06-B"
+      ]
+    },
+    {
+      "id": "deadweight-loss",
+      "term": "无谓损失",
+      "lessonIds": [
+        "M06-B"
+      ]
+    },
+    {
+      "id": "efficiency-equity",
+      "term": "效率 / 公平",
+      "lessonIds": [
+        "M06-B"
+      ]
+    },
+    {
+      "id": "market-power",
+      "term": "市场力量",
+      "lessonIds": [
+        "M07-A",
+        "M07-B"
+      ]
+    },
+    {
+      "id": "marginal-revenue",
+      "term": "边际收益",
+      "lessonIds": [
+        "M07-A"
+      ]
+    },
+    {
+      "id": "markup",
+      "term": "加价",
+      "lessonIds": [
+        "M07-A"
+      ]
+    },
+    {
+      "id": "fixed-resource-cost",
+      "term": "固定资源成本",
+      "lessonIds": [
+        "M07-A",
+        "M07-B"
+      ]
+    },
+    {
+      "id": "scale-economies",
+      "term": "规模经济",
+      "lessonIds": [
+        "M07-B"
+      ]
+    },
+    {
+      "id": "network-effects",
+      "term": "网络效应",
+      "lessonIds": [
+        "M07-B"
+      ]
+    },
+    {
+      "id": "product-differentiation",
+      "term": "产品差异化",
+      "lessonIds": [
+        "M07-B"
+      ]
+    },
+    {
+      "id": "price-discrimination",
+      "term": "价格歧视",
+      "lessonIds": [
+        "M07-B"
+      ]
+    },
+    {
+      "id": "strategic-game",
+      "term": "策略博弈",
+      "lessonIds": [
+        "M08-A"
+      ]
+    },
+    {
+      "id": "best-response",
+      "term": "最佳回应",
+      "lessonIds": [
+        "M08-A",
+        "M08-B"
+      ]
+    },
+    {
+      "id": "dominant-strategy",
+      "term": "占优策略",
+      "lessonIds": [
+        "M08-A"
+      ]
+    },
+    {
+      "id": "nash-equilibrium",
+      "term": "Nash均衡",
+      "lessonIds": [
+        "M08-A",
+        "M08-B"
+      ]
+    },
+    {
+      "id": "pareto-improvement",
+      "term": "Pareto改进",
+      "lessonIds": [
+        "M08-A",
+        "M08-B"
+      ]
+    },
+    {
+      "id": "coordination-game",
+      "term": "协调博弈",
+      "lessonIds": [
+        "M08-B"
+      ]
+    },
+    {
+      "id": "credible-commitment",
+      "term": "可信承诺",
+      "lessonIds": [
+        "M08-B"
+      ]
+    },
+    {
+      "id": "repeated-interaction",
+      "term": "重复互动",
+      "lessonIds": [
+        "M08-B"
+      ]
+    },
+    {
+      "id": "externality",
+      "term": "外部性",
+      "lessonIds": [
+        "M09-A"
+      ]
+    },
+    {
+      "id": "social-marginal-cost",
+      "term": "社会边际成本",
+      "lessonIds": [
+        "M09-A"
+      ]
+    },
+    {
+      "id": "corrective-tax",
+      "term": "纠正税",
+      "lessonIds": [
+        "M09-A",
+        "M09-B"
+      ]
+    },
+    {
+      "id": "property-rights",
+      "term": "产权与使用权规则",
+      "lessonIds": [
+        "M09-A",
+        "M09-B"
+      ]
+    },
+    {
+      "id": "public-good",
+      "term": "公共品",
+      "lessonIds": [
+        "M09-B"
+      ]
+    },
+    {
+      "id": "common-resource",
+      "term": "共有资源",
+      "lessonIds": [
+        "M09-B"
+      ]
+    },
+    {
+      "id": "free-riding",
+      "term": "搭便车",
+      "lessonIds": [
+        "M09-B"
+      ]
+    },
+    {
+      "id": "government-failure",
+      "term": "政府失灵",
+      "lessonIds": [
+        "M09-B"
+      ]
+    },
+    {
+      "id": "expected-value",
+      "term": "期望",
+      "lessonIds": [
+        "M10-A",
+        "M10-B"
+      ]
+    },
+    {
+      "id": "expected-utility",
+      "term": "期望效用",
+      "lessonIds": [
+        "M10-A"
+      ]
+    },
+    {
+      "id": "risk-aversion",
+      "term": "风险厌恶",
+      "lessonIds": [
+        "M10-A"
+      ]
+    },
+    {
+      "id": "certainty-equivalent",
+      "term": "确定性等价与风险溢价",
+      "lessonIds": [
+        "M10-A"
+      ]
+    },
+    {
+      "id": "adverse-selection",
+      "term": "逆向选择",
+      "lessonIds": [
+        "M10-B"
+      ]
+    },
+    {
+      "id": "moral-hazard",
+      "term": "道德风险",
+      "lessonIds": [
+        "M10-A",
+        "M10-B"
+      ]
+    },
+    {
+      "id": "signaling",
+      "term": "信号与认证",
+      "lessonIds": [
+        "M10-B"
+      ]
+    },
+    {
+      "id": "incentive-compatibility",
+      "term": "参与约束与激励相容",
+      "lessonIds": [
+        "M10-B"
+      ]
+    },
+    {
+      "id": "leisure-choice",
+      "term": "劳动—闲暇选择",
+      "lessonIds": [
+        "M11-A"
+      ]
+    },
+    {
+      "id": "monopsony",
+      "term": "买方市场力量",
+      "lessonIds": [
+        "M11-A"
+      ]
+    },
+    {
+      "id": "intertemporal-budget",
+      "term": "跨期预算",
+      "lessonIds": [
+        "M11-B"
+      ]
+    },
+    {
+      "id": "discounting",
+      "term": "现值与偏好贴现",
+      "lessonIds": [
+        "M11-B"
+      ]
+    },
+    {
+      "id": "borrowing-constraint",
+      "term": "借贷约束",
+      "lessonIds": [
+        "M11-B"
+      ]
+    },
+    {
+      "id": "comparative-advantage",
+      "term": "比较优势",
+      "lessonIds": [
+        "M12-A",
+        "M12-B"
+      ]
+    },
+    {
+      "id": "general-equilibrium",
+      "term": "一般均衡",
+      "lessonIds": [
+        "M12-A",
+        "M12-B"
+      ]
+    },
+    {
+      "id": "causal-identification",
+      "term": "因果识别",
+      "lessonIds": [
+        "M12-B"
+      ]
+    }
+  ]
+}

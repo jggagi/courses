@@ -1,0 +1,93 @@
+import { test, expect } from "@playwright/test";
+import { readFile, mkdir } from "node:fs/promises";
+import path from "node:path";
+import { createInitialState, MAX_IMPORT_BYTES, STORAGE_KEY, validateLearningState } from "../../src/persistence/store";
+
+test("工作台真正按需加载，全文搜索与课程深链接可用", async ({ page }) => {
+  const requested: string[] = [];
+  page.on("request", request => requested.push(request.url()));
+  await page.goto("/#/");
+  await expect(page.getByRole("heading", { name: "从选择，到市场与制度。" })).toBeVisible();
+  expect(requested.filter(url => /(?:lessons|modules04to06|modules07to09|modules10to12|glossary-data)[.-]/.test(url))).toEqual([]);
+  await page.getByRole("link", { name: "搜索", exact: true }).click();
+  await page.getByLabel("搜索词", { exact: true }).fill("M08");
+  await page.getByRole("button", { name: "搜索", exact: true }).click();
+  await expect(page.getByRole("region", { name: "搜索结果" })).toContainText("2 项结果");
+  expect(requested.filter(url => /(?:lessons|modules04to06|modules07to09|modules10to12)[.-]/.test(url))).toEqual([]);
+  await page.getByLabel("检索范围").selectOption("full");
+  await page.getByLabel("搜索词", { exact: true }).fill("拉格朗日");
+  await page.getByRole("button", { name: "搜索", exact: true }).click();
+  const results = page.getByRole("region", { name: "搜索结果" });
+  await expect(results).toContainText("M03-A");
+  await results.getByRole("link", { name: /M03-A/ }).click();
+  await expect(page.getByLabel("本节学习笔记")).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("最优点");
+  await page.goto("/#/lesson/M99-A");
+  await expect(page.getByRole("heading", { name: "没有可学习的这节课" })).toBeVisible();
+});
+
+test("笔记模型卡下载为纯文本，打印展开模型卡并保留完整笔记", async ({ page }) => {
+  await page.goto("/#/lesson/M01-B");
+  const note = "<script>window.pwned=true</script>" + "预算与单位的私人练习。\n".repeat(50);
+  await page.getByLabel("本节学习笔记").fill(note);
+  const event = page.waitForEvent("download");
+  await page.getByRole("button", { name: "导出本节笔记与模型卡" }).click();
+  const file = await event;
+  const text = await readFile((await file.path())!, "utf8");
+  expect(text).toContain(note); expect(text).toContain("预算线斜率");
+  await page.evaluate(() => { window.print = () => { (window as Window & { printed?: boolean }).printed = true; }; });
+  await page.getByRole("button", { name: "打印本节与笔记", exact: true }).click();
+  expect(await page.evaluate(() => (window as Window & { printed?: boolean }).printed)).toBe(true);
+  await expect(page.locator(".print-value").filter({ hasText: note })).toHaveCount(1);
+  await expect(page.locator("main details:not([open])")).toHaveCount(0);
+  await page.emulateMedia({ media: "print" });
+  await expect(page.locator(".print-value").filter({ hasText: note })).toBeVisible();
+  await expect(page.locator("header")).toBeHidden();
+  const pdf = await page.pdf({ format: "A4", printBackground: true });
+  expect(pdf.byteLength).toBeGreaterThan(10000);
+  await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
+  await expect(page.locator(".print-value")).toHaveCount(0);
+  expect(await page.evaluate(() => (window as Window & { pwned?: boolean }).pwned)).toBeUndefined();
+});
+
+test("手机新工具入口与搜索结果无横向溢出，键盘可查找", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto("/#/search");
+  await page.getByLabel("搜索词", { exact: true }).focus();
+  await page.keyboard.insertText("收入效应");
+  await page.keyboard.press("Enter");
+  await expect(page.getByRole("region", { name: "搜索结果" })).toContainText("收入效应");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+  expect(await page.locator("main").evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+  await mkdir(path.resolve(import.meta.dirname, "../../../artifacts"), { recursive: true });
+  await page.screenshot({ path: path.resolve(import.meta.dirname, "../../../artifacts/learning-search-mobile.png") });
+});
+
+test("学习记录满额时练习显示错误并保留可导入的原备份", async ({ page }) => {
+  const at = "2026-10-04T00:00:00.000Z";
+  const state = createInitialState(at);
+  state.lastLessonId = "M01-B"; state.lessonStates["M01-B"] = "in_progress";
+  const attempts = Array.from({ length: 1000 }, () => ({ answer: "", correct: false, at }));
+  state.objectiveAttempts["M01-A-number"] = attempts;
+  const bytes = () => Buffer.byteLength(JSON.stringify(state, null, 2));
+  const padding = Math.floor((MAX_IMPORT_BYTES - bytes()) / attempts.length);
+  attempts.forEach(attempt => { attempt.answer = "a".repeat(padding); });
+  attempts[0].answer += "a".repeat(MAX_IMPORT_BYTES - bytes());
+  expect(bytes()).toBe(MAX_IMPORT_BYTES); expect(validateLearningState(state).ok).toBe(true);
+  const original = JSON.stringify(state);
+  await page.addInitScript(({ key, value }) => { localStorage.setItem(key, value); }, { key: STORAGE_KEY, value: original });
+  await page.goto("/#/lesson/M01-B");
+  const numeric = page.locator('.checks .check:has(input[type="number"])');
+  await numeric.getByRole("spinbutton").fill("0");
+  await numeric.getByRole("button", { name: "检查答案" }).click();
+  await expect(page.getByRole("alert")).toContainText("1 MiB");
+  expect(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY)).toBe(original);
+  await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  await page.goto("/#/records");
+  const event = page.waitForEvent("download");
+  await page.getByRole("button", { name: "导出 JSON", exact: true }).click();
+  const file = await event, output = await readFile((await file.path())!, "utf8");
+  expect(Buffer.byteLength(output)).toBe(MAX_IMPORT_BYTES);
+  expect(validateLearningState(JSON.parse(output)).ok).toBe(true);
+});

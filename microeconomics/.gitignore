@@ -1,0 +1,10 @@
+app/node_modules/
+app/dist/
+app/.vite/
+app/coverage/
+app/test-results/
+app/playwright-report/
+app/.cache/
+*.local
+exports/
+*learning-record*.json
