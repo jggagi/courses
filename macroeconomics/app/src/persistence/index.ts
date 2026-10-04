@@ -124,9 +124,15 @@ const MEMORY_NOTICE =
   "浏览器存储不可用：记录仅保存在当前页面内存中，关闭页面后将丢失。";
 const PROTECTED_NOTICE =
   "本课原记录未被自动覆盖。请显式导入有效的宏观文件，或确认后清空本课记录。";
+const CONFLICT_NOTICE =
+  "其他页面已修改本课记录，原记录未被覆盖。当前页面的修改仅保留在内存中。请先导出当前 JSON，再刷新以读取最新记录；核对两份记录后再决定是否导入替换。";
 const MAX_TEXT_LENGTH = 20_000;
 const MAX_AMOUNT = 1_000_000_000;
 const fallbackByStorage = new WeakMap<LocalStorageLike, LearningState>();
+const fallbackNoticeByStorage = new WeakMap<LocalStorageLike, string>();
+/** Each page observes its own version; localStorage can change in another tab. */
+const observedRawByStorage = new WeakMap<LocalStorageLike, string | null>();
+const unreadableStorage = new WeakSet<LocalStorageLike>();
 let fallbackWithoutStorage: LearningState | null = null;
 
 function clone<T>(value: T): T {
@@ -639,11 +645,17 @@ export function validateState(input: unknown): LearningState {
   return result;
 }
 
+function serializeValidatedState(canonical: LearningState): string {
+  const readable = JSON.stringify(canonical, null, 2);
+  if (new TextEncoder().encode(readable).byteLength <= MAX_IMPORT_BYTES)
+    return readable;
+  // Validation/import use compact UTF-8 size. Formatting must not make a valid
+  // near-limit record impossible to save or export again.
+  return JSON.stringify(canonical);
+}
+
 export function exportState(state: LearningState): string {
-  const json = JSON.stringify(validateState(state), null, 2);
-  if (new TextEncoder().encode(json).byteLength > MAX_IMPORT_BYTES)
-    fail("学习记录超过1 MiB；请减少笔记或历史尝试后再导出。");
-  return json;
+  return serializeValidatedState(validateState(state));
 }
 
 export function importState(json: string): LearningState {
@@ -667,9 +679,15 @@ function fallback(storage: StorageAccess): LearningState {
     : fallbackWithoutStorage;
   return saved ? clone(saved) : initialState();
 }
-function remember(storage: StorageAccess, state: LearningState): void {
-  if (storage) fallbackByStorage.set(storage, clone(state));
-  else fallbackWithoutStorage = clone(state);
+function remember(
+  storage: StorageAccess,
+  state: LearningState,
+  notice = MEMORY_NOTICE,
+): void {
+  if (storage) {
+    fallbackByStorage.set(storage, clone(state));
+    fallbackNoticeByStorage.set(storage, notice);
+  } else fallbackWithoutStorage = clone(state);
 }
 
 export function loadState(storage: StorageAccess): LoadResult {
@@ -683,25 +701,39 @@ export function loadState(storage: StorageAccess): LoadResult {
   try {
     raw = storage.getItem(STORAGE_KEY);
   } catch {
+    unreadableStorage.add(storage);
     return {
       state: fallback(storage),
       notice: MEMORY_NOTICE,
       protected: false,
     };
   }
-  if (raw === null)
+  if (raw === null) {
+    if (!fallbackByStorage.has(storage)) {
+      observedRawByStorage.set(storage, raw);
+      unreadableStorage.delete(storage);
+    }
     return {
       state: fallbackByStorage.has(storage)
         ? fallback(storage)
         : initialState(),
-      notice: fallbackByStorage.has(storage) ? MEMORY_NOTICE : "",
+      notice: fallbackByStorage.has(storage)
+        ? fallbackNoticeByStorage.get(storage) || MEMORY_NOTICE
+        : "",
       protected: false,
     };
+  }
   try {
     const state = importState(raw);
+    if (!fallbackByStorage.has(storage)) {
+      observedRawByStorage.set(storage, raw);
+      unreadableStorage.delete(storage);
+    }
     return {
       state: fallbackByStorage.has(storage) ? fallback(storage) : state,
-      notice: fallbackByStorage.has(storage) ? MEMORY_NOTICE : "",
+      notice: fallbackByStorage.has(storage)
+        ? fallbackNoticeByStorage.get(storage) || MEMORY_NOTICE
+        : "",
       protected: false,
     };
   } catch (error) {
@@ -721,7 +753,7 @@ export function saveState(
   let json: string;
   try {
     canonical = validateState(state);
-    json = exportState(canonical);
+    json = serializeValidatedState(canonical);
   } catch (error) {
     return {
       ok: false,
@@ -737,10 +769,15 @@ export function saveState(
   try {
     raw = storage.getItem(STORAGE_KEY);
   } catch {
+    unreadableStorage.add(storage);
     remember(storage, canonical);
     return { ok: false, notice: MEMORY_NOTICE };
   }
-  if (raw !== null) {
+  if (
+    raw !== null &&
+    (!observedRawByStorage.has(storage) ||
+      observedRawByStorage.get(storage) !== raw)
+  ) {
     try {
       importState(raw);
     } catch (error) {
@@ -750,9 +787,25 @@ export function saveState(
       };
     }
   }
+  if (
+    (observedRawByStorage.has(storage) &&
+      observedRawByStorage.get(storage) !== raw) ||
+    (!observedRawByStorage.has(storage) &&
+      unreadableStorage.has(storage) &&
+      raw !== null)
+  ) {
+    remember(storage, canonical, CONFLICT_NOTICE);
+    return { ok: false, notice: CONFLICT_NOTICE };
+  }
+  // A caller may save a valid record without first calling loadState. The first
+  // successful read establishes its version; later writes must match it.
+  observedRawByStorage.set(storage, raw);
+  unreadableStorage.delete(storage);
   try {
     storage.setItem(STORAGE_KEY, json);
+    observedRawByStorage.set(storage, json);
     fallbackByStorage.delete(storage);
+    fallbackNoticeByStorage.delete(storage);
     return { ok: true, notice: "" };
   } catch {
     remember(storage, canonical);
@@ -762,11 +815,16 @@ export function saveState(
 
 /** Only this course's namespace is removed. Confirmation belongs to the UI. */
 export function clearState(storage: StorageAccess): SaveResult {
-  if (storage) fallbackByStorage.delete(storage);
-  else fallbackWithoutStorage = null;
+  if (storage) {
+    fallbackByStorage.delete(storage);
+    fallbackNoticeByStorage.delete(storage);
+    observedRawByStorage.delete(storage);
+    unreadableStorage.delete(storage);
+  } else fallbackWithoutStorage = null;
   if (!storage) return { ok: false, notice: MEMORY_NOTICE };
   try {
     storage.removeItem(STORAGE_KEY);
+    observedRawByStorage.set(storage, null);
     return { ok: true, notice: "" };
   } catch {
     return {
