@@ -1,77 +1,82 @@
-# 宏观经济学完整课程交付
+# 宏观经济学完整课程与复习交付
 
-日期：2026-10-03。用户在首期及私人 Sites 发布后，明确要求“完成设计全部课程”，本次扩展完成 `CURRICULUM.md` 中全部12模块、24节课程和 `LABS.md` 中9个实验。根目录与微观课程未修改。独立分支为 `codex/macroeconomics-complete`，未合并。
+2026-10-04。用户在全部设计课程交付后要求“全部完成”后续改进。本轮完成24课逐节审校、本地复习、手机阅读与实验参数引导、按模块加载、独立PR审阅及可运行的无障碍验证。课程为A01–A12共24节、LA01–LA09共9实验、96道原课反馈练习、115词条、7来源和终课作品；没有未实现课页。
 
-本轮验收代码与测试 commit：`c3067eb6220eaa9a5e3c98c7fb48dfade05c8736`。其后的提交只补入交付说明、最终截图和站点发布记录。原首期记录保留在 [DELIVERY_PHASE1.md](DELIVERY_PHASE1.md)。
+仅修改`macroeconomics/`。沿用独立分支`codex/macroeconomics-complete`及[草稿PR #4](https://github.com/jggagi/courses/pull/4)，没有合并。原完整课程交付保留在[DELIVERY_COMPLETE_INITIAL.md](DELIVERY_COMPLETE_INITIAL.md)，首期历史见[DELIVERY_PHASE1.md](DELIVERY_PHASE1.md)。
 
-## 实现范围
+## 验收提交与实际执行
 
-- A01-A–A12-B：24节均为 `learnable`，没有未实现课页。每节七步主线、按需进阶、定义/单位/假设、推导、数值例、反例、参考来源及四道练习，共96道。解释与迁移使用rubric自评；数值题有单位/容差，选择题有逐干扰项反馈。
-- 115个局部概念词条、7个来源入口；12模块模型卡、笔记、预测、概念信心与客观尝试。阅读或翻页不自动标记掌握。
-- LA01–LA03保留账本、GDP三侧、价格/数量核算。LA04加入资本/劳动总量与每工人过渡、固定技术稳态、技术水平和趋势分离；LA05加入短期支出均衡、调整过程和逐期非计划存货核算。
-- LA06按过去利率和预期递推缺口、通胀、预期及当期利率，提供需求/成本冲击与无冲击基准、不稳定路径警告。LA07逐笔发放、跨行支付、偿还、历史债权减值，完整展示两银行六客户及分户，支持重放撤销。
-- LA08精确复算名义债务额与债务率，区分期初利息、当期GDP初级赤字和净资产状态。LA09从原始生产/支出/跨境收入求NX、YD、S、CA、净外部资产与汇率，拒绝矛盾账目，不把贬值直接当贸易改善。
-- 9个实验均可保存/跳过预测、运行、冻结A、比较B、键盘输入、数字表、重置和写解释。非法参数不覆盖已保存输入或A；重置实验保留学习文字。
-- 终课作品工作台：七段报告、不确定性清单、至少两个可选模型、名义—实际转换、银行账表、原始合成参数、敏感性与六项自评。支持私人文本与学习JSON显式导出。各模型分别比较，未冒充整合且已校准的宏观系统。
+完整集成源与测试提交：`abb467517c01dd22cb24b4a8f0f72a86cea7fc62`。实跑类型检查、376单元、独立内容52、生产构建/加载测试，以及完整Chromium **41/41（2.8分钟）**。
 
-## 状态、数据与隐私
+最终源码提交：`f02ae396d2634bde8f0547d76c1a03e8ddb7e2c0`。末次只补强输入错误提示与当前答案/尝试的关联；其后实际重跑类型、376单元、生产构建/加载与受影响的6个原课/复习场景，**6/6（19秒）**通过。后续仓库提交只补交付文档和发布记录。
 
-沿用 `courses:macroeconomics:v1` 和schemaVersion1。严格接受首期六课/三实验/无capstone的完整旧结构，保留既有数据并增加18课、6实验和终课默认状态；不把残缺或混杂结构当作合法迁移。新版校验全部A/B原始参数与事件并复算，拒绝另一门课程、未知版本、非法模型、缓存图结果和危险字段。笔记与自评字典最多600项，文件仍最多1MiB；已实际验证228条完整笔记、UTF8容量和坏记录保护。
-
-全部默认数字为教学合成 `synthetic`，以第0期起的合成时期标注；没有当前国家数据、真实经济体校准、市场或政策预测。应用无后台、账号、遥测、LLM判卷、外链预取或云同步，学习记录仅存当前浏览器origin。私人Sites只提供访问控制与静态托管，不接收学习记录。
-
-## 实际执行
-
-环境：Node24.19.0、npm11.9.0、Chromium151.0.7922.173。命令在 `macroeconomics/app/`：
+环境Node24.19.0、npm11.9.0、Playwright1.63.0、系统Chromium151.0.7922.173。锁定依赖的`npm ci --cache /tmp/macroeconomics-npm`成功安装53包；仅新增本地axe开发测试依赖，没有新增运行时依赖。
 
 ```bash
-npm ci --cache /tmp/macroeconomics-npm --fetch-retries=0
-npm run dev
+cd macroeconomics/app
+npm ci
 npm run typecheck
 npm test
 npm run test:content
 npm run build
+npm run test:production
 npm run test:e2e
+# 最后反馈补强后的相关重测
+npm run test:e2e -- objective-format.spec.ts refinements.spec.ts
 ```
 
 | 检查 | 实际结果 |
 | --- | --- |
-| 安装 | `npm ci`成功，51个包；无新增运行时依赖，锁文件沿用 |
-| 类型检查 | 源码和全部测试通过 |
-| 单元与合同 | 6文件、322项通过：模型189、状态81、内容52 |
-| 独立内容检查 | 52项通过；24可学课、0规划占位，所有定义/课/实验/来源无悬空 |
-| 生产构建 | 成功，47模块，JS650.98kB/gzip219.33kB、CSS9.77kB/gzip3.12kB |
-| Chromium E2E | 全部25项通过；包含原首期12项和新增13项 |
-| Git检查 | `git diff --check`通过，仓库改动全部位于macroeconomics/ |
+| 单元/合同 | 9文件376项：模型189、原状态81、内容52、PR保护6、复习43、导航/状态/全课答案/异步内容/公式5 |
+| 独立内容 | 52项通过；24课七步路径、四题/课、来源/概念/实验一致；另核对全部24个数值答案的独立固定oracle |
+| Chromium | 全套41项通过：原25、兼容/无障碍7、参数与长表3、复习与自评4、统一答案格式与草稿2 |
+| 无障碍 | 13个代表页面本地axe WCAG A/AA扫描无发现；390px键盘、具名图/数字替代、局部表滚动、减少动画通过 |
+| 生产 | 74模块；入口353.94kB/gzip117.04kB、主要CSS11.56kB/gzip3.56kB，无500kB单包警告 |
+| 加载行为 | 真实生产浏览器首页JS合计354811字节；首页不加载正文，先后只进入A01/A12时仅加载这两个正文模块；LA06与复习正常，无外部请求/未捕获错误 |
+| Git | `git diff --check`通过；所有仓库改动仅在macroeconomics/ |
 
-生产构建提示单个JS块超过500kB，因为全课程中文正文和纯模型随应用离线可读地加载；这是体积提示，构建成功。未声称验证其他浏览器或所有辅助技术。
+入口相比先前650.98kB降低约45.6%；gzip从219.33kB到117.04kB。此为产物及请求证据，不声称测量了低端手机的加载时间。正文十二模块、实验、复习和终课工作台分别按需加载，没有后台教材预取。
 
-浏览器覆盖24课的预测/自评/错误再正确反馈；9实验独立数值oracle、A/B冻结、撤销、负存货投资、政策滞后、准备金拒付/负权益、债务零GDP边界、经常账户与汇率；旧结构自动恢复、新输入往返、坏基准保护、228条笔记；终课七段报告/模型选择/敏感性/TXT及JSON往返；390px和1440px键盘路径、局部横向表滚动与减少动画。用例监听外部请求与未捕获异常，均无发现。
+## 教学与功能
 
-最终错误提示统一使用界面百分数（GDP增长须高于−100%），之后再次执行完整E2E；先前测试期发现的税后消费oracle误写与提示匹配均已修正，未把失败当作通过。
+逐课发现与修订见[基础与增长12课审校](TEACHING_REVIEW_FOUNDATIONS.md)和[政策与开放12课审校](TEACHING_REVIEW_POLICY.md)。修正过时规划提示、赤字重复计息、公共投资/G/储蓄口径、利率单位、客户净值、终课默认数值与组合敏感性说明，补充可复算推导和反例；原96题ID、答案与容差未变。正文现位于`app/src/content/modules/A01.ts`至`A12.ts`，轻量目录与正文一致性有异步测试约束。
 
-## 截图与模型边界
+`/#/review`按每题最新追加的原始答案重新核对，不相信导入的correct标记；正确重做移出待复习，保留尝试与误解笔记。陈旧/错课/无法核实历史明确展示。六道原创迁移练习连接十二模块，参考数字复用现有纯内核；解释由学习者自评。十二张模型卡复用原七字段，改写取消旧自评。回原课可直接聚焦题目/展开模型卡。细节见[REVIEW_FEATURES.md](REVIEW_FEATURES.md)。
 
-以下5张来自独立测试浏览器，均只含合成测试文字，已实际查看桌面、手机和错误态：
+手机目录默认收起，键盘展开/选课后关闭并进入正文；公式分行、上下标、保留可访问原式。九实验提供单位、允许域与教学建议的区别，特别说明小数/百分数/百分点；长表具名且可聚焦，局部双向滚动，保留表头/首列。终课明确分别比较模型及六项组合强度，合法输入即时复算。
 
-- [桌面终课作品](app/tests/screenshots/complete-desktop-capstone.png)
-- [桌面开放经济](app/tests/screenshots/complete-desktop-la09.png)
-- [手机增长路径](app/tests/screenshots/complete-mobile-la04.png)
-- [手机终课作品](app/tests/screenshots/complete-mobile-capstone.png)
-- [债务非法增长错误态](app/tests/screenshots/complete-error-la08.png)
+## 本地记录与审阅修复
 
-每个模型界面及正文标明对象、单位、外生参数、机制、结论与失效边界。LA04零资本为吸收状态，正稳态只是基准；技术持续增长没有固定A稳态。LA05未建模期初库存下限，负库存流量须有可售库存，不能证明其现实可行。LA06局部稳定性判据适用于未触及利率下限的线性部分，有限前缀不伪造未来值。LA07银行减值不是免除客户合同债务，支付假定当期使用或转移，不增加实物资产；准备金发行方仍在边界之外。LA08省略估值、汇率、救助等调整，负净负债明确解释为净资产。LA09略去资本账户与其他调整，不估计贸易价格弹性。推导与修正详见 [IMPLEMENTATION_NOTES.md](IMPLEMENTATION_NOTES.md)。
+[独立代码审阅](PR_REVIEW.md)记录原PR问题和修复。安全解析损坏hash；原课/复习共用严格十进制及选项核对；预测/笔记草稿形成“学习中”证据，客观重做不降低已自评状态，编辑自由回答取消该题旧自评，重置不显示旧反馈；旧信心4/5仍有匹配显示。
 
-完整设计的课程与实验已实现。未加入实时数据、预测平台、AI导师、登录后台或自动上传。后续可根据学习反馈改进内容和交互，不宣称现实模型已经校准。
+沿用`courses:macroeconomics:v1`/schema1，复习使用notes/selfChecks命名键，无顶层迁移破坏。旧六课/三实验结构严格迁移，全部九实验A/B重新核对，坏记录保护。接近1MiB上限的合法JSON改用紧凑编码，导入/保存/导出统一容量。另一标签已保存不同原文时拒绝覆盖，当前草稿仍可导出；真实两标签场景通过，不自动合并私人笔记。
 
-## 原私人 Site 已更新
+500+500个合成事件的独立Node保存样本从约210ms降为68.5ms，仅说明减少重复复算。大量事件仍同步重放，原文比较不是数据库事务。没有延迟保存、跨设备同步、后台、遥测、LLM判卷或实时国家数据。全部经济例子仍为教学合成；详细模型边界见[IMPLEMENTATION_NOTES.md](IMPLEMENTATION_NOTES.md)。
 
-地址：[https://macroeconomics-phase1-jggagi.jggagi.chatgpt.site](https://macroeconomics-phase1-jggagi.jggagi.chatgpt.site)。沿用同一 Site，访问权限仍为 owner-only，未扩大分享范围。原生发布结果 `succeeded`，无失败信息；管理标题已改为“宏观经济学 · 完整课程”。
+## 截图
 
-- Project ID：`appgprj_6ac116886a9081919efc64bfd0f76696`。
-- Sites 源代码 commit：`428c9108af4b09e385fe2f54d1cc9d7aebfc676e`，已确认远端同一分支指向该提交。
-- 保存版本：`appgprj_6ac116886a9081919efc64bfd0f76696~appgver_716401101788819188a1e7a95729c4ee`。
-- 部署：`appgdep_6ac1247d5d0c819183ab0f2d5feaabe9`；成功时间：2026-10-03T15:51:39.852809+00:00。
-- 发布包只含 `.openai/hosting.json`、`dist/index.html`、本地资源与图标。发布副本再次通过类型检查与生产构建，JS SHA-256 与上文验收产物完全一致：`faacd3473c19adda305f3257ac986c0cc46b618aa4fb4c30233ea661361f2b86`。
+隔离测试只使用教学测试文字；本轮生成并实际查看：
 
-当前执行环境未提供 Sites 配套本地脚本，沿用此前等价的本地 Git 同步、检查与静态打包流程，并用原生 Sites 工具发布。复用同一 project，不创建替代站点、不新增登录/数据服务，不上传任何学习记录。只依据原生成功返回验证发布，未声称额外线上浏览器测试。原地址的用户记录仍在同一 origin，可直接升级恢复。
+- [桌面复习](app/tests/screenshots/refinements-desktop-review.png)
+- [手机正文与折叠菜单](app/tests/screenshots/refinements-mobile-lesson.png)
+- [公式上下标](app/tests/screenshots/refinements-formula.png)
+
+完整套件同时更新原实验、手机、终课及错误态截图。没有提交实际学习者的私人笔记或导出。
+
+## 未完成的环境验证
+
+**Firefox和WebKit未验证**：真实尝试官方安装，当前网络策略在`cdn.playwright.dev`及`playwright.download.prss.microsoft.com`返回HTTP403/Domain forbidden，宿主无这些浏览器；实际启动也因可执行文件缺失失败。没有换镜像或绕过策略。三引擎配置和七条代表路径已保留，可在允许官方安装且满足依赖的环境运行`npm run test:compat`；证据见[BROWSER_REVIEW.md](BROWSER_REVIEW.md)。
+
+LinuxWebKit不能替代真实Safari。axe、ARIA和键盘不等于VoiceOver/NVDA或真实学习者试用；本轮没有这些条件，没有把专家式审校说成人类用户研究。
+
+## 原私人Site更新
+
+复用`app/.openai/hosting.json`的原项目，原地址与私人访问范围保留，记录仍在同一浏览器origin。原生发布已于2026-10-04T02:32:29.626208+00:00返回`succeeded`，地址为[宏观经济学 · 完整课程](https://macroeconomics-phase1-jggagi.jggagi.chatgpt.site)。
+
+- 项目：`appgprj_6ac116886a9081919efc64bfd0f76696`；访问保持owner-only。
+- Site源码：`6dd3b5d6b8e1f1c8a0425f906b8f410259bdee49`，来自验收源码`f02ae396d2634bde8f0547d76c1a03e8ddb7e2c0`。
+- 版本：第3版，`appgprj_6ac116886a9081919efc64bfd0f76696~appgver_76b7bbcffe388191a84594f0a54b9ebd`。
+- 发布：`appgdep_6ac1baaf5c148191af989db17ac7ef54`，原生成功，无新增数据服务。
+- Site独立源码检查、构建和生产加载测试通过；打包的28个文件SHA-256与本地验收dist逐一相同，入口JS SHA-256为`a9347a3c60f9ebd98cefa50ecc85083d67c1d1995a9b8822894512fbaa07f29c`。
+
+当前环境仍没有Sites配套本地脚本，复用已记录的等价本地Git同步/检查/静态打包流程，并用原生Sites工具发布。没有以请求生产页面代替原生发布验证，没有上传学习记录。

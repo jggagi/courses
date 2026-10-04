@@ -48,3 +48,7 @@ npm run test:compat
 ```
 
 `test:compat`明确选择三个引擎；`test:e2e`保持只用Chromium完整套件，Firefox/WebKit仅配置新增代表测试。若设置 `PLAYWRIGHT_BROWSERS_PATH`，安装与测试必须使用同一路径。失败时完整本地axe结果写入忽略目录 `app/test-results/**/local-axe-audit.json`，不包含真实学习记录。
+
+## 最终集成复测
+
+本次源码与测试集成提交`abb467517c01dd22cb24b4a8f0f72a86cea7fc62`实跑完整Chromium41/41，其中本报告七条全部通过。13个代表页面（含复习）axe WCAG扫描无发现，原浅色小字已修正；两标签保存冲突、手机键盘目录及损坏hash均通过。随后仅补强输入反馈关联的最终源码`f02ae396d2634bde8f0547d76c1a03e8ddb7e2c0`，重跑受影响六场景、376单元、类型与生产加载验证均通过。具体命令、产物和范围见DELIVERY.md。Firefox/WebKit、真实Safari与真实读屏验证仍受上述限制，未计入通过数量。
