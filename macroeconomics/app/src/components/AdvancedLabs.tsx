@@ -17,9 +17,24 @@ import { simulatePolicy } from "../models/policy";
 import { replayCreditEvents, type CreditEvent } from "../models/credit";
 import { simulateDebt } from "../models/debt";
 import { calculateExternal } from "../models/external";
-import { SeriesChart } from "./Charts";
+import { SeriesChart, TableReadingHelp, TableScroll } from "./Charts";
+import { parameterGuidance } from "./parameterGuidance";
 
 const clone = <T,>(value: T): T => JSON.parse(JSON.stringify(value));
+const creditEventNames: Record<CreditEvent["type"], string> = {
+  loan: "发放贷款",
+  payment: "跨行支付",
+  repayment: "偿还本金",
+  loss: "确认历史贷款损失",
+};
+const customerNames: Record<string, string> = {
+  historicalDepositorA: "A银行原有存款人",
+  historicalBorrowerA: "A银行历史借款人",
+  historicalDepositorB: "B银行原有存款人",
+  historicalBorrowerB: "B银行历史借款人",
+  newBorrower: "A银行新增借款人",
+  recipient: "B银行收款人",
+};
 export const formatNumber = (value: unknown, scale = 1) =>
   typeof value === "number" && Number.isFinite(value * scale)
     ? Number((value * scale).toFixed(8)).toString()
@@ -247,13 +262,13 @@ function DataTable({
   label: string;
 }) {
   return (
-    <div className="table-scroll" tabIndex={0}>
+    <TableScroll label={`${label}表格滚动区域`}>
       <table data-testid={`${id.toLowerCase()}-results`}>
         <caption>{label} · 原始参数复算；A/B单位与口径相同</caption>
         <thead>
           <tr>
             {view.columns.map((c) => (
-              <th key={c.key}>
+              <th key={c.key} scope="col">
                 {c.label}
                 {c.unit && <small>（{c.unit}）</small>}
               </th>
@@ -277,7 +292,7 @@ function DataTable({
           ))}
         </tbody>
       </table>
-    </div>
+    </TableScroll>
   );
 }
 export default function AdvancedLabs({
@@ -433,6 +448,36 @@ export default function AdvancedLabs({
           <p key={t}>{t}</p>
         ))}
       </details>
+      <details className="panel parameter-guidance">
+        <summary>参数怎么改 · 建议试验与允许范围</summary>
+        <h2>做一组可解释的 A/B 对照</h2>
+        <p>{parameterGuidance[id].comparison}</p>
+        <p>
+          “设A为当前情景”会冻结当前有效参数。随后只改B，先一次改一个因素；
+          组合冲击留到单项机制看清之后。预设按钮从默认参数构造B，
+          若要保留自己改过的其他参数，请直接编辑对应格子。
+        </p>
+        <h3>建议从哪里开始</h3>
+        <p>{parameterGuidance[id].suggested}</p>
+        <h3>允许范围与联合约束</h3>
+        <p>
+          下列范围是模型约束，不是现实中的合理区间。所有输入须为有限数字；
+          各项分别合法后，完整情景仍须满足账表、非负消费等联合约束。
+          极端情景可能超出可推演范围，请结合错误或稳定性提示检查。
+        </p>
+        <dl className="parameter-range-list">
+          {Object.entries(parameterGuidance[id].fields).map(([key, help]) => (
+            <div key={key}>
+              <dt>
+                {fields.find((field) => field.key === key)?.label ?? "事件金额"}
+              </dt>
+              <dd>{help.allowed}</dd>
+            </div>
+          ))}
+        </dl>
+      </details>
+      <p className="parameter-unit-note">{parameterGuidance[id].unitNote}</p>
+      <TableReadingHelp />
       <section className="panel">
         <h2>先预测，再运行</h2>
         <label>
@@ -473,20 +518,27 @@ export default function AdvancedLabs({
       {fields.length > 0 && (
         <section className="panel">
           <h2>原始参数 · 只改变 B 实验</h2>
-          <div className="parameter-grid">
-            {fields.map((f) => (
-              <label key={f.key}>
-                {f.label}（{f.unit}）
-                <input
-                  aria-label={f.label}
-                  type="number"
-                  step="any"
-                  value={draft[f.key] ?? ""}
-                  onChange={(e) => edit(f, e.target.value)}
-                />
-              </label>
-            ))}
-          </div>
+          <fieldset className="parameter-fieldset">
+            <legend>B实验 · 可编辑参数</legend>
+            <div className="parameter-grid">
+              {fields.map((f) => (
+                <label key={f.key}>
+                  {f.label}（{f.unit}）
+                  <input
+                    aria-label={f.label}
+                    aria-describedby={`${id}-${f.key}-help`}
+                    type="number"
+                    step="any"
+                    value={draft[f.key] ?? ""}
+                    onChange={(e) => edit(f, e.target.value)}
+                  />
+                  <span className="parameter-help" id={`${id}-${f.key}-help`}>
+                    {parameterGuidance[id].fields[f.key].meaning}
+                  </span>
+                </label>
+              ))}
+            </div>
+          </fieldset>
         </section>
       )}
       <div className="button-row">
@@ -627,11 +679,15 @@ export default function AdvancedLabs({
             事件金额（货币单位）
             <input
               aria-label="银行事件金额"
+              aria-describedby="LA07-amount-help"
               type="number"
               step="0.01"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
             />
+            <span className="parameter-help" id="LA07-amount-help">
+              {parameterGuidance.LA07.fields.amount.meaning}
+            </span>
           </label>
           <div className="button-row">
             {(
@@ -672,7 +728,8 @@ export default function AdvancedLabs({
           <ol>
             {(value.input as CreditInput).events.map((e) => (
               <li key={e.id}>
-                第{e.sequence}笔 · {e.type} · {e.amount}（{e.id}）
+                第{e.sequence}笔 · {creditEventNames[e.type]} · {e.amount}
+                货币单位
               </li>
             ))}
           </ol>
@@ -705,15 +762,15 @@ export default function AdvancedLabs({
       {a && b && (
         <section className="panel" aria-label="实验结果">
           <h2>运行结果 · A/B 对照</h2>
-          <div className="table-scroll" tabIndex={0}>
+          <TableScroll label="A/B指标对照表格滚动区域">
             <table data-testid={`${id.toLowerCase()}-summary`}>
               <caption>同口径指标（未定义不替换为0）</caption>
               <thead>
                 <tr>
-                  <th>指标</th>
-                  <th>A基准</th>
-                  <th>B实验</th>
-                  <th>单位</th>
+                  <th scope="col">指标</th>
+                  <th scope="col">A基准</th>
+                  <th scope="col">B实验</th>
+                  <th scope="col">单位</th>
                 </tr>
               </thead>
               <tbody>
@@ -727,7 +784,7 @@ export default function AdvancedLabs({
                 ))}
               </tbody>
             </table>
-          </div>
+          </TableScroll>
           {b.warnings.map((w) => (
             <p role="alert" key={w}>
               {w}
@@ -844,23 +901,23 @@ function CreditDetails({ input }: { input: CreditInput }) {
   const r = replayCreditEvents(input.initial, input.events);
   return (
     <>
-      <div className="table-scroll" tabIndex={0}>
+      <TableScroll label="客户对手方表格滚动区域">
         <table>
           <caption>客户对手方 · 合同债务与银行净债权分开</caption>
           <thead>
             <tr>
-              <th>客户</th>
-              <th>银行</th>
-              <th>存款</th>
-              <th>合同贷款</th>
-              <th>其他资产</th>
-              <th>净值</th>
+              <th scope="col">客户</th>
+              <th scope="col">银行</th>
+              <th scope="col">存款</th>
+              <th scope="col">合同贷款</th>
+              <th scope="col">其他资产</th>
+              <th scope="col">净值</th>
             </tr>
           </thead>
           <tbody>
             {Object.entries(r.customers).map(([id, c]) => (
               <tr key={id}>
-                <th scope="row">{id}</th>
+                <th scope="row">{customerNames[id] ?? id}</th>
                 <td>{c.bank}</td>
                 <td>{c.deposit}</td>
                 <td>{c.loan}</td>
@@ -870,23 +927,23 @@ function CreditDetails({ input }: { input: CreditInput }) {
             ))}
           </tbody>
         </table>
-      </div>
+      </TableScroll>
       {(["A", "B"] as const).map((bank) => (
-        <div className="table-scroll" key={bank} tabIndex={0}>
+        <TableScroll label={`银行${bank}分项表格滚动区域`} key={bank}>
           <table>
             <caption>银行{bank}分项 · 不隐藏历史客户余额</caption>
             <thead>
               <tr>
-                <th>客户</th>
-                <th>存款负债</th>
-                <th>净贷款账面额</th>
-                <th>损失准备</th>
+                <th scope="col">客户</th>
+                <th scope="col">存款负债</th>
+                <th scope="col">净贷款账面额</th>
+                <th scope="col">损失准备</th>
               </tr>
             </thead>
             <tbody>
               {Object.keys(r[bank].deposits).map((customer) => (
                 <tr key={customer}>
-                  <th>{customer}</th>
+                  <th scope="row">{customerNames[customer] ?? customer}</th>
                   <td>{r[bank].deposits[customer] || 0}</td>
                   <td>{r[bank].loans[customer] || 0}</td>
                   <td>{r[bank].lossAllowances[customer] || 0}</td>
@@ -894,7 +951,7 @@ function CreditDetails({ input }: { input: CreditInput }) {
               ))}
             </tbody>
           </table>
-        </div>
+        </TableScroll>
       ))}
     </>
   );

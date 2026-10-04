@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { LearningState } from "../persistence";
 import {
   computeAccounts,
@@ -18,7 +18,13 @@ import type {
   LedgerState,
   PriceInput,
 } from "../models";
-import { ActivityFlow, SeriesChart, type FlowRow } from "./Charts";
+import {
+  ActivityFlow,
+  SeriesChart,
+  TableReadingHelp,
+  TableScroll,
+  type FlowRow,
+} from "./Charts";
 
 type LedgerInput = { initial: LedgerState; events: LedgerEvent[] };
 type Common<Input> = {
@@ -67,6 +73,7 @@ function NumberControl({
   min = 0,
   max,
   positive = false,
+  help,
   onChange,
   onError,
 }: {
@@ -75,10 +82,12 @@ function NumberControl({
   min?: number;
   max?: number;
   positive?: boolean;
+  help?: string;
   onChange: (value: number) => void;
   onError: (error: string | null) => void;
 }) {
   const [draft, setDraft] = useState(String(value));
+  const helpId = useId();
   useEffect(() => {
     setDraft(String(value));
   }, [value]);
@@ -86,6 +95,8 @@ function NumberControl({
     <label>
       {name}
       <input
+        aria-label={name}
+        aria-describedby={help ? helpId : undefined}
         type="number"
         step="any"
         min={min}
@@ -109,6 +120,11 @@ function NumberControl({
           onChange(parsed);
         }}
       />
+      {help && (
+        <span className="parameter-help" id={helpId}>
+          {help}
+        </span>
+      )}
     </label>
   );
 }
@@ -416,32 +432,32 @@ function LedgerLab({
       </p>
       <details className="details" open>
         <summary>期初账表：预测所需的已知条件</summary>
-        <div className="table-scroll" tabIndex={0}>
+        <TableScroll label="三部门期初表格滚动区域">
           <table>
             <caption>第0期期初存量（货币单位）；由保存的期初账表读取</caption>
             <thead>
               <tr>
-                <th>部门</th>
-                <th>资产</th>
-                <th>负债</th>
-                <th>净值／权益</th>
+                <th scope="col">部门</th>
+                <th scope="col">资产</th>
+                <th scope="col">负债</th>
+                <th scope="col">净值／权益</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <th>家庭 H</th>
+                <th scope="row">家庭 H</th>
                 <td>存款 {numberText(value.input.initial.H.deposit)}</td>
                 <td>0</td>
                 <td>{numberText(value.input.initial.H.netWorth)}</td>
               </tr>
               <tr>
-                <th>企业 F</th>
+                <th scope="row">企业 F</th>
                 <td>存款 {numberText(value.input.initial.F.deposit)}</td>
                 <td>贷款 {numberText(value.input.initial.F.loan)}</td>
                 <td>{numberText(value.input.initial.F.netWorth)}</td>
               </tr>
               <tr>
-                <th>银行 B</th>
+                <th scope="row">银行 B</th>
                 <td>
                   准备金 {numberText(value.input.initial.B.reserves)}；贷款{" "}
                   {numberText(value.input.initial.B.loanAsset)}
@@ -454,11 +470,27 @@ function LedgerLab({
               </tr>
             </tbody>
           </table>
-        </div>
+        </TableScroll>
       </details>
       <Prediction value={value} onChange={onChange} />
       <h3>B · 事件输入</h3>
-      <div className="controls">
+      <details className="details parameter-guidance">
+        <summary>怎么修改事件与金额</summary>
+        <p>
+          先按20／10／5运行默认三步，看清工资、消费与还本各自改变什么。
+          重置实验后可逐笔添加自己的事件；金额为货币单位，至少0.01且最多两位小数。
+          工资不得超过企业当前存款，服务购买不得超过家庭当前存款，
+          还本不得超过企业当前存款和贷款余额。
+        </p>
+        <p>
+          要比较两条路径，先把已运行路径设为A，再改变B的一笔交易。
+          每加一笔，核对新的余额；撤销最后一笔后，可以改金额再添加。
+          默认三步按钮重新建立示例路径，不是在原路径后追加三笔。
+        </p>
+      </details>
+      <TableReadingHelp />
+      <fieldset className="controls parameter-fieldset">
+        <legend>B实验 · 下一笔交易</legend>
         <label>
           交易类型
           <select
@@ -482,10 +514,11 @@ function LedgerLab({
           name="事件金额"
           value={amount}
           positive
+          help="货币单位；最多两位小数。金额的可行上限取决于所选交易及当前余额。"
           onChange={setAmount}
           onError={(error) => setErrors(error ? { amount: error } : {})}
         />
-      </div>
+      </fieldset>
       <div className="button-row">
         <button
           type="button"
@@ -581,26 +614,22 @@ function LedgerLab({
             </p>
           )}
           <h3>期初—变化—期末 · A/B 账表</h3>
-          <div
-            className="table-scroll"
-            tabIndex={0}
-            aria-label="三部门账表，可横向滚动"
-          >
+          <TableScroll label="三部门账表，可横向滚动">
             <table>
               <caption>存量为时点货币单位；变化来自本期事件</caption>
               <thead>
                 <tr>
-                  <th>部门／科目</th>
-                  <th>B 期初</th>
-                  <th>B 变化</th>
-                  <th>B 期末</th>
-                  <th>A 期末</th>
+                  <th scope="col">部门／科目</th>
+                  <th scope="col">B 期初</th>
+                  <th scope="col">B 变化</th>
+                  <th scope="col">B 期末</th>
+                  <th scope="col">A 期末</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map(([label, initial, end, baseline]) => (
                   <tr key={label}>
-                    <th>{label}</th>
+                    <th scope="row">{label}</th>
                     <td>{numberText(initial)}</td>
                     <td>{numberText(end - initial)}</td>
                     <td>{numberText(end)}</td>
@@ -609,23 +638,23 @@ function LedgerLab({
                 ))}
               </tbody>
             </table>
-          </div>
+          </TableScroll>
           <p className="notice">
             双边核对通过：H 存款 {numberText(b.H.deposit)}＝B 对 H 负债{" "}
             {numberText(b.B.depositH)}；F 存款 {numberText(b.F.deposit)}＝B 对 F
             负债 {numberText(b.B.depositF)}；F 贷款 {numberText(b.F.loan)}＝B
             贷款资产 {numberText(b.B.loanAsset)}。
           </p>
-          <div className="table-scroll" tabIndex={0}>
+          <TableScroll label="逐步账表校验滚动区域">
             <table>
               <caption>资产＝负债＋净值；每步均由事件重放验证</caption>
               <thead>
                 <tr>
-                  <th>时点／步骤</th>
-                  <th>H</th>
-                  <th>F</th>
-                  <th>B</th>
-                  <th>总存款</th>
+                  <th scope="col">时点／步骤</th>
+                  <th scope="col">H</th>
+                  <th scope="col">F</th>
+                  <th scope="col">B</th>
+                  <th scope="col">总存款</th>
                 </tr>
               </thead>
               <tbody>
@@ -638,7 +667,9 @@ function LedgerLab({
                     validateLedger(step);
                     return (
                       <tr key={count}>
-                        <th>{count === 0 ? "期初" : `第${count}步`}</th>
+                        <th scope="row">
+                          {count === 0 ? "期初" : `第${count}步`}
+                        </th>
                         <td>
                           {numberText(step.H.deposit)}＝0＋
                           {numberText(step.H.netWorth)}
@@ -660,18 +691,18 @@ function LedgerLab({
                 )}
               </tbody>
             </table>
-          </div>
-          <div className="table-scroll" tabIndex={0}>
+          </TableScroll>
+          <TableScroll label="收入支出表格滚动区域">
             <table>
               <caption>本期收入／支出与净值变化（货币单位／期）</caption>
               <thead>
                 <tr>
-                  <th>H 工资收入</th>
-                  <th>H 服务消费</th>
-                  <th>H 储蓄</th>
-                  <th>F 服务收入</th>
-                  <th>F 工资费用</th>
-                  <th>本金偿还</th>
+                  <th scope="col">H 工资收入</th>
+                  <th scope="col">H 服务消费</th>
+                  <th scope="col">H 储蓄</th>
+                  <th scope="col">F 服务收入</th>
+                  <th scope="col">F 工资费用</th>
+                  <th scope="col">本金偿还</th>
                 </tr>
               </thead>
               <tbody>
@@ -689,7 +720,7 @@ function LedgerLab({
                 </tr>
               </tbody>
             </table>
-          </div>
+          </TableScroll>
           <p>
             工资和服务购买是持有者之间的存款转移，也改变各自的收入、费用与净值。本金偿还使企业与银行的贷款两侧同减，银行存款负债也减少；它不是企业的消费费用，在这些假设下不改变双方净值。
           </p>
@@ -844,24 +875,24 @@ function AccountsLab({
       <details className="details" open>
         <summary>生产活动原始记录：预测所需的已知条件</summary>
         {check.result && (
-          <div className="table-scroll" tabIndex={0}>
+          <TableScroll label="生产源记录表格滚动区域">
             <table>
               <caption>
                 本国当期生产源记录（货币单位／期）；先自行判断如何消除中间投入
               </caption>
               <thead>
                 <tr>
-                  <th>生产者</th>
-                  <th>产出</th>
-                  <th>中间投入</th>
-                  <th>工资</th>
-                  <th>毛营业盈余</th>
+                  <th scope="col">生产者</th>
+                  <th scope="col">产出</th>
+                  <th scope="col">中间投入</th>
+                  <th scope="col">工资</th>
+                  <th scope="col">毛营业盈余</th>
                 </tr>
               </thead>
               <tbody>
                 {check.result.productionRows.map((row) => (
                   <tr key={row.id}>
-                    <th>{row.label}</th>
+                    <th scope="row">{row.label}</th>
                     <td>{numberText(row.output)}</td>
                     <td>{numberText(row.intermediate)}</td>
                     <td>{numberText(row.wages)}</td>
@@ -870,25 +901,48 @@ function AccountsLab({
                 ))}
               </tbody>
             </table>
-          </div>
+          </TableScroll>
         )}
       </details>
       <Prediction value={value} onChange={onChange} />
       <h3>B · 活动选择</h3>
-      <div className="controls">
+      <details className="details parameter-guidance">
+        <summary>怎么改变最终使用，保持核算口径</summary>
+        <p>
+          第一次只把本期未售存货从0改为20，先判断C和I如何变化，再运行。
+          下一次重置，只新增进口消费20：进口同时计入消费与进口扣除，
+          不会因此增加本国生产。建议先分开试存货、进口和机器，再组合。
+        </p>
+        <p>
+          这里金额以货币单位／期填写，最多两位小数；不能为负。
+          未售存货与出口各允许0到100，两者之和不能超过本期成品100。
+          前期存货销售另外受明确的期初库存约束。
+          先选活动分类，再看结果；分类可以修改，不作为解锁条件。
+        </p>
+      </details>
+      <TableReadingHelp />
+      <fieldset className="controls parameter-fieldset">
+        <legend>B实验 · 可变活动金额</legend>
         {numericControls.map((control) => (
           <NumberControl
             key={`${control.key}-${resetKey}`}
             name={control.name}
             value={value.input[control.key]}
             max={control.max}
+            help={
+              control.key === "inventory"
+                ? "当期生产但本期未售；从消费转入存货投资。"
+                : control.key === "exports"
+                  ? "本期成品中由国外使用的部分；与未售存货共用100的总量约束。"
+                  : "新增进口消费；同额计入C与M，国内生产不自动改变。"
+            }
             onChange={(number) => setInput({ [control.key]: number })}
             onError={(error) => setFieldError(control.key, error)}
           />
         ))}
-      </div>
+      </fieldset>
       <p className="muted">
-        s＋x 不得超过本期成品产出100；新增进口消费同时进入 C 和
+        本期未售存货＋出口不得超过本期成品产出100；新增进口消费同时进入 C 和
         M。期初存货下限约束独立于本期未售存货。
       </p>
       <div className="controls">
@@ -974,14 +1028,14 @@ function AccountsLab({
       {b && a.result && (
         <div data-testid="accounts-results">
           <h3>同一生产过程 · 三种核算</h3>
-          <div className="table-scroll" tabIndex={0}>
+          <TableScroll label="GDP三法对照表格滚动区域">
             <table>
               <caption>同口径的 A/B 结果（货币单位／期）</caption>
               <thead>
                 <tr>
-                  <th>方法／分项</th>
-                  <th>A 基准</th>
-                  <th>B 实验</th>
+                  <th scope="col">方法／分项</th>
+                  <th scope="col">A 基准</th>
+                  <th scope="col">B 实验</th>
                 </tr>
               </thead>
               <tbody>
@@ -1002,14 +1056,14 @@ function AccountsLab({
                   ] as const
                 ).map(([label, av, bv]) => (
                   <tr key={label}>
-                    <th>{label}</th>
+                    <th scope="row">{label}</th>
                     <td>{numberText(av)}</td>
                     <td>{numberText(bv)}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
-          </div>
+          </TableScroll>
           <p className="notice">
             生产 {numberText(b.production)}＝最终支出{" "}
             {numberText(b.expenditure)}＝工资 {numberText(b.wages)}＋毛营业盈余{" "}
@@ -1017,22 +1071,22 @@ function AccountsLab({
             包含中间投入与当期未售产出，不能直接相加作为 GDP；期末存货为{" "}
             {numberText(b.closingInventory)}。
           </p>
-          <div className="table-scroll" tabIndex={0}>
+          <TableScroll label="生产侧表格滚动区域">
             <table>
               <caption>生产侧：逐家消除中间投入</caption>
               <thead>
                 <tr>
-                  <th>生产者</th>
-                  <th>当期产出</th>
-                  <th>中间投入</th>
-                  <th>增加值</th>
-                  <th>来源</th>
+                  <th scope="col">生产者</th>
+                  <th scope="col">当期产出</th>
+                  <th scope="col">中间投入</th>
+                  <th scope="col">增加值</th>
+                  <th scope="col">来源</th>
                 </tr>
               </thead>
               <tbody>
                 {b.productionRows.map((row) => (
                   <tr key={row.id}>
-                    <th>{row.label}</th>
+                    <th scope="row">{row.label}</th>
                     <td>{numberText(row.output)}</td>
                     <td>{numberText(row.intermediate)}</td>
                     <td>{numberText(row.valueAdded)}</td>
@@ -1056,21 +1110,21 @@ function AccountsLab({
                 ))}
               </tbody>
             </table>
-          </div>
-          <div className="table-scroll" tabIndex={0}>
+          </TableScroll>
+          <TableScroll label="最终使用侧表格滚动区域">
             <table>
               <caption>最终使用侧：Y＝C＋I＋G＋X−M</caption>
               <thead>
                 <tr>
-                  <th>活动／分项</th>
-                  <th>金额</th>
-                  <th>记账解释／来源</th>
+                  <th scope="col">活动／分项</th>
+                  <th scope="col">金额</th>
+                  <th scope="col">记账解释／来源</th>
                 </tr>
               </thead>
               <tbody>
                 {b.expenditureRows.map((row) => (
                   <tr key={row.id}>
-                    <th>
+                    <th scope="row">
                       {row.label} · {row.component}
                     </th>
                     <td>{numberText(row.amount)}</td>
@@ -1095,23 +1149,23 @@ function AccountsLab({
                 ))}
               </tbody>
             </table>
-          </div>
-          <div className="table-scroll" tabIndex={0}>
+          </TableScroll>
+          <TableScroll label="收入侧表格滚动区域">
             <table>
               <caption>收入侧：来自生产者的明确科目</caption>
               <thead>
                 <tr>
-                  <th>生产者</th>
-                  <th>工资</th>
-                  <th>毛营业盈余</th>
-                  <th>合计</th>
-                  <th>来源</th>
+                  <th scope="col">生产者</th>
+                  <th scope="col">工资</th>
+                  <th scope="col">毛营业盈余</th>
+                  <th scope="col">合计</th>
+                  <th scope="col">来源</th>
                 </tr>
               </thead>
               <tbody>
                 {b.incomeRows.map((row) => (
                   <tr key={row.id}>
-                    <th>{row.label}</th>
+                    <th scope="row">{row.label}</th>
                     <td>{numberText(row.wages)}</td>
                     <td>{numberText(row.surplus)}</td>
                     <td>{numberText(row.total)}</td>
@@ -1135,24 +1189,24 @@ function AccountsLab({
                 ))}
               </tbody>
             </table>
-          </div>
+          </TableScroll>
           <ActivityFlow rows={activityFlowRows(b)} />
           <h3>活动来源与分类反馈</h3>
-          <div className="table-scroll" tabIndex={0}>
+          <TableScroll label="活动分类反馈表格滚动区域">
             <table>
               <caption>每个结果可追溯至原始活动（箭头的数字替代表）</caption>
               <thead>
                 <tr>
-                  <th>活动／金额</th>
-                  <th>时期／来源／性质</th>
-                  <th>你的分类与反馈</th>
-                  <th>原因</th>
+                  <th scope="col">活动／金额</th>
+                  <th scope="col">时期／来源／性质</th>
+                  <th scope="col">你的分类与反馈</th>
+                  <th scope="col">原因</th>
                 </tr>
               </thead>
               <tbody>
                 {b.activities.map((activity) => (
                   <tr id={`activity-${activity.id}`} key={activity.id}>
-                    <th>
+                    <th scope="row">
                       {activity.label}
                       <br />
                       {numberText(activity.amount)}
@@ -1185,7 +1239,7 @@ function AccountsLab({
                 ))}
               </tbody>
             </table>
-          </div>
+          </TableScroll>
           <p>
             进口消费同时加到 C 与 M，避免把境外生产算入本国 GDP。前期库存销售的
             C 与 I
@@ -1301,24 +1355,39 @@ function PriceLab({
       </p>
       <Prediction value={value} onChange={onChange} />
       <h3>B · 原始价格与数量</h3>
-      <div className="table-scroll" tabIndex={0}>
+      <details className="details parameter-guidance">
+        <summary>怎么分开价格变化、数量变化与指数刻度</summary>
+        <p>
+          先冻结默认A，只改变第1期一种商品的价格，数量不变；再重置，只改数量。
+          比较名义产出、实际产出和价格指数，避免同时改p和q后混淆机制。
+          每期为一年：价格是货币单位／件，数量是件／期。
+        </p>
+        <p>
+          价格须大于0，数量可为0；零分母的增长率或指数显示未定义。
+          第一次可把一个价格提高10%，或把一个数量提高10%。
+          “基准100／1000”只改变显示刻度；价格权重基期和消费篮子基期
+          则改变聚合比较的口径，不能把这两种操作混为一谈。
+        </p>
+      </details>
+      <TableReadingHelp />
+      <TableScroll label="价格数量输入表格滚动区域">
         <table>
           <caption>
             价格必须大于0，数量不能小于0。结果使用原始数值而不是显示舍入值。
           </caption>
           <thead>
             <tr>
-              <th>合成时期</th>
-              <th>x 价格</th>
-              <th>y 价格</th>
-              <th>x 数量</th>
-              <th>y 数量</th>
+              <th scope="col">合成时期</th>
+              <th scope="col">x 价格</th>
+              <th scope="col">y 价格</th>
+              <th scope="col">x 数量</th>
+              <th scope="col">y 数量</th>
             </tr>
           </thead>
           <tbody>
             {value.input.periods.map((period, index) => (
               <tr key={index}>
-                <th>第{index}期</th>
+                <th scope="row">第{index}期</th>
                 {keys.map(({ key, label, positive }) => (
                   <td key={key}>
                     <NumberControl
@@ -1346,7 +1415,7 @@ function PriceLab({
             ))}
           </tbody>
         </table>
-      </div>
+      </TableScroll>
       <div className="button-row">
         <button
           type="button"
@@ -1544,22 +1613,22 @@ function PriceLab({
               />
             ))}
           </div>
-          <div className="table-scroll" tabIndex={0}>
+          <TableScroll label="价格指数结果表格滚动区域">
             <table>
               <caption>
                 B 实验结果：名义／实际／两种指数及同比（指数共用显示刻度）
               </caption>
               <thead>
                 <tr>
-                  <th>时期</th>
-                  <th>N 名义</th>
-                  <th>R 实际</th>
-                  <th>D 平减指数</th>
-                  <th>L 固定篮子指数</th>
-                  <th>名义同比</th>
-                  <th>实际同比</th>
-                  <th>D 通胀</th>
-                  <th>L 通胀</th>
+                  <th scope="col">时期</th>
+                  <th scope="col">N 名义</th>
+                  <th scope="col">R 实际</th>
+                  <th scope="col">D 平减指数</th>
+                  <th scope="col">L 固定篮子指数</th>
+                  <th scope="col">名义同比</th>
+                  <th scope="col">实际同比</th>
+                  <th scope="col">D 通胀</th>
+                  <th scope="col">L 通胀</th>
                 </tr>
               </thead>
               <tbody>
@@ -1568,7 +1637,7 @@ function PriceLab({
                     key={period.period}
                     data-testid={`price-row-${period.period}`}
                   >
-                    <th>第{period.period}期</th>
+                    <th scope="row">第{period.period}期</th>
                     <td>{numberText(period.N)}</td>
                     <td>{numberText(period.R)}</td>
                     <td>{numberText(period.D)}</td>
@@ -1581,21 +1650,21 @@ function PriceLab({
                 ))}
               </tbody>
             </table>
-          </div>
-          <div className="table-scroll" tabIndex={0}>
+          </TableScroll>
+          <TableScroll label="价格指数A/B对照表格滚动区域">
             <table>
               <caption>
                 N／R／D／L 四个分离指标的数字替代表：A/B 水平与同指标同比
               </caption>
               <thead>
                 <tr>
-                  <th>时期</th>
-                  <th>指标</th>
-                  <th>A 水平</th>
-                  <th>B 水平</th>
-                  <th>A 同比</th>
-                  <th>B 同比</th>
-                  <th>B 相对 A 水平</th>
+                  <th scope="col">时期</th>
+                  <th scope="col">指标</th>
+                  <th scope="col">A 水平</th>
+                  <th scope="col">B 水平</th>
+                  <th scope="col">A 同比</th>
+                  <th scope="col">B 同比</th>
+                  <th scope="col">B 相对 A 水平</th>
                 </tr>
               </thead>
               <tbody>
@@ -1604,8 +1673,8 @@ function PriceLab({
                     const baseline = a.result!.periods[index];
                     return (
                       <tr key={`${period.period}-${metric.key}`}>
-                        <th>第{period.period}期</th>
-                        <th>{metric.label}</th>
+                        <th scope="row">第{period.period}期</th>
+                        <th scope="row">{metric.label}</th>
                         <td>{numberText(baseline?.[metric.key] ?? null)}</td>
                         <td>{numberText(period[metric.key])}</td>
                         <td>
@@ -1626,24 +1695,24 @@ function PriceLab({
                 )}
               </tbody>
             </table>
-          </div>
-          <div className="table-scroll" tabIndex={0}>
+          </TableScroll>
+          <TableScroll label="商品贡献表格滚动区域">
             <table>
               <caption>
                 单品贡献与篮子基期支出权重（货币单位；权重为百分比）
               </caption>
               <thead>
                 <tr>
-                  <th>时期</th>
-                  <th>x 的 N／R／篮子支出贡献</th>
-                  <th>y 的 N／R／篮子支出贡献</th>
-                  <th>篮子 x／y 权重</th>
+                  <th scope="col">时期</th>
+                  <th scope="col">x 的 N／R／篮子支出贡献</th>
+                  <th scope="col">y 的 N／R／篮子支出贡献</th>
+                  <th scope="col">篮子 x／y 权重</th>
                 </tr>
               </thead>
               <tbody>
                 {b.periods.map((period) => (
                   <tr key={period.period}>
-                    <th>第{period.period}期</th>
+                    <th scope="row">第{period.period}期</th>
                     <td>
                       {numberText(period.nominalContributions.x)}／
                       {numberText(period.realContributions.x)}／
@@ -1662,7 +1731,7 @@ function PriceLab({
                 ))}
               </tbody>
             </table>
-          </div>
+          </TableScroll>
           <p>
             未定义不是0：实际产出为0时 D 无定义，基准篮子价值为0时 L
             无定义；前期水平为0时增长率无定义。图上留缺口，表中写“未定义”。

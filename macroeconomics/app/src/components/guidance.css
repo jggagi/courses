@@ -1,0 +1,95 @@
+.parameter-guidance summary {
+  font-weight: 600;
+}
+.parameter-guidance p,
+.parameter-unit-note {
+  max-width: 74ch;
+  line-height: 1.75;
+}
+.parameter-help {
+  display: block;
+  margin-top: 0.4rem;
+  color: #4e6459;
+  font-size: 0.85rem;
+  font-weight: normal;
+  line-height: 1.6;
+}
+.parameter-fieldset {
+  min-width: 0;
+}
+.parameter-fieldset legend {
+  padding: 0 0.4rem;
+  font-weight: 600;
+}
+.parameter-range-list {
+  display: grid;
+  grid-template-columns: minmax(8rem, 1fr) minmax(0, 2fr);
+  gap: 0.5rem 1rem;
+  line-height: 1.65;
+}
+.parameter-range-list dt,
+.parameter-range-list dd {
+  margin: 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.parameter-range-list > div {
+  display: contents;
+}
+.parameter-range-list dt {
+  font-weight: 600;
+}
+.table-reading-help {
+  color: #4e6459;
+  font-size: 0.85rem;
+  line-height: 1.65;
+}
+.guided-table {
+  max-height: 32rem;
+  overflow: auto;
+  position: relative;
+  scrollbar-gutter: stable;
+  scroll-padding: 3.5rem 1rem;
+}
+.guided-table table {
+  isolation: isolate;
+}
+.guided-table th,
+.guided-table td {
+  min-width: 5.5rem;
+  max-width: 24rem;
+  white-space: normal;
+}
+.guided-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #edf2e8;
+  box-shadow: 0 1px var(--border);
+}
+.guided-table tbody th[scope="row"]:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: #edf2e8;
+  box-shadow: 1px 0 var(--border);
+}
+.guided-table thead th:first-child {
+  left: 0;
+  z-index: 3;
+}
+@media (max-width: 600px) {
+  .parameter-range-list {
+    display: block;
+  }
+  .parameter-range-list dt {
+    border-bottom: 0;
+    padding: 0.5rem 0 0;
+  }
+  .parameter-range-list dd {
+    padding: 0.2rem 0 0.75rem;
+  }
+  .guided-table {
+    max-height: min(32rem, 65vh);
+  }
+}

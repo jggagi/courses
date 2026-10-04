@@ -1,3 +1,36 @@
+import type { ReactNode } from "react";
+
+export function TableScroll({
+  label,
+  children,
+  testId,
+}: {
+  label: string;
+  children: ReactNode;
+  testId?: string;
+}) {
+  return (
+    <div
+      className="table-scroll guided-table"
+      role="region"
+      aria-label={label}
+      tabIndex={0}
+      data-testid={testId}
+    >
+      {children}
+    </div>
+  );
+}
+
+export function TableReadingHelp() {
+  return (
+    <p className="table-reading-help">
+      宽表可左右滚动，长表可上下滚动。键盘用 Tab 聚焦表格区域后，用方向键查看；
+      表头和首列保留在视野内。图形的完整数字见相应结果表。
+    </p>
+  );
+}
+
 type Series = {
   label: string;
   values: (number | null)[];
