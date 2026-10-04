@@ -191,6 +191,16 @@ export type ProbabilityInterval = [number, number];
 export type EquilibriumRegion = { p: ProbabilityInterval; q: ProbabilityInterval };
 type SignCondition = "nonnegative" | "nonpositive" | "zero";
 
+function indifferenceProbability(at0: number, at1: number): number {
+  const probability = at0 / (at0 - at1);
+  // Opposite nonzero endpoint signs imply a strictly interior root. An
+  // extreme payoff ratio can round that root onto 0 or 1; reporting that
+  // endpoint would introduce a non-Nash profile, so preserve the limitation
+  // as an explicit numerical-domain error rather than a silent probability.
+  if (at0 !== 0 && at1 !== 0 && (probability <= 0 || probability >= 1)) throw new RangeError("混合概率超出当前浮点精度，请缩小收益差的数量级范围。");
+  return probability;
+}
+
 /** Exact comparisons preserve strict payoff differences; no displayed-decimal
  * tolerance turns near ties into true indifference. The rectangle boundaries
  * are computed from a linear indifference condition in double precision.
@@ -202,14 +212,14 @@ function linearFeasible(at0: number, at1: number, condition: SignCondition): Pro
     if (at0 === 0) return [0, 0];
     if (at1 === 0) return [1, 1];
     if ((at0 > 0) === (at1 > 0)) return null;
-    const root = at0 / (at0 - at1);
+    const root = indifferenceProbability(at0, at1);
     return [root, root];
   }
   const accepts = (value: number) => condition === "nonnegative" ? value >= 0 : value <= 0;
   const low = accepts(at0), high = accepts(at1);
   if (low && high) return [0, 1];
   if (!low && !high) return null;
-  const root = at0 / (at0 - at1);
+  const root = indifferenceProbability(at0, at1);
   return low ? [0, root] : [root, 1];
 }
 function intersection(a: ProbabilityInterval, b: ProbabilityInterval | null): ProbabilityInterval | null {

@@ -377,6 +377,10 @@ describe("extension registry, purity and numerical-domain guards", () => {
     expect(() => run("MX02", { d: 1e308, B: 1e308, c: 0 })).toThrow(RangeError);
     expect(() => run("MX02", { A: 1e30, F: 1e-10 })).toThrow(RangeError);
     expect(() => run("MX03", { r00: 1e308, r10: -1e308 })).toThrow(RangeError);
+    // A true interior indifference probability must not silently round onto
+    // an endpoint where a strict profitable deviation would remain.
+    expect(() => run("MX03", { r00: -1, r10: 0, r01: 1e300, r11: 0 })).toThrow(/概率.*精度/);
+    expect(() => run("MX03", { r00: 1e300, r10: 0, r01: -1e-100, r11: 0 })).toThrow(/概率.*精度/);
     expect(() => run("MX03", { R: 1e308, T: 1.5e308, P: 0, S: -1, delta: .99 })).toThrow(RangeError);
   });
 });
