@@ -12,7 +12,7 @@ import {
   validateCapstone,
   initialCapstone,
 } from "../persistence/capstone";
-import { formatNumber } from "./AdvancedLabs";
+import { formatNumber } from "./formatNumber";
 
 const labels: Record<ComparisonModel, string> = {
   growth: "长期供给 / 资本与技术",
@@ -133,6 +133,15 @@ export default function Capstone({
       </p>
       <section className="panel">
         <h2>1 · 选题与合成情景</h2>
+        <details>
+          <summary>怎样比较单个机制与组合强度？</summary>
+          <p>
+            先保留默认情景，只改一个参数，记录哪个模型结果变化以及单位。价格、技术的1.1倍表示水平提高10%；需求、成本输入1表示各自缺口或通胀增加1个百分点；货币金额按表中单位解释。
+          </p>
+          <p>
+            敏感性强度同时调整六项情景变化，1表示与当前情景相同，1.5表示组合更强。它用于检查结论是否随组合强度改变，不能辨认某一个冲击的独立因果作用，也不是未来发生的概率。全部结果随合法输入即时更新。
+          </p>
+        </details>
         <label>
           作品标题
           <input
@@ -172,15 +181,20 @@ export default function Capstone({
             <p>
               固定第0期价格，改变第1期价格、保留数量。时期为合成年度，不季调。
             </p>
-            <div className="table-scroll" tabIndex={0}>
+            <div
+              className="table-scroll"
+              tabIndex={0}
+              role="region"
+              aria-label="名义与实际产出数字表，可横向滚动"
+            >
               <table data-testid="capstone-measurement">
                 <caption>同一 p/q 源表的名义与固定价格实际产出</caption>
                 <thead>
                   <tr>
-                    <th>时期</th>
-                    <th>名义 N</th>
-                    <th>实际 R</th>
-                    <th>平减指数 D</th>
+                    <th scope="col">时期</th>
+                    <th scope="col">名义 N</th>
+                    <th scope="col">实际 R</th>
+                    <th scope="col">平减指数 D</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -200,16 +214,21 @@ export default function Capstone({
               {value.parameters.creditLoss}
               。借款人的合同债务与银行净债权分开，准备金发行方在边界之外。支付按当期使用/转移解释，不取得新的实物资产；因此付款与收款客户净值分别变化。
             </p>
-            <div className="table-scroll" tabIndex={0}>
+            <div
+              className="table-scroll"
+              tabIndex={0}
+              role="region"
+              aria-label="银行资产负债数字表，可横向滚动"
+            >
               <table data-testid="capstone-balance">
                 <caption>合成资产负债表 · 资产=负债+权益</caption>
                 <thead>
                   <tr>
-                    <th>银行</th>
-                    <th>准备金</th>
-                    <th>净贷款</th>
-                    <th>存款负债</th>
-                    <th>权益</th>
+                    <th scope="col">银行</th>
+                    <th scope="col">准备金</th>
+                    <th scope="col">净贷款</th>
+                    <th scope="col">存款负债</th>
+                    <th scope="col">权益</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -254,16 +273,23 @@ export default function Capstone({
                 终课作品需要至少两个模型作比较；可以先记录想法，再补齐。
               </p>
             )}
-            <div className="table-scroll" tabIndex={0}>
+            <div
+              className="table-scroll"
+              tabIndex={0}
+              role="region"
+              aria-label="模型对照数字表，可横向滚动"
+            >
               <table data-testid="capstone-comparison">
                 <caption>分别运行模型，不能直接相加不同单位的结果</caption>
                 <thead>
                   <tr>
-                    <th>模型与指标</th>
-                    <th>无冲击基准</th>
-                    <th>当前情景</th>
-                    <th>强度×{value.parameters.sensitivityFactor}</th>
-                    <th>单位</th>
+                    <th scope="col">模型与指标</th>
+                    <th scope="col">无冲击基准</th>
+                    <th scope="col">当前情景</th>
+                    <th scope="col">
+                      强度×{value.parameters.sensitivityFactor}
+                    </th>
+                    <th scope="col">单位</th>
                   </tr>
                 </thead>
                 <tbody>

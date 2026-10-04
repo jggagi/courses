@@ -15,7 +15,7 @@
   font-size: 16px;
   --green: #234e48;
   --border: #d8dfd8;
-  --muted: #65756f;
+  --muted: #506358;
 }
 * {
   box-sizing: border-box;
@@ -114,12 +114,27 @@ summary:focus-visible {
   font-size: 13px;
   margin: 28px 0 32px;
 }
+.menu-toggle {
+  display: none;
+}
+.formula-line {
+  display: block;
+}
+.formula sub,
+.formula sup {
+  line-height: 0;
+}
+.question:focus,
+details.panel:focus {
+  outline: 3px solid #bd792b;
+  outline-offset: 4px;
+}
 .eyebrow {
   text-transform: uppercase;
   letter-spacing: 1.7px;
   font-size: 11px;
   font-weight: 650;
-  color: #607b68;
+  color: #506358;
   margin-top: 0;
 }
 .lesson-link {
@@ -143,11 +158,11 @@ summary:focus-visible {
   font-size: 10px;
   letter-spacing: 0.5px;
   padding-top: 4px;
-  color: #60776a;
+  color: #506358;
 }
 .lesson-link small {
   display: block;
-  color: #78847a;
+  color: #506358;
   font-size: 10px;
 }
 .lab-nav {
@@ -169,7 +184,7 @@ summary:focus-visible {
   font-weight: 600;
 }
 .privacy {
-  color: #6b7c6f;
+  color: #506358;
   font-size: 11px;
   margin-top: 30px;
   line-height: 1.8;
@@ -183,7 +198,7 @@ summary:focus-visible {
   padding: 18px 44px;
   border-bottom: 1px solid var(--border);
   font-size: 12px;
-  color: #63766b;
+  color: #506358;
 }
 .topbar span:first-child {
   font-weight: 600;
@@ -268,7 +283,7 @@ small {
   margin: 0;
 }
 .module-number {
-  color: #8b9c7c;
+  color: #506358;
   font-family: Georgia, serif;
   font-size: 34px;
 }
@@ -315,9 +330,9 @@ small {
   line-height: 2;
 }
 .formula {
-  font-family: ui-monospace, monospace;
-  font-size: 14px;
-  white-space: pre-wrap;
+  font-family: "Cambria Math", "STIX Two Math", Georgia, serif;
+  font-size: 1.05rem;
+  white-space: normal;
   overflow-wrap: anywhere;
   border-left: 3px solid #8aa27d;
   background: #edf2e9;
@@ -429,7 +444,7 @@ details p {
 footer {
   padding: 20px 44px;
   border-top: 1px solid var(--border);
-  color: #7a887d;
+  color: #506358;
   font-size: 11px;
 }
 .notice {
@@ -605,6 +620,17 @@ button + button {
     padding: 20px;
     border-right: 0;
     border-bottom: 1px solid var(--border);
+  }
+  .menu-toggle {
+    display: flex;
+    width: 100%;
+    margin-top: 16px;
+  }
+  #course-navigation[data-open="false"] {
+    display: none;
+  }
+  #course-navigation[data-open="true"] {
+    display: block;
   }
   .sidebar-intro,
   .privacy {

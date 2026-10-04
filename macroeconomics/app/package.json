@@ -11,7 +11,8 @@
     "test:e2e": "playwright test --project=chromium",
     "test:compat": "playwright test compatibility.spec.ts --project=chromium --project=firefox --project=webkit",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:production": "node tests/production/lazy-loading.mjs"
   },
   "dependencies": {
     "react": "19.3.0",

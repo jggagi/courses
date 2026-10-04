@@ -10,7 +10,9 @@ const screenshotDirectory = fileURLToPath(
 const networkByPage = new WeakMap<Page, string[]>();
 const errorsByPage = new WeakMap<Page, string[]>();
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page, baseURL }) => {
+  const runtimeOrigin = new URL(baseURL!).origin;
+  const runtimeHost = new URL(baseURL!).host;
   const externalRequests: string[] = [];
   const runtimeErrors: string[] = [];
   networkByPage.set(page, externalRequests);
@@ -20,12 +22,12 @@ test.beforeEach(async ({ page }) => {
     const url = new URL(request.url());
     if (
       ["http:", "https:"].includes(url.protocol) &&
-      url.origin !== "http://127.0.0.1:5174"
+      url.origin !== runtimeOrigin
     )
       externalRequests.push(request.url());
   });
   page.on("websocket", (socket) => {
-    if (new URL(socket.url()).host !== "127.0.0.1:5174")
+    if (new URL(socket.url()).host !== runtimeHost)
       externalRequests.push(socket.url());
   });
   page.on("pageerror", (error) => runtimeErrors.push(error.message));
@@ -580,39 +582,35 @@ test("notes, predictions and raw events survive deep-link refresh and a real JSO
     "lastLessonId",
   ])
     expect(restored[key]).toEqual(exported[key]);
-  await page
-    .getByLabel("导入本课 JSON", { exact: true })
-    .setInputFiles({
-      name: "micro.json",
-      mimeType: "application/json",
-      buffer: Buffer.from(
-        JSON.stringify({ ...exported, courseId: "microeconomics" }),
-      ),
-    });
+  await page.getByLabel("导入本课 JSON", { exact: true }).setInputFiles({
+    name: "micro.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(
+      JSON.stringify({ ...exported, courseId: "microeconomics" }),
+    ),
+  });
   await expect(page.getByRole("status")).toContainText("课程不匹配");
-  await page
-    .getByLabel("导入本课 JSON", { exact: true })
-    .setInputFiles({
-      name: "illegal-event.json",
-      mimeType: "application/json",
-      buffer: Buffer.from(
-        JSON.stringify({
-          ...exported,
-          labStates: {
-            ...exported.labStates,
-            LA01: {
-              ...exported.labStates.LA01,
-              input: {
-                ...exported.labStates.LA01.input,
-                events: [
-                  { id: "bad", sequence: 1, type: "telemetry", amount: 20 },
-                ],
-              },
+  await page.getByLabel("导入本课 JSON", { exact: true }).setInputFiles({
+    name: "illegal-event.json",
+    mimeType: "application/json",
+    buffer: Buffer.from(
+      JSON.stringify({
+        ...exported,
+        labStates: {
+          ...exported.labStates,
+          LA01: {
+            ...exported.labStates.LA01,
+            input: {
+              ...exported.labStates.LA01.input,
+              events: [
+                { id: "bad", sequence: 1, type: "telemetry", amount: 20 },
+              ],
             },
           },
-        }),
-      ),
-    });
+        },
+      }),
+    ),
+  });
   await expect(page.getByRole("status")).toContainText("非法事件类型");
   expect(
     await page.evaluate(

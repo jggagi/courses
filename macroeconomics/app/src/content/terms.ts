@@ -184,7 +184,7 @@ const foundationTerms: Term[] = [
     id: "government-purchases",
     name: "政府购买（government purchases）",
     definition:
-      "政府对本期商品和服务的购买，在本课记为G。它不包括纯转移支付；公共资本形成等完整官方细项需查具体口径。",
+      "本课G采用政府最终消费口径，公共资本形成归I；当前实验政府投资为0，故G也等于本例政府购买。转移支付不计入G。若教材把政府投资归G，需先转换口径再推导国民储蓄，避免公共投资重复计入。",
     lessonId: "A02-B",
     references: ["MAC-BEA"],
   },

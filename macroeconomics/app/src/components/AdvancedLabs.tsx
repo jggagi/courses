@@ -35,12 +35,8 @@ const customerNames: Record<string, string> = {
   newBorrower: "A银行新增借款人",
   recipient: "B银行收款人",
 };
-export const formatNumber = (value: unknown, scale = 1) =>
-  typeof value === "number" && Number.isFinite(value * scale)
-    ? Number((value * scale).toFixed(8)).toString()
-    : value === null
-      ? "未定义"
-      : String(value);
+import { formatNumber } from "./formatNumber";
+export { formatNumber } from "./formatNumber";
 type Column = { key: string; label: string; unit?: string; scale?: number };
 type Presentation = {
   columns: Column[];
