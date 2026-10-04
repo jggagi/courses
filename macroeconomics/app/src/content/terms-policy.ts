@@ -46,7 +46,7 @@ export const policyTerms: Term[] = [
     id: "policy-output-gap",
     name: "产出缺口（output gap）",
     definition:
-      "实际产出相对于潜在产出的偏离；LA06将x以百分点表示。潜在产出是需估计的反事实基准，实验中外生给定，现实中不能当直接观察到的真值。",
+      "实际产出相对于当期潜在产出的偏离，可写100×(Y−Y潜在)/Y潜在；LA06按百分数尺度输入x，变化用百分点。负缺口不直接等于产出负增长或负通胀。潜在产出是需估计的反事实基准，实验中外生给定，现实中不能当直接观察到的真值。",
     lessonId: "A07-B",
     references: ["MAC-MIT", "MAC-CORE"],
   },
@@ -70,7 +70,7 @@ export const policyTerms: Term[] = [
     id: "policy-supply-shock",
     name: "成本冲击（cost shock）",
     definition:
-      "在给定预期与产出缺口下，直接改变LA06价格方程的外生项s。它是教学模型的简化表示，不声称能完整识别现实能源、工资或供应链冲击。",
+      "在给定预期、产出缺口和潜在产出下，直接改变LA06价格方程的外生项s。实验不通过s另行降低潜在产出，不能完整表示实物产能损毁；它也不声称能识别现实能源、工资或供应链冲击。",
     lessonId: "A07-B",
     references: ["MAC-CORE", "MAC-MIT"],
   },
@@ -118,7 +118,7 @@ export const policyTerms: Term[] = [
     id: "policy-real-rate",
     name: "实际利率（real interest rate）",
     definition:
-      "按价格变化调整的跨期回报。确定性教学例中，精确r=(1+i)/(1+π)−1，低利率近似r≈i−π；事前使用预期通胀、事后使用实现通胀，二者对象不同。",
+      "按价格变化调整的跨期回报。确定性教学例中，精确r=(1+i)/(1+π)−1=(i−π)/(1+π)，利率与通胀较小时常近似r≈i−π；事前使用预期通胀、事后使用实现通胀，须保持同一期间和资产口径。",
     lessonId: "A08-B",
     references: ["MAC-MIT"],
   },
@@ -126,7 +126,7 @@ export const policyTerms: Term[] = [
     id: "policy-neutral-rate",
     name: "自然 / 中性实际利率（r*）",
     definition:
-      "使模型需求处于基准状态的实际利率参照。LA06外生给定r*=1个百分点；现实中需估计且可能随结构变化，不能把实验参数当可直接观测的政策真值。",
+      "使模型需求处于基准状态的实际利率参照。LA06外生给定r*=1%（按百分数尺度输入1）；利率差才用百分点。现实中需估计且可能随结构变化，不能把实验参数当可直接观测的政策真值。",
     lessonId: "A08-B",
     references: ["MAC-MIT", "MAC-CORE"],
   },
@@ -142,7 +142,7 @@ export const policyTerms: Term[] = [
     id: "policy-net-tax",
     name: "净税收（net taxes）",
     definition:
-      "本课T=税收收入减转移支付，是期间流量。G仅含政府购买；用于私人可支配收入Y−T与政府初级余额T−G，避免把转移同时算入G又减入T。",
+      "本课T=税收收入减转移支付，是期间流量。G为政府最终消费，I包含公共资本形成；私人可支配收入写Y−T，政府储蓄写T−G。当前模型没有公共投资，政府储蓄才同时等于初级余额；避免把转移同时算入G又减入T。",
     lessonId: "A09-A",
     references: ["MAC-MIT", "MAC-CORE"],
   },
@@ -158,7 +158,7 @@ export const policyTerms: Term[] = [
     id: "policy-primary-balance",
     name: "初级余额 / 初级赤字（primary balance / deficit）",
     definition:
-      "不含债务利息的政府收入减支出称初级余额；反号为初级赤字PD。本课用净税收T和购买G表示PD=G−T，正数是赤字；总体赤字还包括利息。",
+      "不含债务利息的政府收入减支出称初级余额；反号为初级赤字PD，正数是赤字。本课G为政府最终消费，当前无公共投资或其他政府科目，故PD=G−T；若加入公共投资I_g，应写PD=G+I_g−T。总体赤字还包括利息。",
     lessonId: "A09-B",
     references: ["MAC-MIT", "MAC-CORE"],
   },

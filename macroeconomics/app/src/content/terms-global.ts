@@ -30,7 +30,7 @@ export const globalTerms: Term[] = [
     id: "global-disposable-income",
     name: "可支配国民收入（disposable national income）",
     definition:
-      "本课YD=Y+NPI+NCT，把国内生产创造的收入与跨境净收入、净经常转移连接起来。这里使用与毛投资一致的毛储蓄口径S=YD−C−G；不能不说明口径就与GDP混称。",
+      "本课YD=Y+NPI+NCT，把国内生产创造的收入与居民取得的跨境净收入、净经常转移连接起来；居民按经济归属而非国籍判断。这里使用毛储蓄口径S=YD−C−G，G为政府最终消费、I含全部资本形成，与毛投资一致；不能不说明口径就与GDP混称。",
     lessonId: "A10-A",
     references: ["MAC-MIT", "MAC-CORE"],
   },
@@ -54,7 +54,7 @@ export const globalTerms: Term[] = [
     id: "global-exchange-rate",
     name: "名义汇率（nominal exchange rate）",
     definition:
-      "本课e表示购买1单位外币需要多少本币，单位是本币/外币，且e>0。e上升表示本币名义贬值；若改用外币/本币，数字方向会反转，交易含义不会反转。",
+      "本课e表示购买1单位外币需要多少本币，单位是本币/外币，且e>0。e上升表示本币名义贬值；若改用外币/本币，数字方向会反转，交易含义不会反转。倒数变化的百分比绝对值也不同：e7→7.7涨10%，1/e约降9.0909%。",
     lessonId: "A10-B",
     references: ["MAC-MIT", "MAC-CORE"],
   },
@@ -166,7 +166,7 @@ export const globalTerms: Term[] = [
     id: "global-endogeneity",
     name: "内生性（endogeneity）",
     definition:
-      "用于解释结果的变量与未纳入的影响因素相关的情形，如政策针对预期衰退而调整。它不等于“模型里内生变量很多”；政策后经济较弱不能独立识别政策使经济变弱。",
+      "经验分析中，用于解释结果的变量与方程中未观察的影响因素相关的情形，如政策针对预期衰退而调整。它不等于“模型里内生变量很多”；政策后经济较弱不能独立识别政策使经济变弱。是否存在问题依赖具体方程、识别目标及假设。",
     lessonId: "A12-A",
     references: ["MAC-MIT", "MAC-CORE"],
   },
