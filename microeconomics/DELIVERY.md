@@ -71,4 +71,6 @@ MX01仅适用指定CD、正价格和非负预算；有限Slutsky/Hicks补偿通�
 
 ## 提交与Site
 
-课程基线8c5ba8a；本次通过上述检查的应用、内容、测试和截图提交为 **`fa22f045d4a7821c7c596478027ba662f3be79a9`**；本记录随后仅补齐该SHA。交付记录自身的SHA可由 `git log -1 -- microeconomics/DELIVERY.md` 查询。沿用项目 `appgprj_6ac11332890881919b9b578c3e887b41`，现有Site已核验为active、owner、custom仅1名所有者、0群组/外部访客，0自动任务。仅更新同一私人Site，保持浏览器origin与历史key，学习记录经schema3迁移继续使用。推送源码、静态archive与部署版本须相同SHA，不对外扩展共享。
+课程基线8c5ba8a；本次通过上述检查的应用、内容、测试和截图提交为 **`fa22f045d4a7821c7c596478027ba662f3be79a9`**；其后仅更新交付记录，应用源码未改。交付记录自身的SHA可由 `git log -1 -- microeconomics/DELIVERY.md` 查询。沿用项目 `appgprj_6ac11332890881919b9b578c3e887b41`，现有Site已核验为active、owner、custom仅1名所有者、0群组/外部访客，0自动任务。仅更新同一私人Site，保持浏览器origin与历史key，学习记录经schema3迁移继续使用。推送源码、静态archive与部署版本须相同SHA，不对外扩展共享。
+
+实际发布已成功，原 URL [微观经济学完整课程](https://microeconomics-phase1.jggagi.chatgpt.site) 沿用。Site source commit `f1ed582e75d2281b165de104873ac1a3e8cd684e`，保存版本 `appgprj_6ac11332890881919b9b578c3e887b41~appgver_eb02fd39a9f88191a3aa3ac18b8b45c9`，deployment `appgdep_6ac1b85d15a881918576dc2298fe3bce`，原生部署结果 succeeded；原生版本读取已核对 source.commit_sha 与推送一致。source/src、tests、public、dist 与本地已验证应用逐文件字节一致，archive仅含manifest与dist，无个人记录或凭据。课程增量草稿 [PR #5](https://github.com/jggagi/courses/pull/5) 已创建，基于完整课程分支（PR #3），未合并。
