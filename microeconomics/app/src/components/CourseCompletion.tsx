@@ -1,6 +1,10 @@
 import type { LearningState } from "../persistence/store";
-import { advancedLabDefinitions, advancedDefaults, runAdvancedLab, type AdvancedLabId, type AdvancedParameters } from "../models/advanced";
+import { advancedDefaults, runAdvancedLab, type AdvancedLabId, type AdvancedParameters } from "../models/advanced";
 import { fmt } from "./Charts";
+import { historyLabRoute, historyLabTitle, snapshotReport, SnapshotDetails } from "./ExperimentHistory";
+import { queueReview } from "../persistence/learning-tools";
+import { printCurrentPage } from "../utils/export";
+import { useState } from "react";
 
 type PageProps = { state: LearningState; save: (state: LearningState) => void };
 const reportSections = [
@@ -21,27 +25,29 @@ function downloadReport(content: string) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+export function capstoneReportText(state: LearningState): string {
+  const selected = state.capstoneSnapshots.map((id) => state.experimentHistory.find((snapshot) => snapshot.id === id)!).filter(Boolean);
+  return ["微观经济学 · 可审查的机制分析", "数据性质：synthetic 教学情景；学习笔记仅由用户显式导出。",
+    selected.length < 2 ? "草稿提示：当前引用不足两份快照，请完成两次反事实并分别解释。" : `当前引用 ${selected.length} 份快照；引用数量不代表分析正确或作品完成。`,
+    ...reportSections.map((section) => `${section.title}\n${state.capstone[section.key] || "（尚未填写）"}`),
+    "附录 · 正文选定的实验历史快照（保存时的精确 A/B 参数、预测、解释及同内核计算结果）",
+    ...(selected.length ? selected.map((snapshot) => JSON.stringify(snapshotReport(snapshot), null, 2)) : ["（尚未选定快照；实验当前状态不会自动充当已保存历史。）"]),
+  ].join("\n\n");
+}
+
 export function CapstonePage({ state, save }: PageProps) {
-  const experiments = advancedLabDefinitions.filter((lab) => state.advancedLabStates[lab.id].revealed);
-  const exportReport = () => {
-    const text = ["微观经济学 · 可审查的机制分析", "数据性质：synthetic 教学情景；学习笔记仅由用户显式导出。",
-      ...reportSections.map((section) => `${section.title}\n${state.capstone[section.key] || "（尚未填写）"}`),
-      "附录 · 当前已运行实验快照（请在正文记录两次反事实；此附录只保留每个实验当前 A/B）",
-      ...experiments.map((lab) => {
-        const record = state.advancedLabStates[lab.id];
-        return JSON.stringify({ modelId: lab.modelId, labId: lab.id, assumptions: lab.assumptions, ...record,
-          baselineResults: runAdvancedLab(lab.id, record.baseline).metrics,
-          scenarioResults: runAdvancedLab(lab.id, record.scenario).metrics }, null, 2);
-      }),
-    ].join("\n\n");
-    downloadReport(text);
-  };
+  const selectedSnapshots = state.capstoneSnapshots.map((id) => state.experimentHistory.find((snapshot) => snapshot.id === id)!).filter(Boolean);
+  const selectSnapshot = (id: string, selected: boolean) => save({
+    ...state,
+    capstoneSnapshots: selected ? [...state.capstoneSnapshots, id] : state.capstoneSnapshots.filter((current) => current !== id),
+  });
+  const exportReport = () => downloadReport(capstoneReportText(state));
   return <article>
     <div className="eyebrow">M12 · 重建、实验、证据</div>
     <h1>一个可审查的机制分析</h1>
     <p className="lead">将 24 节课程串成一份 2–4 页报告与一个可复现实验。两次反事实、一个反例，以及结论需要什么证据。</p>
     <p>先选一个虚构问题，或使用能够追溯来源的真实问题。实验结果来自模型假设，不是实际市场预测。作品保存在当前浏览器，导出含个人文字，请勿提交公开仓库。</p>
-    <p><a href="#/lesson/M12-B">回看 M12-B 的分析方法</a> · <a href="#/review">跨模块复习</a> · <a href="#/records">备份全部学习记录</a></p>
+    <p><a href="#/lesson/M12-B">回看 M12-B 的分析方法</a> · <a href="#/review">跨模块复习</a> · <a href="#/history">查看实验历史</a> · <a href="#/records">备份全部学习记录</a></p>
     {reportSections.map((section) => <section className="panel" key={section.key}>
       <h2>{section.title}</h2>
       <p>{section.prompt}</p>
@@ -51,15 +57,18 @@ export function CapstonePage({ state, save }: PageProps) {
       </label>
     </section>)}
     <section className="panel">
-      <h2>可复现的实验附录</h2>
-      <p>下面显示已经揭示结果的实验。报告导出包含当前 A/B 参数、预测、解释、假设和计算结果。再次修改实验会替换当前 B；请把两次反事实的参数分别写进报告正文。</p>
-      {experiments.length === 0 ? <p>尚未运行后续实验。请选择对应课程，先预测、运行，再回到这里。</p> : experiments.map((lab) => <details key={lab.id}>
-        <summary>{lab.id} · {lab.title} · 当前 A/B 参数</summary>
-        <pre className="experiment-snapshot">{JSON.stringify({ baseline: state.advancedLabStates[lab.id].baseline, scenario: state.advancedLabStates[lab.id].scenario }, null, 2)}</pre>
-        <p>{state.advancedLabStates[lab.id].explanation || "尚未填写实验解释。"}</p>
-      </details>)}
+      <h2>引用已保存的实验快照</h2>
+      <p>每次运行后在实验旁保存一份命名快照，再改变一个条件保存下一份。勾选两次反事实，正文就能引用各自完整的 A/B、预测、解释和结果；修改实验当前参数不会改变这里已保存的记录。</p>
+      <p role="status" data-testid="capstone-snapshot-count">已引用 {selectedSnapshots.length} 份快照。{selectedSnapshots.length < 2 ? "仍是草稿：两次反事实需至少引用两份不同快照，仍可继续写作和导出。" : "请检查两次反事实是否实际改变了不同条件，并在正文解释；勾选数量不判断报告是否正确或完成。"}</p>
+      {state.experimentHistory.length === 0 ? <p>尚未保存快照。进入实验先预测并运行，再点击“保存实验快照”。</p> : <fieldset className="no-print"><legend>选择要引用的快照（可以取消勾选）</legend>
+        {[...state.experimentHistory].reverse().map((snapshot) => <label key={snapshot.id} className="snapshot-choice"><input type="checkbox" aria-label={`引用 ${snapshot.label}`} checked={state.capstoneSnapshots.includes(snapshot.id)} onChange={(event) => selectSnapshot(snapshot.id, event.target.checked)} /> {snapshot.label} · {snapshot.labId} · <time dateTime={snapshot.createdAt}>{new Date(snapshot.createdAt).toLocaleString()}</time></label>)}
+      </fieldset>}
+      {selectedSnapshots.map((snapshot) => <section className="panel" key={snapshot.id} data-testid={`capstone-snapshot-${snapshot.id}`}>
+        <h3>{snapshot.label} · {snapshot.labId}</h3><p>{historyLabTitle(snapshot.labId)} · 保存于 <time dateTime={snapshot.createdAt}>{new Date(snapshot.createdAt).toLocaleString()}</time></p>
+        <SnapshotDetails snapshot={snapshot} /><p className="no-print"><a href={historyLabRoute(snapshot.labId)}>打开对应实验</a> · <a href="#/history">在实验历史恢复或管理</a></p>
+      </section>)}
       <p>实验入口：<a href="#/lesson/M04-B">成本与市场</a> · <a href="#/lesson/M06-B">税负与福利</a> · <a href="#/lesson/M07-A">定价</a> · <a href="#/lesson/M09-A">外部性</a> · <a href="#/lesson/M12-A">贸易</a></p>
-      <button onClick={exportReport}>导出终课作品文本与实验快照</button>
+      <div className="actions no-print"><button onClick={exportReport}>导出终课作品文本与实验快照</button><button className="secondary" onClick={printCurrentPage}>打印终课作品</button></div>
       <p className="small">作品文本供阅读与审查；恢复全部学习状态请使用“本地记录”的 JSON 导出/导入。</p>
     </section>
     <section className="panel"><h2>独立评价维度</h2>
@@ -80,16 +89,24 @@ const reviewItems: { id: string; title: string; prompt: string; labId: AdvancedL
 ];
 
 export function ReviewPage({ state, save }: PageProps) {
+  const [error, setError] = useState("");
   return <article>
     <div className="eyebrow">不同数字 · 新情境 · 独立自评</div>
     <h1>跨模块复习</h1>
+    {error && <p role="alert">{error} 原记录保留；可先导出备份。</p>}
     <p className="lead">用四个新情境连接成本、市场、政策、策略、风险与时间。先独立解释，再打开模型结果和参考。</p>
     <p>这些回答与逐课客观尝试分别保存，不产生掌握率。发现条件不清时，回到相应模型卡。</p>
     {reviewItems.map((item) => {
       const id = `M12-B-review-${item.id}`;
       const record = state.selfChecks[id];
       const result = runAdvancedLab(item.labId, { ...advancedDefaults(item.labId), ...item.parameters });
-      const update = (answer: string, rating: "needs_review" | "partial" | "clear") => save({ ...state, selfChecks: { ...state.selfChecks, [id]: { answer, rating } } });
+      const update = (answer: string, rating: "needs_review" | "partial" | "clear") => {
+        try {
+        const next = answer.trim() && rating !== "clear" ? queueReview(state, id, "uncertain", new Date().toISOString()) : state;
+        save({ ...next, selfChecks: { ...state.selfChecks, [id]: { answer, rating } } });
+        setError("");
+        } catch (cause) { setError(cause instanceof Error ? cause.message : "自评未保存，请先导出备份。"); }
+      };
       return <section className="panel" key={id}>
         <h2>{item.title}</h2><p>{item.prompt}</p>
         <label>我的解释<textarea aria-label={`${item.title} 我的解释`} maxLength={10000} value={record?.answer || ""} onChange={(e) => update(e.target.value, record?.rating || "needs_review")} /></label>

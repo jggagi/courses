@@ -1,0 +1,12 @@
+.review-queue-actions { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
+.review-queue-list { list-style: none; padding: 0; }
+.review-queue-list li { display: flex; align-items: start; justify-content: space-between; gap: 16px; padding: 18px 0; border-top: 1px solid #d6ded5; }
+.review-queue-list li > div { min-width: 0; }
+.review-queue-list .small { margin: 6px 0 0; }
+.review-queue-list button { flex-shrink: 0; }
+.review-prompt { white-space: pre-line; overflow-wrap: anywhere; }
+.review-question fieldset { border: 1px solid #c1cec4; border-radius: 6px; margin: 14px 0; padding: 14px; min-width: 0; }
+.review-choice { display: flex; align-items: baseline; gap: 10px; margin: 12px 0; }
+.review-choice input { width: auto; flex-shrink: 0; }
+.review-feedback { padding: 14px 18px; background: #eff4ec; border-left: 3px solid #7b9984; border-radius: 4px; overflow-wrap: anywhere; }
+@media (max-width: 600px) { .review-queue-list li { flex-direction: column; gap: 10px; } .review-queue-actions button { max-width: 100%; } }

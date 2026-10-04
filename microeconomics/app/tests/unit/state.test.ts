@@ -28,6 +28,28 @@ class FakeStorage implements StorageLike {
   }
 }
 
+function bytes(source: string): number {
+  return new TextEncoder().encode(source).byteLength;
+}
+/** Build a genuine, valid attempt history at a chosen wire-size boundary.
+ * ASCII padding does not change escaping, and 1,000 answers stay individually
+ * well below the text limit. This fixture distinguishes indentation overhead
+ * from record data instead of relying on an arbitrary large string. */
+function withSizedAttempts<T extends { objectiveAttempts: unknown }>(
+  candidate: T, targetBytes: number, pretty: boolean,
+): T {
+  const state = structuredClone(candidate);
+  const attempts = Array.from({ length: 1000 }, () => ({ answer: "", correct: false, at: AT }));
+  state.objectiveAttempts = { "M01-A-number": attempts };
+  const size = () => bytes(JSON.stringify(state, null, pretty ? 2 : undefined));
+  const perAnswer = Math.floor((targetBytes - size()) / attempts.length);
+  for (const attempt of attempts) attempt.answer = "a".repeat(perAnswer);
+  attempts[0].answer += "a".repeat(targetBytes - size());
+  expect(size()).toBe(targetBytes);
+  expect(attempts.every(attempt => attempt.answer.length <= 20_000)).toBe(true);
+  return state;
+}
+
 function filledState(): LearningState {
   const state = createInitialState(AT);
   state.lastLessonId = "M02-A";
@@ -121,6 +143,36 @@ function legacyFixture() {
   };
 }
 
+// An independently written complete-course export, with the historical v2
+// field contract. It does not remove fields from today's v3 defaults.
+function v2Fixture() {
+  const lessonIds = ["M01-A", "M01-B", "M02-A", "M02-B", "M03-A", "M03-B",
+    "M04-A", "M04-B", "M05-A", "M05-B", "M06-A", "M06-B", "M07-A", "M07-B",
+    "M08-A", "M08-B", "M09-A", "M09-B", "M10-A", "M10-B", "M11-A", "M11-B", "M12-A", "M12-B"];
+  const parameters = {
+    ML04: { F: 20, c: 2, d: 1, p: 8, n: 10, A: 100, B: 5 },
+    ML05: { A: 100, B: 1, C: 20, D: 1, tau: 20, legalPayer: 0 },
+    ML06: { a: 100, b: 1, c: 20, F: 20 },
+    ML07: { r00: 3, c00: 3, r01: 0, c01: 5, r10: 5, c10: 0, r11: 1, c11: 1 },
+    ML08: { A: 100, B: 1, C: 20, D: 1, e: 2, tau: 40 },
+    ML09: { sL: 2, sH: 8, vL: 4, vH: 12, theta: .25, certificationFee: 1 },
+    ML10: { wLow: 0, wHigh: 100, probHigh: .5, y1: 20, y2: 180, r: 0, beta: 1, noBorrow: 0, T: 24, wage: 10, nonLabor: 40, leisureWeight: .5 },
+    ML11: { laborA: 120, laborB: 120, ax: 1, ay: 2, bx: 3, by: 3, price: .75, tradeX: 40 },
+  };
+  return {
+    ...legacyFixture(), schemaVersion: 2, lastLessonId: "M12-B",
+    lessonStates: Object.fromEntries(lessonIds.map((id) => [id, id === "M12-B" ? "self_checked" : "practiced"])),
+    notes: { "M03-B": "旧笔记", "M12-B": "已有完整报告笔记" },
+    objectiveAttempts: { "M12-B-number": [{ answer: 30, correct: true, at: AT }] },
+    selfChecks: { "M12-B-review-tax": { answer: "转移不是资源损失。", rating: "clear" } },
+    conceptConfidence: Object.fromEntries(lessonIds.map((id) => [id, id === "M12-B" ? 4 : null])),
+    advancedLabStates: Object.fromEntries(Object.entries(parameters).map(([id, baseline]) => [id, {
+      baseline: { ...baseline }, scenario: { ...baseline }, prediction: `${id} 的原预测`, revealed: true, explanation: `${id} 的原解释`,
+    }])),
+    capstone: { object: "原研究对象", baseline: "原基准", counterfactuals: "原反事实", boundaries: "原边界", evidence: "原证据", reflection: "原反思" },
+  };
+}
+
 describe("local learning state", () => {
   it("creates separate valid default A/B experiment objects and honest lesson states", () => {
     const state = createInitialState(AT);
@@ -129,7 +181,7 @@ describe("local learning state", () => {
       Array(24).fill("not_started"),
     );
     expect(state.lastLessonId).toBeNull();
-    expect(state.schemaVersion).toBe(2);
+    expect(state.schemaVersion).toBe(3);
     expect(Object.keys(state.advancedLabStates)).toEqual(ADVANCED_LAB_IDS);
     expect(state.capstone).toEqual({
       object: "", baseline: "", counterfactuals: "", boundaries: "", evidence: "", reflection: "",
@@ -183,7 +235,7 @@ describe("local learning state", () => {
     });
     expect(second.importJson(exported).ok).toBe(true);
     expect(second.load().state).toEqual(first.load().state);
-    expect(JSON.parse(exported).schemaVersion).toBe(2);
+    expect(JSON.parse(exported).schemaVersion).toBe(3);
     expect(second.load().state.capstone.evidence).toContain("另行识别因果");
   });
 
@@ -518,6 +570,50 @@ describe("local learning state", () => {
     });
   });
 
+  it("rejects records whose compact JSON fits but actual pretty export exceeds the import budget, without overwriting saved data", () => {
+    const storage = new FakeStorage();
+    const store = createLearningStore({ storage, now: () => AT });
+    store.save(filledState());
+    const before = storage.getItem(STORAGE_KEY);
+    const candidate = withSizedAttempts(filledState(), MAX_IMPORT_BYTES - 1, false);
+    const compact = JSON.stringify(candidate);
+    expect(bytes(compact)).toBeLessThan(MAX_IMPORT_BYTES);
+    expect(bytes(JSON.stringify(candidate, null, 2))).toBeGreaterThan(MAX_IMPORT_BYTES);
+    expect(store.save(candidate)).toMatchObject({ ok: false, error: expect.stringContaining("1 MiB") });
+    expect(store.importJson(compact)).toMatchObject({ ok: false, error: expect.stringContaining("1 MiB") });
+    expect(storage.getItem(STORAGE_KEY)).toBe(before);
+    expect(store.load().state.objectiveAttempts["M01-A-number"]).toHaveLength(2);
+  });
+
+  it("round trips an accepted record whose actual exported UTF-8 file is exactly 1 MiB", () => {
+    const candidate = withSizedAttempts(filledState(), MAX_IMPORT_BYTES, true);
+    expect(validateLearningState(candidate).ok).toBe(true);
+    const store = createLearningStore({ storage: new FakeStorage(), now: () => AT });
+    const saved = store.save(candidate);
+    expect(saved.ok).toBe(true);
+    const exported = store.exportJson();
+    expect(bytes(exported)).toBe(MAX_IMPORT_BYTES);
+    const imported = createLearningStore({ storage: new FakeStorage(), now: () => LATER });
+    expect(imported.importJson(exported).ok).toBe(true);
+    expect(imported.load().state).toEqual(saved.state);
+    expect(imported.exportJson()).toBe(exported);
+  });
+
+  it.each([1, 2] as const)("counts all new schema 3 defaults before accepting a near-limit v%s migration, preserving the oversized original", version => {
+    const historical = withSizedAttempts(version === 1 ? legacyFixture() : v2Fixture(), MAX_IMPORT_BYTES - 1, true);
+    const raw = JSON.stringify(historical);
+    expect(bytes(raw)).toBeLessThan(MAX_IMPORT_BYTES);
+    expect(bytes(JSON.stringify(historical, null, 2))).toBeLessThan(MAX_IMPORT_BYTES);
+    const storage = new FakeStorage();
+    storage.setItem(STORAGE_KEY, raw);
+    const store = createLearningStore({ storage, now: () => AT });
+    expect(store.load()).toMatchObject({ ok: false, status: "recovery", error: expect.stringContaining("1 MiB") });
+    expect(store.exportOriginal()).toBe(raw);
+    expect(storage.getItem(STORAGE_KEY)).toBe(raw);
+    expect(store.save(store.load().state).status).toBe("recovery");
+    expect(storage.getItem(STORAGE_KEY)).toBe(raw);
+  });
+
 
   it("loads a real v1 export without overwriting it and preserves all historical records", () => {
     const storage = new FakeStorage();
@@ -528,7 +624,7 @@ describe("local learning state", () => {
     const store = createLearningStore({ storage, now: () => AT });
     const loaded = store.load();
     expect(loaded).toMatchObject({ ok: true, status: "saved", notice: expect.stringContaining("已迁移") });
-    expect(loaded.state.schemaVersion).toBe(2);
+    expect(loaded.state.schemaVersion).toBe(3);
     expect(loaded.state.lastLessonId).toBe("M03-B");
     expect(loaded.state.objectiveAttempts).toEqual(legacy.objectiveAttempts);
     expect(loaded.state.selfChecks).toEqual(legacy.selfChecks);
@@ -540,24 +636,61 @@ describe("local learning state", () => {
     expect(loaded.state.conceptConfidence["M01-A"]).toBe(4);
     expect(loaded.state.conceptConfidence["M12-B"]).toBeNull();
     expect(storage.getItem(STORAGE_KEY)).toBe(raw);
-    expect(JSON.parse(store.exportJson()).schemaVersion).toBe(2);
+    expect(JSON.parse(store.exportJson()).schemaVersion).toBe(3);
     expect(store.exportOriginal()).toBeNull();
     expect(store.save(loaded.state).ok).toBe(true);
-    expect(JSON.parse(storage.getItem(STORAGE_KEY)!).schemaVersion).toBe(2);
+    expect(JSON.parse(storage.getItem(STORAGE_KEY)!).schemaVersion).toBe(3);
     expect(storage.getItem("courses:macroeconomics:v1")).toBe("other private records");
     expect(createLearningStore({ storage, now: () => AT }).load().state.labStates).toEqual(legacy.labStates);
   });
 
-  it("imports historical JSON explicitly and exports a valid complete v2 record", () => {
+  it("imports historical JSON explicitly and exports a valid complete v3 record", () => {
     const store = createLearningStore({ storage: new FakeStorage(), now: () => AT });
     expect(store.importJson(JSON.stringify(legacyFixture()))).toMatchObject({
       ok: true, status: "saved", notice: expect.stringContaining("已迁移"),
     });
     const exported = JSON.parse(store.exportJson());
-    expect(exported.schemaVersion).toBe(2);
+    expect(exported.schemaVersion).toBe(3);
     expect(Object.keys(exported.lessonStates)).toHaveLength(24);
     expect(Object.keys(exported.advancedLabStates)).toHaveLength(8);
     expect(validateLearningState(exported).ok).toBe(true);
+  });
+
+  it("strictly migrates real v2 exports without writing on load or losing complete-course records", () => {
+    const fixture = v2Fixture();
+    const raw = JSON.stringify(fixture);
+    const storage = new FakeStorage();
+    storage.setItem(STORAGE_KEY, raw);
+    const store = createLearningStore({ storage, now: () => AT });
+    const loaded = store.load();
+    expect(loaded.ok).toBe(true);
+    expect(loaded.notice).toContain("版本 3");
+    expect(storage.getItem(STORAGE_KEY)).toBe(raw);
+    for (const key of ["lessonStates", "objectiveAttempts", "selfChecks", "notes", "labStates", "advancedLabStates", "capstone", "conceptConfidence"] as const)
+      expect(loaded.state[key]).toEqual(fixture[key]);
+    expect(loaded.state).toMatchObject({ schemaVersion: 3, reviewQueue: {}, experimentHistory: [], capstoneSnapshots: [] });
+    expect(Object.keys(loaded.state.extensionLabStates)).toEqual(["MX01", "MX02", "MX03"]);
+    expect(validateLearningState(JSON.parse(store.exportJson())).ok).toBe(true);
+    expect(store.save(loaded.state).ok).toBe(true);
+    expect(JSON.parse(storage.getItem(STORAGE_KEY)!).schemaVersion).toBe(3);
+  });
+
+  it.each([
+    ["unknown top-level key", (value: Record<string, unknown>) => { value.reviewQueue = {}; }],
+    ["missing advanced lab", (value: Record<string, unknown>) => { delete (value.advancedLabStates as Record<string, unknown>).ML11; }],
+    ["unknown fabricated question", (value: Record<string, unknown>) => { value.selfChecks = { "M01-A-q1": { answer: "x", rating: "clear" } }; }],
+    ["missing capstone", (value: Record<string, unknown>) => { delete value.capstone; }],
+  ])("preserves corrupt v2 originals rather than migrating them: %s", (_label, mutate) => {
+    const value = v2Fixture() as unknown as Record<string, unknown>;
+    mutate(value);
+    const raw = JSON.stringify(value);
+    const storage = new FakeStorage();
+    storage.setItem(STORAGE_KEY, raw);
+    const store = createLearningStore({ storage, now: () => AT });
+    expect(store.load()).toMatchObject({ ok: false, status: "recovery" });
+    expect(store.exportOriginal()).toBe(raw);
+    expect(store.save(store.load().state).status).toBe("recovery");
+    expect(storage.getItem(STORAGE_KEY)).toBe(raw);
   });
 
   it("shows migration and backup notices when a legacy import can only live in memory", () => {
@@ -566,7 +699,7 @@ describe("local learning state", () => {
     expect(result).toMatchObject({ ok: true, status: "memory" });
     expect(result.notice).toContain("已迁移");
     expect(result.notice).toContain("关闭或刷新后可能丢失");
-    expect(JSON.parse(store.exportJson()).schemaVersion).toBe(2);
+    expect(JSON.parse(store.exportJson()).schemaVersion).toBe(3);
   });
 
   it.each([

@@ -124,7 +124,7 @@ test("ML11 贸易守恒、消费边界与非法交易提示", async ({ page }) =
 test("旧版学习记录自动迁移并保存新课、复习与终课作品", async ({ page }) => {
   const current = createInitialState();
   const ids = ["M01-A", "M01-B", "M02-A", "M02-B", "M03-A", "M03-B"];
-  const { advancedLabStates: _advanced, capstone: _capstone, ...legacy } = current;
+  const { advancedLabStates: _advanced, capstone: _capstone, reviewQueue: _review, experimentHistory: _history, extensionLabStates: _extensions, capstoneSnapshots: _references, ...legacy } = current;
   const record = { ...legacy, schemaVersion: 1, lastLessonId: "M03-A", notes: { "M03-A": "已有笔记" },
     lessonStates: Object.fromEntries(ids.map((id) => [id, "in_progress"])), conceptConfidence: Object.fromEntries(ids.map((id) => [id, null])) };
   await page.addInitScript(({ key, value }) => { if (!localStorage.getItem(key)) localStorage.setItem(key, value); }, { key: STORAGE_KEY, value: JSON.stringify(record) });
@@ -132,7 +132,7 @@ test("旧版学习记录自动迁移并保存新课、复习与终课作品", as
   await expect(page.getByLabel("本节学习笔记")).toHaveValue("已有笔记");
   await page.goto("/#/lesson/M12-B");
   await page.getByLabel("本节学习笔记").fill("区分机制和识别证据。");
-  expect((await state(page)).schemaVersion).toBe(2);
+  expect((await state(page)).schemaVersion).toBe(3);
   await page.goto("/#/review");
   await page.getByLabel("税楔、剩余与外部性 我的解释").fill("税收是转移，额外损害须另行计入。");
   await page.goto("/#/capstone");

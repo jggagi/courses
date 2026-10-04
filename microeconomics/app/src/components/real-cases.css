@@ -1,0 +1,13 @@
+.real-cases-page > label { margin-bottom: 24px; }
+.case-date-pickers { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 20px; }
+.case-grid { stroke: #dce1d9; stroke-width: 1; }
+.case-legend { list-style: none; padding-left: 0; display: flex; flex-wrap: wrap; gap: 6px 20px; font-size: .9rem; }
+.case-legend span { font-weight: 700; letter-spacing: -.05em; }
+.case-figure svg { width: 100%; height: auto; }
+.case-provenance dl { margin: 0; }
+.case-provenance dl > div { padding: 12px 0; border-bottom: 1px solid #dce1d9; }
+.case-provenance dt { font-weight: 650; }
+.case-provenance dd { margin: 4px 0 0; overflow-wrap: anywhere; }
+.case-provenance p { overflow-wrap: anywhere; }
+.case-provenance button { margin-bottom: 8px; }
+@media (max-width: 600px) { .case-date-pickers { grid-template-columns: 1fr; gap: 12px; } }
