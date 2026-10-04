@@ -1,7 +1,7 @@
 # 宏观经济学｜从总量核算到增长、波动与政策
 
 **courseId:** `macroeconomics`  
-**状态：** 课程设计完成；Web 实现待 Codex。12 模块 / 24 节核心课；首期实现 A01–A03。
+**状态：** 全部设计课程已实现：A01–A12共24节可学习课程、LA01–LA09共9个可复现实验，以及终课宏观诊断作品工作台。
 
 ## 一条主线
 
@@ -14,10 +14,12 @@
 ## 文件入口
 
 - [CURRICULUM.md](CURRICULUM.md)：12模块、24节课、概念依赖、终课作品。
-- [LABS.md](LABS.md)：9个实验模型；LA01–LA03为首期必做。
+- [LABS.md](LABS.md)：9个实验模型；全部已实现。
 - [LESSONS_PHASE1.md](LESSONS_PHASE1.md)：首期6节课的教学种子、例题和答案。
 - [REFERENCES.md](REFERENCES.md)：教材与统计/中央银行官方资料、数据规则。
 - [CODEX_TASK.md](CODEX_TASK.md)：独立应用实现、测试与交付任务。
+- [REVIEW_FEATURES.md](REVIEW_FEATURES.md)：错题重做、跨模块迁移和模型卡复习。
+- [PR_REVIEW.md](PR_REVIEW.md)、[BROWSER_REVIEW.md](BROWSER_REVIEW.md)：独立代码审阅和实际浏览器验证边界。
 
 共同教学规则见 [LEARNING_DESIGN.md](../LEARNING_DESIGN.md) 与 [AGENTS.md](../AGENTS.md)。
 
@@ -27,8 +29,53 @@
 
 建议先接触微观M01–M03的约束和边际语言，但不强制先完成微观。所有必要前置在本课程内解释，另一门课不运行也能独立学习。
 
-## 首期成品
+## 完整课程成品
 
-先把概念地基做扎实：6节课、3个实验（交易与资产负债、GDP三种核算、名义/实际与价格指数），配有练习、错误反馈、本地笔记和恢复状态。通胀—政策模拟、增长模型和真实数据分析在后续阶段，不用虚假的政策仪表盘填充第一版。
+24节课依次建立对象、账本与测量，再进入资本积累、技术人口与分配、需求反馈、就业通胀、银行货币政策、财政债务、开放经济、金融危机和证据识别。9个实验均有计算内核、A/B对照、预测与解释、键盘输入和数字表；每课四道反馈练习，共96道。终课作品支持七段报告、模型比较、名义—实际转换、账表、参数敏感性、不确定性清单与自评。
 
-默认全用教学合成数据，年份写“第0期/第1期”而非伪装历史。无需金融账户、个人资产或云端API。源码以后仅在本目录 `app/` 内，当前文档不意味着应用已经实现。
+默认全用教学合成数据，时期写“第0期/第1期/第2期”而非伪装历史。无需金融账户、个人资产或云端 API。源码、依赖、锁文件与测试全部在本目录 `app/` 内，另一门课无需启动。
+
+复习页 `/#/review` 根据每题最新原始答案重新核对，正确重做后移出待复习，保留尝试与误解笔记；六道跨模块迁移练习覆盖十二模块，使用参考解释与自评。十二张模型卡复用原课的七个字段。改写自由回答会取消旧自评，阅读不自动成为掌握。
+
+手机目录默认收起，可用键盘展开；选课后收起并进入正文。公式分行并显示上下标，长表在局部滚动且保留表头/首列。每个实验说明参数单位和建议的单因素对照。正文按十二模块加载，实验、复习和终课工作台分别按需加载。
+
+## 私人 ChatGPT Site
+
+按用户请求扩展并更新原私人站点：[宏观经济学 · 完整课程](https://macroeconomics-phase1-jggagi.jggagi.chatgpt.site)。访问权限保持私人，学习记录仍仅保存于当前浏览器。
+
+同一站点更新保留当前浏览器的记录。若迁移浏览器或从原本地应用迁移，请先在“个人学习记录”页导出 JSON，再到目标应用导入。首期旧记录会保留并自动补入其余课程的初始状态；新版导出含九实验原始参数、事件、终课报告与复习记录。Site 标识保存在 `app/.openai/hosting.json`，发布版本与验证记录见 [DELIVERY.md](DELIVERY.md)。
+
+## 本地运行
+
+需要 Node.js 24（依赖 engines 允许的其他兼容版本亦可）与 npm：
+
+```bash
+cd macroeconomics/app
+npm ci
+npm run dev
+```
+
+打开 `http://localhost:5174/`。端口严格固定，冲突时退出并报告，不静默切换。hash 深链接例如 `/#/lesson/A01-A`；生产资源使用相对 base，可放在子路径。
+
+```bash
+npm run typecheck
+npm test
+npm run test:content
+npm run build
+npm run test:e2e
+npm run test:production
+```
+
+浏览器测试默认使用 `/usr/bin/chromium`。若 Chromium 在别处，运行 `CHROMIUM_PATH=/absolute/path/to/chromium npm run test:e2e`；也可用 Playwright 安装的 Chromium 可执行文件。生产本地预览使用 `npm run preview`。
+
+`test:production` 对刚构建的产物检查首页加载预算、模块加载和代表交互。在具备 Firefox/WebKit 的环境，运行 `npm run test:compat`；安装、实际执行结果及当前环境限制见 [BROWSER_REVIEW.md](BROWSER_REVIEW.md)。
+
+## 学习记录与边界
+
+预测、笔记、客观题尝试、自由题自评、模型卡与实验原始输入仅存于浏览器键 `courses:macroeconomics:v1`。导入文件会校验课程、版本、大小、结构和模型可行性。损坏记录不自动覆盖；存储不可用时提示内存模式。JSON 导出由用户明确操作，包含私人笔记，不应提交公开仓库。
+
+另一标签已保存不同记录时，本页拒绝覆盖并保留可导出的草稿；先导出再刷新核对。系统不自动合并私人笔记，也不提供跨设备同步。近1 MiB上限的合法记录使用紧凑JSON保存与导出，避免缩进扩大文件而无法往返。
+
+LA01 只展开 H/F/B，准备金发行方在边界之外；LA02 是核算实验，不模拟政策行为；LA03 是固定价格/篮子模型，不复现官方链式与质量调整。LA04–LA09的储蓄、技术、投资、政策规则与跨境口径均明确假设，不模拟真实经济体或提供政策/投资预测。没有后台、遥测、登录、自动外链请求、实时数据或 LLM 判卷。
+
+实际验证结果与截图见 [DELIVERY.md](DELIVERY.md)，精度和模型边界见 [IMPLEMENTATION_NOTES.md](IMPLEMENTATION_NOTES.md)。只修改本课程，独立分支 `codex/macroeconomics-complete`；未自动合并。首期停止范围已由用户后续“完成设计全部课程”的明确请求扩展，私人站点沿用原地址和访问权限。

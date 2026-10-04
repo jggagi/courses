@@ -1,0 +1,57 @@
+.review-workbench > section {
+  margin-block: 2rem;
+}
+
+.review-workbench h2:focus {
+  outline: 2px solid currentColor;
+  outline-offset: 0.35rem;
+}
+
+.review-workbench .panel {
+  margin-block: 1rem;
+}
+
+.review-workbench summary {
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.review-workbench details > summary {
+  padding-block: 0.25rem;
+}
+
+.review-workbench details[open] > summary {
+  margin-bottom: 1rem;
+}
+
+.review-workbench .review-retry,
+.review-workbench .review-reference {
+  margin-block: 1rem;
+}
+
+.review-feedback {
+  padding-inline-start: 0.85rem;
+  border-inline-start: 3px solid currentColor;
+}
+
+.review-history li,
+.review-links {
+  display: grid;
+  gap: 0.35rem;
+  margin-block: 0.65rem;
+}
+
+.review-history time {
+  font-size: 0.85rem;
+}
+
+.review-question,
+.review-history,
+.review-links {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.review-workbench .review-status:empty {
+  margin: 0;
+}
