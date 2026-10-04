@@ -35,14 +35,15 @@ export function historyLabRoute(id: HistoryLabId): string {
 }
 
 type SnapshotResults = Pick<AdvancedLabResult, "status" | "rows" | "metrics" | "notes">;
+const resultSummary = ({ status, rows, metrics, notes }: AdvancedLabResult): SnapshotResults => ({ status, rows, metrics, notes });
 const row = (key: string, label: string, value: number | string | null, unit: string) => ({ key, label, value, unit });
 const orderLabel = { a_preferred: "组合 A 更受偏好", b_preferred: "组合 B 更受偏好", indifferent: "组合 A 与 B 无差别" };
 
 /** A snapshot contains inputs, never a separate cache of authoritative answers.
  * Both the on-screen appendix and text export recompute with the lab kernels. */
 export function snapshotResults(snapshot: LabSnapshot, side: "baseline" | "scenario"): SnapshotResults {
-  if (isExtension(snapshot.labId)) return runExtensionLab(snapshot.labId, snapshot[side] as Record<string, number>);
-  if (!isBasic(snapshot.labId)) return runAdvancedLab(snapshot.labId as AdvancedLabId, snapshot[side] as Record<string, number>);
+  if (isExtension(snapshot.labId)) return resultSummary(runExtensionLab(snapshot.labId, snapshot[side] as Record<string, number>));
+  if (!isBasic(snapshot.labId)) return resultSummary(runAdvancedLab(snapshot.labId as AdvancedLabId, snapshot[side] as Record<string, number>));
   const p = snapshot[side] as LabParameters;
   const preference: Preference = { kind: p.kind, alpha: p.alpha, a: p.a, b: p.b };
   const representation = p.representation === "square" ? "u2" : "u";

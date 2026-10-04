@@ -55,11 +55,14 @@ describe("saved snapshot displays and capstone exports", () => {
     state.advancedLabStates.ML05.revealed = true;
     state.advancedLabStates.ML05.scenario.tau = 30;
     const advanced = captureSnapshot(state, "ML05", "税负", at).experimentHistory[0];
-    expect(snapshotResults(advanced, "scenario")).toEqual(runAdvancedLab("ML05", { ...advancedDefaults("ML05"), tau: 30 }));
+    const authoritative = runAdvancedLab("ML05", { ...advancedDefaults("ML05"), tau: 30 });
+    expect(snapshotResults(advanced, "scenario")).toEqual({ status: authoritative.status, rows: authoritative.rows, metrics: authoritative.metrics, notes: authoritative.notes });
+    expect(snapshotReport(advanced).scenarioResults).not.toHaveProperty("curves");
     for (const id of EXTENSION_LAB_IDS) {
       state.extensionLabStates[id].revealed = true;
       const snapshot = captureSnapshot(state, id, id, at).experimentHistory[0];
-      expect(snapshotResults(snapshot, "scenario")).toEqual(runExtensionLab(id, extensionDefaults(id)));
+      const result = runExtensionLab(id, extensionDefaults(id));
+      expect(snapshotResults(snapshot, "scenario")).toEqual({ status: result.status, rows: result.rows, metrics: result.metrics, notes: result.notes });
       expect(JSON.stringify(snapshotReport(snapshot))).not.toContain("NaN");
     }
   });
