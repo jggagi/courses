@@ -132,8 +132,8 @@ function Question({
     });
   }
   useEffect(() => {
-    if (!last) setFeedback("");
-  }, [last]);
+    setFeedback("");
+  }, [last, answer]);
   function selfCheck(checked: boolean) {
     const selfChecks = { ...state.selfChecks, [check.id]: checked };
     const next = { ...state, selfChecks };
