@@ -28,6 +28,28 @@ class FakeStorage implements StorageLike {
   }
 }
 
+function bytes(source: string): number {
+  return new TextEncoder().encode(source).byteLength;
+}
+/** Build a genuine, valid attempt history at a chosen wire-size boundary.
+ * ASCII padding does not change escaping, and 1,000 answers stay individually
+ * well below the text limit. This fixture distinguishes indentation overhead
+ * from record data instead of relying on an arbitrary large string. */
+function withSizedAttempts<T extends { objectiveAttempts: unknown }>(
+  candidate: T, targetBytes: number, pretty: boolean,
+): T {
+  const state = structuredClone(candidate);
+  const attempts = Array.from({ length: 1000 }, () => ({ answer: "", correct: false, at: AT }));
+  state.objectiveAttempts = { "M01-A-number": attempts };
+  const size = () => bytes(JSON.stringify(state, null, pretty ? 2 : undefined));
+  const perAnswer = Math.floor((targetBytes - size()) / attempts.length);
+  for (const attempt of attempts) attempt.answer = "a".repeat(perAnswer);
+  attempts[0].answer += "a".repeat(targetBytes - size());
+  expect(size()).toBe(targetBytes);
+  expect(attempts.every(attempt => attempt.answer.length <= 20_000)).toBe(true);
+  return state;
+}
+
 function filledState(): LearningState {
   const state = createInitialState(AT);
   state.lastLessonId = "M02-A";
@@ -546,6 +568,50 @@ describe("local learning state", () => {
       ok: false,
       error: expect.stringContaining("1 MiB"),
     });
+  });
+
+  it("rejects records whose compact JSON fits but actual pretty export exceeds the import budget, without overwriting saved data", () => {
+    const storage = new FakeStorage();
+    const store = createLearningStore({ storage, now: () => AT });
+    store.save(filledState());
+    const before = storage.getItem(STORAGE_KEY);
+    const candidate = withSizedAttempts(filledState(), MAX_IMPORT_BYTES - 1, false);
+    const compact = JSON.stringify(candidate);
+    expect(bytes(compact)).toBeLessThan(MAX_IMPORT_BYTES);
+    expect(bytes(JSON.stringify(candidate, null, 2))).toBeGreaterThan(MAX_IMPORT_BYTES);
+    expect(store.save(candidate)).toMatchObject({ ok: false, error: expect.stringContaining("1 MiB") });
+    expect(store.importJson(compact)).toMatchObject({ ok: false, error: expect.stringContaining("1 MiB") });
+    expect(storage.getItem(STORAGE_KEY)).toBe(before);
+    expect(store.load().state.objectiveAttempts["M01-A-number"]).toHaveLength(2);
+  });
+
+  it("round trips an accepted record whose actual exported UTF-8 file is exactly 1 MiB", () => {
+    const candidate = withSizedAttempts(filledState(), MAX_IMPORT_BYTES, true);
+    expect(validateLearningState(candidate).ok).toBe(true);
+    const store = createLearningStore({ storage: new FakeStorage(), now: () => AT });
+    const saved = store.save(candidate);
+    expect(saved.ok).toBe(true);
+    const exported = store.exportJson();
+    expect(bytes(exported)).toBe(MAX_IMPORT_BYTES);
+    const imported = createLearningStore({ storage: new FakeStorage(), now: () => LATER });
+    expect(imported.importJson(exported).ok).toBe(true);
+    expect(imported.load().state).toEqual(saved.state);
+    expect(imported.exportJson()).toBe(exported);
+  });
+
+  it.each([1, 2] as const)("counts all new schema 3 defaults before accepting a near-limit v%s migration, preserving the oversized original", version => {
+    const historical = withSizedAttempts(version === 1 ? legacyFixture() : v2Fixture(), MAX_IMPORT_BYTES - 1, true);
+    const raw = JSON.stringify(historical);
+    expect(bytes(raw)).toBeLessThan(MAX_IMPORT_BYTES);
+    expect(bytes(JSON.stringify(historical, null, 2))).toBeLessThan(MAX_IMPORT_BYTES);
+    const storage = new FakeStorage();
+    storage.setItem(STORAGE_KEY, raw);
+    const store = createLearningStore({ storage, now: () => AT });
+    expect(store.load()).toMatchObject({ ok: false, status: "recovery", error: expect.stringContaining("1 MiB") });
+    expect(store.exportOriginal()).toBe(raw);
+    expect(storage.getItem(STORAGE_KEY)).toBe(raw);
+    expect(store.save(store.load().state).status).toBe("recovery");
+    expect(storage.getItem(STORAGE_KEY)).toBe(raw);
   });
 
 

@@ -413,6 +413,9 @@ function nonnegativeInteger(value: unknown, path: string): void {
   if (!Number.isSafeInteger(value) || (value as number) < 0)
     throw new Error(`${path} 必须是非负安全整数。`);
 }
+function serializeExport(state: LearningState): string {
+  return JSON.stringify(state, null, 2);
+}
 function validateLearningTools(value: Record<string, unknown>): void {
   record(value.extensionLabStates, "extensionLabStates");
   exactKeys(value.extensionLabStates, EXTENSION_LAB_IDS, "extensionLabStates");
@@ -605,27 +608,22 @@ export function validateLearningState(
     }
     isoTimestamp(value.updatedAt, "updatedAt");
     const serialized = JSON.stringify(value);
-    if (new TextEncoder().encode(serialized).byteLength > MAX_IMPORT_BYTES)
-      throw new Error("学习记录超过 1 MiB 大小限制。");
     // Validate every historical field before adding defaults. Otherwise corrupt
     // v1 records could be made superficially valid by filling missing lessons.
     const detached = JSON.parse(serialized) as LearningState;
-    if (historical) {
-      const defaults = createInitialState(detached.updatedAt);
-      return {
-        ok: true,
-        migrated: true,
-        state: {
-          ...defaults,
-          ...detached,
-          schemaVersion: 3,
-          lessonStates: { ...defaults.lessonStates, ...detached.lessonStates },
-          conceptConfidence: { ...defaults.conceptConfidence, ...detached.conceptConfidence },
-        },
-      };
-    }
+    const defaults = historical ? createInitialState(detached.updatedAt) : null;
+    const state: LearningState = defaults ? {
+      ...defaults, ...detached, schemaVersion: 3,
+      lessonStates: { ...defaults.lessonStates, ...detached.lessonStates },
+      conceptConfidence: { ...defaults.conceptConfidence, ...detached.conceptConfidence },
+    } : detached;
+    // The user-facing backup has indentation. Budget that exact representation
+    // after migration, including new defaults, so every accepted record can be
+    // exported and imported under the same UTF-8 limit.
+    if (new TextEncoder().encode(serializeExport(state)).byteLength > MAX_IMPORT_BYTES)
+      throw new Error("学习记录导出后超过 1 MiB 大小限制。");
     // JSON cloning gives callers a detached plain-data snapshot.
-    return { ok: true, state: detached, migrated: false };
+    return { ok: true, state, migrated: historical };
   } catch (error) {
     return {
       ok: false,
@@ -801,7 +799,7 @@ export function createLearningStore(
     resetLesson,
     exportJson: () => {
       load();
-      return JSON.stringify(current, null, 2);
+      return serializeExport(current);
     },
     exportOriginal: () => {
       load();
