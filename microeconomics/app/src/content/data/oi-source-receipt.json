@@ -1,0 +1,45 @@
+{
+  "provider": "Opportunity Insights Economic Tracker",
+  "upstreamCommit": "338754b4794d4b8d1bac4b647a5daa870ba7016c",
+  "upstreamCommitDate": "2026-10-02T15:04:19Z",
+  "retrievedAtUTC": "2026-10-04T01:53:40Z",
+  "observations": "2020-02-29–2020-06-06, six selected dates",
+  "excerptMethod": "Retain exact original header and exact original CSV rows at six selected dates, in upstream order. No interpolation, imputation, rounding or recomputation. Line endings are LF, as in upstream.",
+  "files": [
+    {
+      "file": "oi-affinity-2020-excerpt.csv",
+      "sourceUrl": "https://github.com/OpportunityInsights/EconomicTracker/blob/338754b4794d4b8d1bac4b647a5daa870ba7016c/data/Affinity%20-%20National%20-%20Daily.csv",
+      "upstreamBlobSha": "cbfef6d1f1e053d4e0f96d5427979c3df1453895",
+      "upstreamSha256": "7c50f0abb2503fd2bd0468be5fed9433abc4f9a97f1e1d6549ef88a3af412f99",
+      "excerptSha256": "d7f27615e73f6c569396f899cc56e6e42fa3edd5162ea1d45159538aafeca96f",
+      "bytes": 7207,
+      "rows": 6
+    },
+    {
+      "file": "oi-ui-claims-2020-excerpt.csv",
+      "sourceUrl": "https://github.com/OpportunityInsights/EconomicTracker/blob/338754b4794d4b8d1bac4b647a5daa870ba7016c/data/UI%20Claims%20-%20National%20-%20Weekly.csv",
+      "upstreamBlobSha": "e5ad38be36eaf92d925a43bd87d3fa4e82931623",
+      "upstreamSha256": "358e8ad03cb3a1c50e7899dadc210a34ac951af0d02d8220e06719a53a9c24fc",
+      "excerptSha256": "753edffb121c7eba4ed75b6adde59359d3983c0ca9481c3e117a2d8bd8b73889",
+      "bytes": 865,
+      "rows": 6
+    }
+  ],
+  "evidence": [
+    {
+      "document": "README.md",
+      "upstreamSha256": "12cd89b21e367219fb3d453c870f40a2e1143f0981b3f7d10e09b42f602f5af1",
+      "excerpt": "Anyone is welcome to use this data; we simply we ask that you:\n\n1. List the name of the data provider(s) for the particular series you use.\n\n2. Attribute our work by citing or linking to [the accompanying paper](https://opportunityinsights.org/wp-content/uploads/2020/05/tracker_paper.pdf) and the Economic Tracker at https://tracktherecovery.org.\n\n> \"The Economic Impacts of COVID-19: Evidence from a New Public Database Built Using Private Sector Data\", by Raj Chetty, John Friedman, Nathaniel Hendren, Michael Stepner, and the Opportunity Insights Team. November 2020. Available at: https://opportunityinsights.org/wp-content/uploads/2020/05/tracker_paper.pdf\n"
+    },
+    {
+      "document": "dictionary.md",
+      "upstreamSha256": "5e58c67ac0502b94c0f5ada022d1da6806aa8757732d45c55df553db5d0581a7",
+      "excerpt": "<p>All spending variables are measured relative to January 6 to February\n2, 2020, seasonally adjusted, and calculated as a 7 day moving average.\nWhen we subdivide by income using the median income of the ZIP codes,\n<code>q1</code> is the quartile with the lowest median income and\n<code>q4</code> is the quartile with the highest median income. At the\nnational level, we release a variety of breakdowns <em>without seasonal\nadjustment</em> in variables that begin with <code>spend_s_</code>\n(relative to January 2019 for 2019 data, relative to January 2020 for\n2020 data onward) or <code>spend_19_</code> (relative to Janurary 7 to\nFebruary 3, 2019 for all data) instead of <code>spend_</code>.</p>"
+    },
+    {
+      "document": "documentation.md",
+      "upstreamSha256": "a53500c2d7c696e8b92023aa5ae98da39ca28d583ecd34254924030a67da0ddd",
+      "excerpt": "<h2 id=\"unemployment-claims\">Unemployment Claims</h2>\n<p><strong>Summary:</strong> Weekly unemployment insurance claims counts\nand rates (as a share of the 2019 labor force) for all states, as well\nas initial unemployment insurance claims for select counties where the\ndata is publicly available.</p>\n<p><strong>Data Source:</strong> State-level and national statistics are\nreported by the U.S. Department of Labor.</p>"
+    }
+  ]
+}
