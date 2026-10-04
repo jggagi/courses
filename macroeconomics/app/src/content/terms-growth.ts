@@ -166,7 +166,7 @@ export const growthTerms: Term[] = [
     id: "marginal-propensity-consume",
     name: "边际消费倾向（marginal propensity to consume）",
     definition:
-      "本课消费方程中可支配收入增加一单位带来的计划消费增量c，0≤c<1。它不同于平均消费占收入比例；C0、借贷与分组行为可使平均比例不同，现实参数需估计而非由恒等式得出。",
+      "本课消费方程中可支配收入增加一单位带来的计划消费增量c，0≤c<1。默认可支配收入150、消费110，平均比例约73.33%，但新增收入1只带来消费0.6，c仍为60%。现实参数需估计而非由恒等式得出。",
     lessonId: "A06-A",
     references: ["MAC-CORE", "MAC-MIT"],
   },
@@ -182,7 +182,7 @@ export const growthTerms: Term[] = [
     id: "is-relation",
     name: "IS关系（IS relation）",
     definition:
-      "在价格固定的商品市场模型中，给定投资随实际利率变化的行为式后，使计划支出等于产出的Y与r组合。例如I=Ibar−br给出Y=[C0−cT+Ibar−br+G]/(1−c)；它本身没有决定利率，也没有包含货币市场或央行规则。",
+      "在价格固定的商品市场模型中，给定投资随实际利率变化的行为式后，使计划支出等于产出的Y与r组合。例如I=Ibar−br给出Y=[C0−cT+Ibar−br+G]/(1−c)；r用小数/期时，b100与降息0.01对应投资增加1。它本身没有决定利率，也没有包含货币市场或央行规则。",
     lessonId: "A06-B",
     references: ["MAC-MIT"],
   },
