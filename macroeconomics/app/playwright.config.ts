@@ -6,12 +6,30 @@ export default defineConfig({
   reporter: "list",
   use: {
     baseURL: "http://127.0.0.1:5174",
-    launchOptions: {
-      executablePath: process.env.CHROMIUM_PATH || "/usr/bin/chromium",
-      args: ["--no-sandbox"],
-    },
     trace: "retain-on-failure",
   },
+  projects: [
+    {
+      name: "chromium",
+      use: {
+        browserName: "chromium",
+        launchOptions: {
+          executablePath: process.env.CHROMIUM_PATH || "/usr/bin/chromium",
+          args: ["--no-sandbox"],
+        },
+      },
+    },
+    {
+      name: "firefox",
+      testMatch: "**/compatibility.spec.ts",
+      use: { browserName: "firefox" },
+    },
+    {
+      name: "webkit",
+      testMatch: "**/compatibility.spec.ts",
+      use: { browserName: "webkit" },
+    },
+  ],
   webServer: {
     command: "npm run dev -- --host 127.0.0.1",
     url: "http://127.0.0.1:5174",
