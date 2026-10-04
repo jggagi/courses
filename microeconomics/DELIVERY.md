@@ -71,4 +71,4 @@ MX01仅适用指定CD、正价格和非负预算；有限Slutsky/Hicks补偿通�
 
 ## 提交与Site
 
-课程基线8c5ba8a；本次代码、测试和截图提交在独立分支，实际验证提交SHA在后续记录补齐。沿用项目 `appgprj_6ac11332890881919b9b578c3e887b41`，现有Site已核验为active、owner、custom仅1名所有者、0群组/外部访客，0自动任务。仅更新同一私人Site，保持浏览器origin与历史key，学习记录经schema3迁移继续使用。推送源码、静态archive与部署版本须相同SHA，不对外扩展共享。
+课程基线8c5ba8a；本次通过上述检查的应用、内容、测试和截图提交为 **`fa22f045d4a7821c7c596478027ba662f3be79a9`**；本记录随后仅补齐该SHA。交付记录自身的SHA可由 `git log -1 -- microeconomics/DELIVERY.md` 查询。沿用项目 `appgprj_6ac11332890881919b9b578c3e887b41`，现有Site已核验为active、owner、custom仅1名所有者、0群组/外部访客，0自动任务。仅更新同一私人Site，保持浏览器origin与历史key，学习记录经schema3迁移继续使用。推送源码、静态archive与部署版本须相同SHA，不对外扩展共享。
