@@ -205,7 +205,7 @@ export function ExperimentHistoryPage({ state, save }: PageProps) {
     </section>)}
     <dialog ref={dialog} aria-labelledby={titleId} onCancel={() => setPending(null)} className="snapshot-confirmation no-print">
       {pending && <><h2 id={titleId}>{pending.kind === "restore" ? "确认恢复实验" : "确认删除快照"}</h2><p>“{pending.snapshot.label}” · {pending.snapshot.labId}</p>
-        <p>{pending.kind === "restore" ? "此操作把对应实验当前的 A/B 参数、预测及解释换成此快照，并打开该实验。已保存的其他快照、练习与笔记保留。" : "删除后无法在此浏览器中撤销；若该快照已被终课作品引用，相应引用也会移除。可以先取消并在“本地记录”导出 JSON 备份。"}</p>
+        <p>{pending.kind === "restore" ? "此操作恢复对应实验的 A/B 参数和预测，并打开该实验；有实验解释字段的实验同时恢复解释。历史中的快照解释始终保留。已保存的其他快照、练习与笔记保留。" : "删除后无法在此浏览器中撤销；若该快照已被终课作品引用，相应引用也会移除。可以先取消并在“本地记录”导出 JSON 备份。"}</p>
         <div className="actions"><button className="secondary" autoFocus onClick={closeDialog}>取消</button><button onClick={confirmAction}>{pending.kind === "restore" ? "确认恢复" : "确认删除"}</button></div></>}
     </dialog>
   </article>;

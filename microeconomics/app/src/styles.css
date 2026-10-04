@@ -664,6 +664,34 @@ footer {
 }
 
 .experiment-snapshot { white-space: pre-wrap; overflow-wrap: anywhere; font-size: .85rem; padding: 16px; background: #eef2eb; }
+.learning-tools-nav { display: grid; gap: 9px; margin: 16px 0 24px; padding: 14px 0; border-block: 1px solid #d4ded5; }
+.page-tools { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+.page-tools button { font-size: .8rem; }
+.print-value { display: none; }
+.snapshot-choice { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; overflow-wrap: anywhere; }
+.snapshot-choice input[type="checkbox"] { width: auto; }
+.snapshot-confirmation { width: min(560px, 90vw); border: 1px solid #bfcbbf; border-radius: 12px; padding: 24px; }
+.snapshot-confirmation::backdrop { background: #10211799; }
+.snapshot-details pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+main h1, main h2, main h3, main p, main li, main label, main td, main th { overflow-wrap: anywhere; }
+@media print {
+  @page { margin: 16mm; }
+  html, body { background: white; color: #111; }
+  .workbench { display: block; }
+  header, aside, .skip-link, .page-tools, .lesson-next, button, .button, .actions, .file-input, .dialog-backdrop, .storage-notice, .no-print { display: none !important; }
+  main { width: auto; max-width: none; margin: 0; padding: 0; overflow: visible; }
+  input:not([type="checkbox"]):not([type="radio"]), textarea, select { display: none !important; }
+  .print-value { display: block; white-space: pre-wrap; overflow-wrap: anywhere; border: 1px solid #ccc; padding: 8px; margin: 6px 0; }
+  details, .panel, .check, .prose { overflow: visible; box-shadow: none; }
+  h1, h2, h3 { break-after: avoid; }
+  table, .plot, .model-card { break-inside: avoid; }
+  tr, p, li { break-inside: avoid; }
+  table { width: 100%; font-size: 9pt; }
+  svg { max-width: 100%; }
+  .module-grid, .knowledge { display: block; }
+  a { color: #111; text-decoration: underline; }
+  footer { margin-top: 20px; }
+}
 @media (max-width: 760px) {
   header { height: auto; flex-wrap: wrap; gap: 12px; }
   header nav { flex-wrap: wrap; gap: 10px 18px; }

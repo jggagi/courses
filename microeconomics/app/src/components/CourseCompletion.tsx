@@ -2,6 +2,9 @@ import type { LearningState } from "../persistence/store";
 import { advancedDefaults, runAdvancedLab, type AdvancedLabId, type AdvancedParameters } from "../models/advanced";
 import { fmt } from "./Charts";
 import { historyLabRoute, historyLabTitle, snapshotReport, SnapshotDetails } from "./ExperimentHistory";
+import { queueReview } from "../persistence/learning-tools";
+import { printCurrentPage } from "../utils/export";
+import { useState } from "react";
 
 type PageProps = { state: LearningState; save: (state: LearningState) => void };
 const reportSections = [
@@ -65,7 +68,7 @@ export function CapstonePage({ state, save }: PageProps) {
         <SnapshotDetails snapshot={snapshot} /><p className="no-print"><a href={historyLabRoute(snapshot.labId)}>打开对应实验</a> · <a href="#/history">在实验历史恢复或管理</a></p>
       </section>)}
       <p>实验入口：<a href="#/lesson/M04-B">成本与市场</a> · <a href="#/lesson/M06-B">税负与福利</a> · <a href="#/lesson/M07-A">定价</a> · <a href="#/lesson/M09-A">外部性</a> · <a href="#/lesson/M12-A">贸易</a></p>
-      <div className="actions no-print"><button onClick={exportReport}>导出终课作品文本与实验快照</button><button className="secondary" onClick={() => window.print()}>打印终课作品</button></div>
+      <div className="actions no-print"><button onClick={exportReport}>导出终课作品文本与实验快照</button><button className="secondary" onClick={printCurrentPage}>打印终课作品</button></div>
       <p className="small">作品文本供阅读与审查；恢复全部学习状态请使用“本地记录”的 JSON 导出/导入。</p>
     </section>
     <section className="panel"><h2>独立评价维度</h2>
@@ -86,16 +89,24 @@ const reviewItems: { id: string; title: string; prompt: string; labId: AdvancedL
 ];
 
 export function ReviewPage({ state, save }: PageProps) {
+  const [error, setError] = useState("");
   return <article>
     <div className="eyebrow">不同数字 · 新情境 · 独立自评</div>
     <h1>跨模块复习</h1>
+    {error && <p role="alert">{error} 原记录保留；可先导出备份。</p>}
     <p className="lead">用四个新情境连接成本、市场、政策、策略、风险与时间。先独立解释，再打开模型结果和参考。</p>
     <p>这些回答与逐课客观尝试分别保存，不产生掌握率。发现条件不清时，回到相应模型卡。</p>
     {reviewItems.map((item) => {
       const id = `M12-B-review-${item.id}`;
       const record = state.selfChecks[id];
       const result = runAdvancedLab(item.labId, { ...advancedDefaults(item.labId), ...item.parameters });
-      const update = (answer: string, rating: "needs_review" | "partial" | "clear") => save({ ...state, selfChecks: { ...state.selfChecks, [id]: { answer, rating } } });
+      const update = (answer: string, rating: "needs_review" | "partial" | "clear") => {
+        try {
+        const next = answer.trim() && rating !== "clear" ? queueReview(state, id, "uncertain", new Date().toISOString()) : state;
+        save({ ...next, selfChecks: { ...state.selfChecks, [id]: { answer, rating } } });
+        setError("");
+        } catch (cause) { setError(cause instanceof Error ? cause.message : "自评未保存，请先导出备份。"); }
+      };
       return <section className="panel" key={id}>
         <h2>{item.title}</h2><p>{item.prompt}</p>
         <label>我的解释<textarea aria-label={`${item.title} 我的解释`} maxLength={10000} value={record?.answer || ""} onChange={(e) => update(e.target.value, record?.rating || "needs_review")} /></label>

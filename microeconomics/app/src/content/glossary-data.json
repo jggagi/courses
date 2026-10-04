@@ -1,0 +1,1333 @@
+[
+  {
+    "id": "scarcity",
+    "term": "稀缺",
+    "english": "scarcity",
+    "object": "资源与相互竞争的用途",
+    "definition": "可用资源不能同时满足所有想要实现的用途，因而必须作出选择。稀缺总是相对于用途和约束而言。",
+    "example": "一天只剩六小时，即使书与工具都免费，也无法同时阅读六小时并制作六小时。",
+    "confusion": "稀缺不等于贫穷，也不等于东西罕见；富有的人仍然面对时间和注意力约束。",
+    "lessonIds": [
+      "M01-A"
+    ],
+    "relatedIds": [
+      "opportunity-cost",
+      "feasible-set"
+    ]
+  },
+  {
+    "id": "opportunity-cost",
+    "term": "机会成本",
+    "english": "opportunity cost",
+    "object": "一项行动与最佳被放弃方案",
+    "definition": "选择一项行动时，在同一约束下放弃的最佳替代方案的价值。比较要说明决策时间、可选方案和评价标准。",
+    "example": "把第三小时用来阅读，会放弃原本能完成的一小时制作；其价值依赖你的目标。",
+    "confusion": "不是只算付款，也不是把所有没有做的事情的价值相加。资源交换率与个人评价也须分开。",
+    "lessonIds": [
+      "M01-A",
+      "M01-B"
+    ],
+    "relatedIds": [
+      "scarcity",
+      "sunk-cost",
+      "relative-price"
+    ]
+  },
+  {
+    "id": "sunk-cost",
+    "term": "沉没成本",
+    "english": "sunk cost",
+    "object": "决策时点之前已发生且无法收回的付出",
+    "definition": "无论下一步选哪个方案都不能改变的过去成本，不应在未来增量比较中再计一次。",
+    "example": "不可退的十单位门票已付；留下还是离开，要比较之后两小时的收益与新增成本。",
+    "confusion": "可退款或转卖的费用不是完全沉没。已付款可能降低当前财富，不能忽略财富变化，也不能重复扣款。",
+    "lessonIds": [
+      "M01-A"
+    ],
+    "relatedIds": [
+      "opportunity-cost",
+      "budget-line"
+    ]
+  },
+  {
+    "id": "feasible-set",
+    "term": "可行集",
+    "english": "feasible set / budget set",
+    "object": "所有满足约束的方案的集合",
+    "definition": "同时满足非负性、资源及其他约束的全部选择，包含边界与内部；本期货币模型为 px·x+py·y≤m。",
+    "example": "预算120，价格3和2时，(10,20)与(20,30)都可行，(30,30)不可行。",
+    "confusion": "可行不等于最好，内部点也不是无效点。不可分割商品或最低采购量会改变集合形状。",
+    "lessonIds": [
+      "M01-A",
+      "M01-B",
+      "M03-A"
+    ],
+    "relatedIds": [
+      "budget-line",
+      "interior-corner-kink"
+    ]
+  },
+  {
+    "id": "budget-line",
+    "term": "预算线",
+    "english": "budget line",
+    "object": "恰好花完货币预算的组合边界",
+    "definition": "在正价格下满足 px·x+py·y=m 的非负组合。横轴x、纵轴y时，截距为m/px与m/py，斜率为−px/py。",
+    "example": "3x+2y=120的截距是40个x和60个y，每多一个x要在边界上减少1.5个y。",
+    "confusion": "预算线不是整个预算集；相对价格变动通常旋转，收入变化在价格固定时平移。",
+    "lessonIds": [
+      "M01-B",
+      "M03-A"
+    ],
+    "relatedIds": [
+      "feasible-set",
+      "relative-price",
+      "mrs"
+    ]
+  },
+  {
+    "id": "relative-price",
+    "term": "相对价格",
+    "english": "relative price",
+    "object": "两种商品的市场交换率",
+    "definition": "px/py表示一个x的支出相当于多少个y的支出，单位是y单位/x单位。",
+    "example": "px=3、py=2时，一个x花的钱可以买1.5个y；两价都乘十，比率不变。",
+    "confusion": "相对价格来自市场约束，MRS来自偏好；不是每个组合都必须满足两者相等。",
+    "lessonIds": [
+      "M01-B",
+      "M02-B",
+      "M03-A"
+    ],
+    "relatedIds": [
+      "budget-line",
+      "mrs"
+    ]
+  },
+  {
+    "id": "preference",
+    "term": "偏好",
+    "english": "preferences",
+    "object": "同一决策者对方案的比较关系",
+    "definition": "描述两个组合哪个更好，或者是否无差别的排序关系。偏好模型可以纳入他人福祉，并不必然等于自私。",
+    "example": "在示例排序中(12,12)优于(10,10)，后者与(20,5)无差别。",
+    "confusion": "效用公式是排序的表示，不是创造偏好的机器；改变参数可能改变偏好，改写数值标签不一定。",
+    "lessonIds": [
+      "M02-A",
+      "M02-B",
+      "M03-A"
+    ],
+    "relatedIds": [
+      "ordinal-utility",
+      "indifference-curve"
+    ]
+  },
+  {
+    "id": "ordinal-utility",
+    "term": "序数效用",
+    "english": "ordinal utility",
+    "object": "偏好排序的数值表示",
+    "definition": "效用大小用来表示排序，差值或倍数没有独立的幸福计量含义。确定性选择下严格递增变换保留排序。",
+    "example": "u=√(xy)的10、10、12可改写为u²的100、100、144；最佳组合仍相同。",
+    "confusion": "u=20不是比u=10幸福一倍，也不能跨人比较。风险期望效用的允许变换更严格。",
+    "lessonIds": [
+      "M02-A",
+      "M03-A"
+    ],
+    "relatedIds": [
+      "preference",
+      "monotone-transformation"
+    ]
+  },
+  {
+    "id": "monotone-transformation",
+    "term": "严格递增变换",
+    "english": "strictly increasing transformation",
+    "object": "同一排序的表示函数",
+    "definition": "若数值a>b必有g(a)>g(b)，g是严格递增的；对既有效用应用这种变换，大小与相等关系都保留。",
+    "example": "本期u≥0，因此u²严格保序；u=-2与u=1若平方则4>1，却反转了原来的排序。",
+    "confusion": "平方在整个实数域上不是严格递增；改变CD的α也不是表示变换。",
+    "lessonIds": [
+      "M02-A"
+    ],
+    "relatedIds": [
+      "ordinal-utility",
+      "preference"
+    ]
+  },
+  {
+    "id": "indifference-curve",
+    "term": "无差异曲线",
+    "english": "indifference curve",
+    "object": "同一偏好水平的组合集合",
+    "definition": "对同一决策者而言无差别的一组组合，效用表示下是u(x,y)=常数的等值集合。",
+    "example": "√(xy)=10经过(10,10)与(20,5)；改为xy=100仍经过同样的点。",
+    "confusion": "曲线标签依赖表示，集合本身不依赖标签。曲线可以是直线或折线，不必总光滑。",
+    "lessonIds": [
+      "M02-A",
+      "M02-B",
+      "M03-A"
+    ],
+    "relatedIds": [
+      "ordinal-utility",
+      "mrs",
+      "perfect-complements"
+    ]
+  },
+  {
+    "id": "mrs",
+    "term": "边际替代率",
+    "english": "marginal rate of substitution (MRS)",
+    "object": "当前组合附近的偏好交换率",
+    "definition": "在光滑内点且MUy非零时，以y衡量x的MRS=MUx/MUy，是保持偏好水平时多一点x愿意放弃的y数量。",
+    "example": "CD α=.5在(20,5)处MRS=.25，而市场价格比仍可以是1.5。",
+    "confusion": "MRS是局部量，不是有限变化的固定换算；互补拐角没有唯一MRS，不应强行输出数值。",
+    "lessonIds": [
+      "M02-B",
+      "M03-A"
+    ],
+    "relatedIds": [
+      "relative-price",
+      "indifference-curve",
+      "interior-corner-kink"
+    ]
+  },
+  {
+    "id": "interior-corner-kink",
+    "term": "内点 / 角点 / 拐角",
+    "english": "interior / corner / kink",
+    "object": "最优化解的位置与曲线的可微性",
+    "definition": "本期的内点指x,y都严格为正；角点指至少一种商品为零的解；拐角指等值曲线在该点没有唯一切线。",
+    "example": "默认CD解(20,30)是正商品内点；线性解(0,60)是角点；互补解(24,24)是拐角。",
+    "confusion": "商品内点仍在预算边界上，不能误称预算集的几何内部。互补拐角可有两种商品都为正。",
+    "lessonIds": [
+      "M02-B",
+      "M03-A"
+    ],
+    "relatedIds": [
+      "mrs",
+      "feasible-set",
+      "perfect-complements"
+    ]
+  },
+  {
+    "id": "perfect-substitutes",
+    "term": "完全替代",
+    "english": "perfect substitutes",
+    "object": "固定边际交换率的偏好模型",
+    "definition": "线性效用u=ax+by表示两种商品以固定比率相互替代，a,b>0。最优选择比较每单位货币得到的a/px和b/py。",
+    "example": "u=x+y，价格3和2时全买y；两价都为2时，x+y=60整段预算边界都最优。",
+    "confusion": "并列时不是计算器没找到唯一答案，而是模型确实给出一个最优集合。",
+    "lessonIds": [
+      "M02-B",
+      "M03-A",
+      "M03-B"
+    ],
+    "relatedIds": [
+      "mrs",
+      "optimal-set"
+    ]
+  },
+  {
+    "id": "perfect-complements",
+    "term": "完全互补",
+    "english": "perfect complements",
+    "object": "固定配套比例的偏好模型",
+    "definition": "u=min(x,y)只由较少的那一种决定偏好水平。两种商品按1:1配套使用，单独增加富余的一边不会提高效用。",
+    "example": "左鞋与右鞋一一配套，(10,10)和(20,10)同为10；预算默认解为(24,24)。",
+    "confusion": "拐角不是无效模型，不应为满足相切公式把它平滑成CD。配套比例改变须另写模型。",
+    "lessonIds": [
+      "M02-B",
+      "M03-A"
+    ],
+    "relatedIds": [
+      "indifference-curve",
+      "interior-corner-kink"
+    ]
+  },
+  {
+    "id": "optimal-set",
+    "term": "最优选择 / 最优集合",
+    "english": "optimal choice / optimal set",
+    "object": "给定约束中偏好最高的可行组合",
+    "definition": "在可行集内没有其他组合严格更好的选择。答案可能是一个点，也可能是多个并列点组成的集合。",
+    "example": "u=x+y且px=py=2、m=120时，所有非负且x+y=60的组合都最优。",
+    "confusion": "最优选择依赖假设与评价标准，不自动意味着伦理上最好，也不等于多人市场均衡。",
+    "lessonIds": [
+      "M03-A",
+      "M03-B"
+    ],
+    "relatedIds": [
+      "feasible-set",
+      "preference",
+      "perfect-substitutes"
+    ]
+  },
+  {
+    "id": "demand",
+    "term": "需求",
+    "english": "demand",
+    "object": "条件固定时价格与最优数量的关系",
+    "definition": "固定收入、其他价格和偏好，每个自身价格下重新求最优选择，得到需求关系；在多解模型中关系可以是集合。",
+    "example": "默认CD的x*=60/px，px从3到6使x从20到10；经济学图横轴数量、纵轴价格。",
+    "confusion": "不是随意画一条向下线，也不是任意历史价格销量散点；个体需求还不是市场需求。",
+    "lessonIds": [
+      "M03-B"
+    ],
+    "relatedIds": [
+      "optimal-set",
+      "comparative-statics",
+      "income-substitution-effects"
+    ]
+  },
+  {
+    "id": "comparative-statics",
+    "term": "比较静态",
+    "english": "comparative statics",
+    "object": "不同外生条件下的模型解",
+    "definition": "比较某个参数变化前后的最优解或均衡，明确其余条件保持什么不变；不描述过渡过程与回归速度。",
+    "example": "固定m、py、α，把px从3提高到6，再比较两次求出的消费组合。",
+    "confusion": "解的前后比较不是现实动态稳定性证明，也不是只凭共变识别因果。",
+    "lessonIds": [
+      "M03-B"
+    ],
+    "relatedIds": [
+      "demand",
+      "income-substitution-effects"
+    ]
+  },
+  {
+    "id": "income-substitution-effects",
+    "term": "收入效应与替代效应",
+    "english": "income effect / substitution effect",
+    "object": "价格变化引起的两种选择机制",
+    "definition": "价格变化既改变相对交换率，也改变可负担能力。将总价格效应分成替代与收入部分，必须规定保持效用或购买能力的补偿规则。",
+    "example": "x涨价使x相对更贵，也让原来(20,30)不可负担；不能把x减少10全部称为替代效应。",
+    "confusion": "CD例中y数量恰好不变不表示购买力未变，也不表示两种机制都为零。",
+    "lessonIds": [
+      "M03-B"
+    ],
+    "relatedIds": [
+      "relative-price",
+      "demand",
+      "comparative-statics"
+    ]
+  },
+  {
+    "id": "production-function",
+    "term": "生产函数",
+    "english": "production function",
+    "object": "投入组合与可实现产量",
+    "definition": "在指定技术、质量和时间条件下，描述投入组合可达到的产量上界；它是物理可行关系，不是收入或利润。",
+    "example": "机器固定的合成例子q=√L，生产3个单位至少用9小时劳动。",
+    "confusion": "历史劳动与销量共变不自动是生产函数；技术相同而工资改变仍可改变成本。",
+    "lessonIds": [
+      "M04-A"
+    ],
+    "relatedIds": [
+      "marginal-product",
+      "returns-to-scale",
+      "short-long-run"
+    ]
+  },
+  {
+    "id": "marginal-product",
+    "term": "边际产出",
+    "english": "marginal product",
+    "object": "固定其他条件时追加投入的局部产出",
+    "definition": "其他投入与技术固定，增加一点某种投入带来的产量变化率；劳动边际产出为∂f/∂L，单位产品/劳动小时。",
+    "example": "q=√L在L4时MPL=.25；增加劳动仍提高产出，但边际增幅递减。",
+    "confusion": "边际产出递减不等于总产量下降，也不等于整体规模报酬递减。",
+    "lessonIds": [
+      "M04-A"
+    ],
+    "relatedIds": [
+      "production-function",
+      "returns-to-scale",
+      "marginal-average-cost"
+    ]
+  },
+  {
+    "id": "returns-to-scale",
+    "term": "规模报酬",
+    "english": "returns to scale",
+    "object": "同比例改变所有生产投入",
+    "definition": "将所有投入乘t后比较产量与原产量的t倍；高于、等于、低于分别称规模报酬递增、不变、递减。",
+    "example": "√(LK)中L与K同翻倍，产量也翻倍，但固定K时劳动边际产出递减。",
+    "confusion": "规模报酬是技术侧定义，不等同固定一种投入的边际递减，也不自动等同长期平均成本变化。",
+    "lessonIds": [
+      "M04-A"
+    ],
+    "relatedIds": [
+      "production-function",
+      "marginal-product",
+      "short-long-run"
+    ]
+  },
+  {
+    "id": "short-long-run",
+    "term": "短期 / 长期",
+    "english": "short run / long run",
+    "object": "可调整投入与决策的时间范围",
+    "definition": "短期至少一种相关投入固定；长期研究范围内所有投入可调整。具体时间因技术、合同与制度而异。",
+    "example": "本期机器租约不可解除，未来可换机器、改变企业数，属于不同约束。",
+    "confusion": "不是统一的一年以内或以外；长期也不是在短期成本式中直接删除F。",
+    "lessonIds": [
+      "M04-A",
+      "M04-B",
+      "M05-B"
+    ],
+    "relatedIds": [
+      "shutdown-exit",
+      "fixed-variable-cost",
+      "comparative-statics"
+    ]
+  },
+  {
+    "id": "economic-profit",
+    "term": "经济利润 / 会计利润",
+    "english": "economic profit / accounting profit",
+    "object": "收入与不同成本口径的净额",
+    "definition": "经济利润扣除相关显性与隐性机会成本；会计利润按会计记录口径扣费用。两者口径不同，需要明确自有劳动、场地与资本的替代回报。",
+    "example": "自有店面可出租但用于经营，放弃的租金进入经济成本；零经济利润仍可支付工资与正常资本回报。",
+    "confusion": "经济利润为零不是收入为零，也不是所有经营者无报酬；净额与总额不同。",
+    "lessonIds": [
+      "M04-B",
+      "M05-A"
+    ],
+    "relatedIds": [
+      "opportunity-cost",
+      "fixed-variable-cost",
+      "shutdown-exit"
+    ]
+  },
+  {
+    "id": "fixed-variable-cost",
+    "term": "固定成本 / 可变成本",
+    "english": "fixed cost / variable cost",
+    "object": "指定时间内成本与产量的关系",
+    "definition": "固定成本不随本期产量变化，可变成本随产量变化；固定是否可避免还需说明合同与决策时点。",
+    "example": "C(q)=20+2q+q²/2中F20本期不可避免，q0仍付20，其他部分随q改变。",
+    "confusion": "固定不等于沉没；可避免的开机费虽为运营固定费用，仍影响是否开机。",
+    "lessonIds": [
+      "M04-B",
+      "M05-B"
+    ],
+    "relatedIds": [
+      "sunk-cost",
+      "marginal-average-cost",
+      "shutdown-exit"
+    ]
+  },
+  {
+    "id": "marginal-average-cost",
+    "term": "边际成本 / 平均成本",
+    "english": "marginal cost / average cost",
+    "object": "新增产量与全部产量的单位成本",
+    "definition": "MC是总成本对产量的局部变化率；q>0时AC=C(q)/q。AVC只平均可变成本。三者均须注明单位与有效域。",
+    "example": "默认q6时MC8、AC50/6、AVC5；AC下降并不要求MC下降。",
+    "confusion": "导数不是任意有限增量的精确成本；q0时平均成本未定义，不能填为零。",
+    "lessonIds": [
+      "M04-A",
+      "M04-B"
+    ],
+    "relatedIds": [
+      "fixed-variable-cost",
+      "marginal-product",
+      "supply"
+    ]
+  },
+  {
+    "id": "shutdown-exit",
+    "term": "停产 / 退出",
+    "english": "shutdown / exit",
+    "object": "本期产量为零与未来离开行业",
+    "definition": "停产是在本期选择q0，可能仍承担不可避免成本；退出是改变未来经营可行方案，需要可避免成本及替代机会。",
+    "example": "p8时生产利润−2大于停产−20；若F仅开机支付则停产利润0，决策相反。",
+    "confusion": "负利润不自动意味着立即停产，短期继续生产也不证明长期永不退出。",
+    "lessonIds": [
+      "M04-B",
+      "M05-B"
+    ],
+    "relatedIds": [
+      "short-long-run",
+      "economic-profit",
+      "fixed-variable-cost"
+    ]
+  },
+  {
+    "id": "supply",
+    "term": "供给",
+    "english": "supply",
+    "object": "条件给定时价格与企业最优产量的关系",
+    "definition": "价格接受企业固定成本与技术条件，每个给定价下重新选择最优产量；本例短期q=max(0,(p−c)/d)。",
+    "example": "c2,d1时p8对应q6，十家企业同价供给60。",
+    "confusion": "想卖的计划不保证实际成交；市场力量、可避免开机费或容量边界会改变模型。",
+    "lessonIds": [
+      "M04-B",
+      "M05-A"
+    ],
+    "relatedIds": [
+      "marginal-average-cost",
+      "market-aggregation",
+      "competitive-equilibrium"
+    ]
+  },
+  {
+    "id": "market-aggregation",
+    "term": "市场加总",
+    "english": "horizontal aggregation",
+    "object": "同价下多个参与者的数量计划",
+    "definition": "在同一价格及统一商品与时期下，将个体需求或供给数量相加；数量在横轴所以称水平加总。",
+    "example": "p8时十家各供给6，总供给60；n变20后要重新求均衡价及单家量。",
+    "confusion": "不能把各家价格相加，也不能固定原均衡单家量来断言企业增加后成交量同比扩大。",
+    "lessonIds": [
+      "M05-A"
+    ],
+    "relatedIds": [
+      "demand",
+      "supply",
+      "market-boundary"
+    ]
+  },
+  {
+    "id": "competitive-equilibrium",
+    "term": "竞争均衡",
+    "english": "competitive equilibrium",
+    "object": "共同价格下最优计划与交易兼容",
+    "definition": "在规定市场与制度内，各方价格接受并选择最优计划，同时需求与供给数量兼容。",
+    "example": "Qd=100−5p与Qs=10(p−2)在p8,Q60满足企业最佳选择与数量清算。",
+    "confusion": "均衡不是单个参与者最优，也不自动公平、稳定或包含全部社会成本。",
+    "lessonIds": [
+      "M05-A",
+      "M05-B"
+    ],
+    "relatedIds": [
+      "optimal-set",
+      "stability",
+      "efficiency-equity"
+    ]
+  },
+  {
+    "id": "market-boundary",
+    "term": "市场边界",
+    "english": "market boundary",
+    "object": "参与者、商品、地域与交易期间",
+    "definition": "明确哪些买卖方、质量、替代品、地域和时期被纳入同一市场，以统一数量和价格的含义。",
+    "example": "一天内的标准杯咖啡与全年全部饮料不是同一个供需对象。",
+    "confusion": "边界不是随意画出的框；遗漏进口、质量差异或平台规则可能改变有效关系。",
+    "lessonIds": [
+      "M05-A"
+    ],
+    "relatedIds": [
+      "market-aggregation",
+      "competitive-equilibrium",
+      "demand"
+    ]
+  },
+  {
+    "id": "stability",
+    "term": "动态稳定性",
+    "english": "dynamic stability",
+    "object": "规定调整规则下偏离均衡的时间过程",
+    "definition": "给出调价或行为更新规则后，研究小扰动是否衰减并回到均衡；局部稳定性与全局稳定性还需区分。",
+    "example": "p下一期=p+λ超额需求，同一交点配小λ可能收敛，过大λ可能发散。",
+    "confusion": "静态交点唯一不保证稳定；比较静态未定义调整速度或路径。",
+    "lessonIds": [
+      "M05-B"
+    ],
+    "relatedIds": [
+      "competitive-equilibrium",
+      "comparative-statics",
+      "short-long-run"
+    ]
+  },
+  {
+    "id": "elasticity",
+    "term": "弹性",
+    "english": "elasticity",
+    "object": "固定条件下局部百分比响应",
+    "definition": "响应变量的百分比变化率对冲击变量百分比变化率之比；价格弹性ε=(dq/dp)p/q要求相应正基准与导数存在。",
+    "example": "Pb=100−q在p60,q40处ε=−1.5；同线p20,q80处为−.25。",
+    "confusion": "弹性无量纲，斜率有单位；同一直线斜率不变而弹性变化，q0时不填零。",
+    "lessonIds": [
+      "M06-A",
+      "M06-B"
+    ],
+    "relatedIds": [
+      "demand",
+      "income-cross-elasticity",
+      "tax-incidence"
+    ]
+  },
+  {
+    "id": "income-cross-elasticity",
+    "term": "收入弹性 / 交叉价格弹性",
+    "english": "income elasticity / cross-price elasticity",
+    "object": "收入或另一商品价格变化时的条件需求响应",
+    "definition": "收入弹性为(∂q/∂m)m/q；交叉价格弹性为(∂qx/∂py)py/qx，分别明确固定自身价格、偏好和其他条件。",
+    "example": "CD x=αm/px的收入弹性1，对py的总交叉弹性0。",
+    "confusion": "劣等品指收入响应为负，不是质量差；总交叉响应含收入作用，不能直接等同补偿替代关系。",
+    "lessonIds": [
+      "M06-A"
+    ],
+    "relatedIds": [
+      "elasticity",
+      "income-substitution-effects",
+      "preference"
+    ]
+  },
+  {
+    "id": "tax-wedge",
+    "term": "税楔",
+    "english": "tax wedge",
+    "object": "买方支付价与卖方净得价的差",
+    "definition": "正交易且税完整执行时，每单位税τ使Pb−Ps=τ，需要两端价格与交易量共同满足行为关系。",
+    "example": "默认τ20后Pb70、Ps50、q30；无交易则不声称唯一实际成交价。",
+    "confusion": "不是在保持所有数量不变时机械减去税；法定上缴方不能单独决定最终价格。",
+    "lessonIds": [
+      "M06-B"
+    ],
+    "relatedIds": [
+      "tax-incidence",
+      "competitive-equilibrium",
+      "deadweight-loss"
+    ]
+  },
+  {
+    "id": "tax-incidence",
+    "term": "税负归宿",
+    "english": "tax incidence",
+    "object": "相对无税基准的两端价格负担",
+    "definition": "比较加税前后买方支付价增加及卖方净价减少，经济分配取决于双方响应、市场与执行条件。",
+    "example": "B=D=1、τ20时买卖各承担10；同假设下换法定缴纳方不改税楔结果。",
+    "confusion": "谁转账给政府不等于谁最终承担；反需求斜率与普通需求斜率方向须区分。",
+    "lessonIds": [
+      "M06-B"
+    ],
+    "relatedIds": [
+      "tax-wedge",
+      "elasticity",
+      "efficiency-equity"
+    ]
+  },
+  {
+    "id": "consumer-producer-surplus",
+    "term": "消费者剩余 / 生产者剩余",
+    "english": "consumer surplus / producer surplus",
+    "object": "货币支付意愿与增量成本口径下的交易净额",
+    "definition": "消费者剩余是支付意愿高于支付的面积；生产者剩余是净收入高于相关增量成本的面积。线性ML05中分别Bq²/2与Dq²/2。",
+    "example": "默认τ20、q30时CS=PS=450，加税收600后总剩余1500。",
+    "confusion": "生产者剩余未必等于扣全部固定成本后的利润；货币剩余加总也不直接等于跨人的幸福比较。",
+    "lessonIds": [
+      "M06-B"
+    ],
+    "relatedIds": [
+      "economic-profit",
+      "deadweight-loss",
+      "efficiency-equity"
+    ]
+  },
+  {
+    "id": "deadweight-loss",
+    "term": "无谓损失",
+    "english": "deadweight loss",
+    "object": "指定福利基准下未实现的净收益",
+    "definition": "在本无其他扭曲市场，税减少互利交易形成的总剩余差；财政转移加回一次后计算，线性式为(B+D)(q0−q)²/2。",
+    "example": "q0=40,q30时损失100；截断到q=0交易时损失1600、税收0。",
+    "confusion": "税收不是全额社会损失；有外部性时社会成本基准改变，纠正税未必降低福利。",
+    "lessonIds": [
+      "M06-B"
+    ],
+    "relatedIds": [
+      "tax-wedge",
+      "consumer-producer-surplus",
+      "efficiency-equity"
+    ]
+  },
+  {
+    "id": "efficiency-equity",
+    "term": "效率 / 公平",
+    "english": "efficiency / equity",
+    "object": "资源配置净收益与收益分配的不同评价",
+    "definition": "效率按明确标准检查可实现净收益或可改进性；公平判断谁应获得什么，需要分配原则与价值标准，不能由总剩余自动推出。",
+    "example": "总剩余较高的方案仍可令部分低收入顾客受损；税收用途或补偿改变分配。",
+    "confusion": "竞争均衡、较高总剩余或更低损失不自动证明每个人都获益或分配公平。",
+    "lessonIds": [
+      "M06-B"
+    ],
+    "relatedIds": [
+      "competitive-equilibrium",
+      "consumer-producer-surplus",
+      "tax-incidence"
+    ]
+  },
+  {
+    "id": "market-power",
+    "term": "市场力量",
+    "english": "market power",
+    "object": "企业面对的需求和可影响的价格",
+    "definition": "企业能够在相关市场边界内影响自身交易价格的能力；需分析替代品、进入、容量和定价规则。",
+    "example": "单一定价企业多卖服务必须降低P=a−bQ，而不是把P视为外生常数。",
+    "confusion": "高价格或高份额本身没有识别机制；市场力量不等于已证明不公平或自然垄断。",
+    "lessonIds": [
+      "M07-A",
+      "M07-B"
+    ],
+    "relatedIds": [
+      "marginal-revenue",
+      "markup",
+      "product-differentiation"
+    ]
+  },
+  {
+    "id": "marginal-revenue",
+    "term": "边际收益",
+    "english": "marginal revenue",
+    "object": "总收入对销售数量的增量变化",
+    "definition": "MR=dTR/dQ；单一定价线性反需求下TR=aQ−bQ²，故MR=a−2bQ。",
+    "example": "P=100−Q时，Q40的点MR20而价格60；40到41的离散收入增量19。",
+    "confusion": "MR不是每件售价，也不是边际利润；离散一件增量与点导数应区分。",
+    "lessonIds": [
+      "M07-A"
+    ],
+    "relatedIds": [
+      "market-power",
+      "markup"
+    ]
+  },
+  {
+    "id": "markup",
+    "term": "加价",
+    "english": "markup",
+    "object": "价格与边际成本的差或比率",
+    "definition": "在明确口径下比较P和MC；本模型单一定价垄断Pm−c=(a−c)/2。差额与百分比需注明。",
+    "example": "a100、c20时Pm60，加价差40，并非40%的自动结论。",
+    "confusion": "价格超过MC不代表收入全是利润，固定资源投入仍需扣除；规范评价另需标准。",
+    "lessonIds": [
+      "M07-A"
+    ],
+    "relatedIds": [
+      "market-power",
+      "fixed-resource-cost"
+    ]
+  },
+  {
+    "id": "fixed-resource-cost",
+    "term": "固定资源成本",
+    "english": "fixed resource cost",
+    "object": "在相关数量范围内不随运营数量改变的资源投入",
+    "definition": "F与Q无关但进入总成本、利润和净资源剩余。是否沉没或可避免由决策时点和退出规则确定。",
+    "example": "成本20+20Q中F20；提高F不改条件运营的MR=MC，却降低总账并影响进入。",
+    "confusion": "固定不自动等于沉没，也不表示社会资源成本可以不计；不进入与停产的F处理要明确。",
+    "lessonIds": [
+      "M07-A",
+      "M07-B"
+    ],
+    "relatedIds": [
+      "sunk-cost",
+      "scale-economies",
+      "opportunity-cost"
+    ]
+  },
+  {
+    "id": "scale-economies",
+    "term": "规模经济",
+    "english": "economies of scale",
+    "object": "相关产量区间的平均成本与生产规模",
+    "definition": "规模扩大时单位平均成本下降的成本侧关系，需注明产量范围；F+cQ下AC=F/Q+c。",
+    "example": "开发投入分摊到更多服务单位使AC下降，MC可以仍为同一个c。",
+    "confusion": "规模经济不等于需求侧网络效应，也不凭大固定成本就确定自然垄断及最优政策。",
+    "lessonIds": [
+      "M07-B"
+    ],
+    "relatedIds": [
+      "network-effects",
+      "fixed-resource-cost"
+    ]
+  },
+  {
+    "id": "network-effects",
+    "term": "网络效应",
+    "english": "network effects",
+    "object": "其他参与者对某用户使用收益的影响",
+    "definition": "其他用户数量、质量或互补服务参与改变个人价值的需求侧关系；兼容性、拥堵与多归属需限定。",
+    "example": "能联系的同伴增加可能提高通讯工具价值，即使生产成本没有改变。",
+    "confusion": "用户增加只分摊固定成本不算网络效应；网络效应也不保证单一企业永久胜出。",
+    "lessonIds": [
+      "M07-B"
+    ],
+    "relatedIds": [
+      "scale-economies",
+      "externality",
+      "product-differentiation"
+    ]
+  },
+  {
+    "id": "product-differentiation",
+    "term": "产品差异化",
+    "english": "product differentiation",
+    "object": "消费者对不同供给者产品的替代程度",
+    "definition": "功能、位置、体验或其他特征使产品并非完全替代，企业可能面对自己的向下需求。",
+    "example": "在线工具的离线功能和协作功能满足不同需求，用户不只比较价格。",
+    "confusion": "差异化不是网络效应，也不意味着完全没有竞争；替代程度需具体描述。",
+    "lessonIds": [
+      "M07-B"
+    ],
+    "relatedIds": [
+      "market-power",
+      "network-effects",
+      "preference"
+    ]
+  },
+  {
+    "id": "price-discrimination",
+    "term": "价格歧视",
+    "english": "price discrimination",
+    "object": "针对群体、版本或购买数量的有效价格规则",
+    "definition": "按可识别差异或自我选择菜单收取不同有效价格，分析需包含套利、识别和激励限制。",
+    "example": "同一服务设置分群价格或版本套餐，可能扩大服务量，也可能转移消费者剩余。",
+    "confusion": "不同价格未必都是歧视，成本差异也可能解释；更高总剩余不保证每位用户获益。",
+    "lessonIds": [
+      "M07-B"
+    ],
+    "relatedIds": [
+      "market-power",
+      "product-differentiation"
+    ]
+  },
+  {
+    "id": "strategic-game",
+    "term": "策略博弈",
+    "english": "strategic game",
+    "object": "玩家、可用行动、信息时序和依联合行动的收益",
+    "definition": "个人最佳选择取决于其他玩家行动的相互作用模型；先明示谁何时知道什么。",
+    "example": "同时选C或D的两位玩家从同一2×2表中读取各自收益。",
+    "confusion": "现实有两个人不自动等于囚徒困境，收益和行动必须有依据；游戏名称不替代机制。",
+    "lessonIds": [
+      "M08-A"
+    ],
+    "relatedIds": [
+      "best-response",
+      "nash-equilibrium"
+    ]
+  },
+  {
+    "id": "best-response",
+    "term": "最佳回应",
+    "english": "best response",
+    "object": "给定对方策略时自己的最优行动集合",
+    "definition": "保持对方行动不变，比较自己的收益并保留所有最高收益行动，允许并列。",
+    "example": "默认囚徒困境中，不论对方C或D，自己的D都是最佳回应。",
+    "confusion": "不能比较总收益或对方收益来替代个人回应；最佳回应可以不是唯一行动。",
+    "lessonIds": [
+      "M08-A",
+      "M08-B"
+    ],
+    "relatedIds": [
+      "nash-equilibrium",
+      "dominant-strategy",
+      "optimal-set"
+    ]
+  },
+  {
+    "id": "dominant-strategy",
+    "term": "占优策略",
+    "english": "dominant strategy",
+    "object": "对所有对方行动都至少同样好的自身行动",
+    "definition": "弱占优逐个条件都不差；严格占优逐个条件都严格更好，须说明口径。",
+    "example": "默认C/D矩阵中D对对方C和D都严格提高自身收益，因此严格占优。",
+    "confusion": "Nash均衡不要求每人存在占优策略；协调博弈最佳回应依对方而变。",
+    "lessonIds": [
+      "M08-A"
+    ],
+    "relatedIds": [
+      "best-response",
+      "nash-equilibrium"
+    ]
+  },
+  {
+    "id": "nash-equilibrium",
+    "term": "Nash均衡",
+    "english": "Nash equilibrium",
+    "object": "双方策略彼此为最佳回应的联合选择",
+    "definition": "给定其他玩家策略，任何一人都无法通过单边改变提高自身收益。ML07枚举全部纯策略解。",
+    "example": "DD为默认囚徒困境唯一纯均衡；协调有两个，正反面无纯均衡。",
+    "confusion": "均衡不是公平或Pareto最优；无纯均衡不否定另一个策略域的混合均衡。",
+    "lessonIds": [
+      "M08-A",
+      "M08-B"
+    ],
+    "relatedIds": [
+      "best-response",
+      "pareto-improvement",
+      "coordination-game"
+    ]
+  },
+  {
+    "id": "pareto-improvement",
+    "term": "Pareto改进",
+    "english": "Pareto improvement",
+    "object": "同一组对象在两结果之间的福利排序",
+    "definition": "所有比较对象都不变差且至少一人严格变好；不允许用一人的改善补偿另一人的损失来自动称改进。",
+    "example": "默认DD(1,1)共同改CC(3,3)为Pareto改进，DD仍可为Nash。",
+    "confusion": "Pareto与单边最佳回应不同，也不能仅凭收益总和增加就说所有人不差。",
+    "lessonIds": [
+      "M08-A",
+      "M08-B"
+    ],
+    "relatedIds": [
+      "nash-equilibrium",
+      "preference"
+    ]
+  },
+  {
+    "id": "coordination-game",
+    "term": "协调博弈",
+    "english": "coordination game",
+    "object": "最佳回应依对方匹配行动而变的相互作用",
+    "definition": "玩家希望行动相互匹配，可能存在多个自我维持的纯均衡，需要分析共同预期与信号。",
+    "example": "AA(2,2)、BB(1,1)、错开(0,0)同时有AA和BB两个纯均衡。",
+    "confusion": "高收益均衡没有自动删除低收益均衡；协调问题与合作后的单边偏离需区分。",
+    "lessonIds": [
+      "M08-B"
+    ],
+    "relatedIds": [
+      "nash-equilibrium",
+      "credible-commitment"
+    ]
+  },
+  {
+    "id": "credible-commitment",
+    "term": "可信承诺",
+    "english": "credible commitment",
+    "object": "改变未来可用行动或执行激励的可核对安排",
+    "definition": "到真正执行时相关人仍有动机和能力遵守的承诺；需明确监督、执行、成本与退出。",
+    "example": "可执行的押金条款可能改变违约收益；无法收取的罚款只是一句威胁。",
+    "confusion": "宣布愿望不是可信承诺，承诺也不自动提升总福利或公平。",
+    "lessonIds": [
+      "M08-B"
+    ],
+    "relatedIds": [
+      "repeated-interaction",
+      "strategic-game"
+    ]
+  },
+  {
+    "id": "repeated-interaction",
+    "term": "重复互动",
+    "english": "repeated interaction",
+    "object": "依过去记录制定未来行动的跨期策略",
+    "definition": "将单期博弈按明确终止、观察与折现条件串联，策略可以依历史变化，未来收益可能改变当前激励。",
+    "example": "完全观察且无限重复的指定惩罚例中，合作激励条件δ≥1/2。",
+    "confusion": "重复不必然合作；将单期收益乘次数没有求解历史策略或可信惩罚。",
+    "lessonIds": [
+      "M08-B"
+    ],
+    "relatedIds": [
+      "credible-commitment",
+      "nash-equilibrium"
+    ]
+  },
+  {
+    "id": "externality",
+    "term": "外部性",
+    "english": "externality",
+    "object": "行动通过交易价格之外影响他人的未内部化收益或成本",
+    "definition": "影响未充分进入行动者边际比较，需要说明路径、受影响者、单位与现有权利规则。",
+    "example": "清洗服务排放造成下游损害，私人MC未包括eq这项边际损害。",
+    "confusion": "不是一切不喜欢的结果都叫外部性；价格影响与直接未内部化资源损害须分开。",
+    "lessonIds": [
+      "M09-A"
+    ],
+    "relatedIds": [
+      "social-marginal-cost",
+      "corrective-tax",
+      "network-effects"
+    ]
+  },
+  {
+    "id": "social-marginal-cost",
+    "term": "社会边际成本",
+    "english": "social marginal cost",
+    "object": "新增行动对全部纳入对象的增量资源成本",
+    "definition": "在本模型中将私人MC和未内部化边际损害相加，SMC=C+(D+e)q，不重复计入同一损害。",
+    "example": "C20、D1、e2时q20的PMC40，外部边际损害40，SMC80。",
+    "confusion": "边际损害是每单位数额，累计损害需积分；社会成本不是所有支出和转移随意相加。",
+    "lessonIds": [
+      "M09-A"
+    ],
+    "relatedIds": [
+      "externality",
+      "corrective-tax"
+    ]
+  },
+  {
+    "id": "corrective-tax",
+    "term": "纠正税",
+    "english": "corrective tax",
+    "object": "将外部影响引入私人增量比较的单位税楔",
+    "definition": "在已知损害且可执行的ML08中，τ*=e·qs可实现社会基准量；税收转移不创造资源收益。",
+    "example": "e2、qs20时理想税率40，政策量20；高至80使交易截断为零。",
+    "confusion": "外部性不证明任何税率都好，理想税率不是未经测量的现实政策建议。",
+    "lessonIds": [
+      "M09-A",
+      "M09-B"
+    ],
+    "relatedIds": [
+      "externality",
+      "social-marginal-cost",
+      "government-failure"
+    ]
+  },
+  {
+    "id": "property-rights",
+    "term": "产权与使用权规则",
+    "english": "property and use rights",
+    "object": "进入、取用、转让和执行资源权利的安排",
+    "definition": "说明谁可作何种行动、权利如何转移以及如何执行，明确权利可帮助协商但不消除交易成本。",
+    "example": "共享资源总量配额需同时规定初始分配、转让与超额检查。",
+    "confusion": "有主人不保证所有受影响者能谈判，也不自动决定公平或完整内部化。",
+    "lessonIds": [
+      "M09-A",
+      "M09-B"
+    ],
+    "relatedIds": [
+      "externality",
+      "common-resource",
+      "credible-commitment"
+    ]
+  },
+  {
+    "id": "public-good",
+    "term": "公共品",
+    "english": "public good",
+    "object": "在相关容量内非竞争且难以排除未付费者的共同使用对象",
+    "definition": "非竞争性和非排他性分别核对；共同数量的总边际收益按个人边际收益加总。",
+    "example": "无拥堵、任何人可用的指路标识可能具有两项特征，不取决于出资者是政府还是居民。",
+    "confusion": "政府供给不等于公共品；拥堵和排除技术会改变分类，公共品也不必免费。",
+    "lessonIds": [
+      "M09-B"
+    ],
+    "relatedIds": [
+      "common-resource",
+      "free-riding"
+    ]
+  },
+  {
+    "id": "common-resource",
+    "term": "共有资源",
+    "english": "common-pool resource",
+    "object": "使用会竞争且排除困难的资源",
+    "definition": "他人取用减少自己可用量，但进入或取用难以排除，可能产生未内部化拥堵或耗竭。",
+    "example": "开放且数量有限的停车位被一人占用后，另一人不能同时使用。",
+    "confusion": "共有资源不是非竞争公共品；取用规则、容量和排除技术需具体说明。",
+    "lessonIds": [
+      "M09-B"
+    ],
+    "relatedIds": [
+      "public-good",
+      "property-rights",
+      "externality"
+    ]
+  },
+  {
+    "id": "free-riding",
+    "term": "搭便车",
+    "english": "free riding",
+    "object": "共同收益与个人贡献激励",
+    "definition": "可以享受他人贡献带来的收益而不承担相应投入时，个人贡献可能低于共同期望。",
+    "example": "居民可使用他人出资的指路标识，自己贡献的收益并非全部归自己。",
+    "confusion": "描述激励结构不等于道德定性；共有资源过度取用与公共品贡献不足应分别建模。",
+    "lessonIds": [
+      "M09-B"
+    ],
+    "relatedIds": [
+      "public-good",
+      "strategic-game"
+    ]
+  },
+  {
+    "id": "government-failure",
+    "term": "政府失灵",
+    "english": "government failure",
+    "object": "公共决策的信息、激励和执行限制",
+    "definition": "制度可能因损害未知、监督成本、游说和其他激励偏离目标，需要与可行替代制度对称比较。",
+    "example": "理想纠正税需已知e；若量测、执法昂贵，实际净收益须扣相应资源成本。",
+    "confusion": "可能政府失灵不证明所有干预都差，市场失灵也不证明任何干预都好。",
+    "lessonIds": [
+      "M09-B"
+    ],
+    "relatedIds": [
+      "corrective-tax",
+      "property-rights",
+      "externality"
+    ]
+  },
+  {
+    "id": "expected-value",
+    "term": "期望",
+    "english": "expected value",
+    "object": "结果及其概率组成的彩票",
+    "definition": "以各结果的概率为权重求和得到的平均；概率总和为1。它不是一次实现值或确定承诺。",
+    "example": "0与100各半的期望财富为50，但最终只得到0或100。",
+    "confusion": "期望财富与期望效用不同，取非线性函数与取期望的顺序不能任意交换。",
+    "lessonIds": [
+      "M10-A",
+      "M10-B"
+    ],
+    "relatedIds": [
+      "expected-utility",
+      "certainty-equivalent"
+    ]
+  },
+  {
+    "id": "expected-utility",
+    "term": "期望效用",
+    "english": "expected utility",
+    "object": "同一人的风险彩票偏好表示",
+    "definition": "按指定效用分别评价各状态结果，再依概率加权；一般彩票排序等价表示须用正仿射变换。",
+    "example": "u=√w，0/100各半的EU=5，确定50的效用约7.071。",
+    "confusion": "不能把M02任意严格递增的序数变换直接用于期望效用；平方可能改变彩票排序。",
+    "lessonIds": [
+      "M10-A"
+    ],
+    "relatedIds": [
+      "ordinal-utility",
+      "risk-aversion",
+      "certainty-equivalent"
+    ]
+  },
+  {
+    "id": "risk-aversion",
+    "term": "风险厌恶",
+    "english": "risk aversion",
+    "object": "对平均相同的彩票与确定结果的比较",
+    "definition": "在期望效用模型中，凹效用倾向偏好保证获得彩票的平均财富；它是给定财富域下的偏好性质。",
+    "example": "√w偏好下，确定50优于0与100各半。",
+    "confusion": "不等于拒绝所有风险或任何高于公平价的保险都值得买，成本和初始财富仍要比较。",
+    "lessonIds": [
+      "M10-A"
+    ],
+    "relatedIds": [
+      "expected-utility",
+      "certainty-equivalent"
+    ]
+  },
+  {
+    "id": "certainty-equivalent",
+    "term": "确定性等价与风险溢价",
+    "english": "certainty equivalent / risk premium",
+    "object": "与彩票无差别的确定财富",
+    "definition": "CE满足u(CE)=EU；风险溢价为EW−CE，单位是财富。",
+    "example": "0/100各半、u=√w时，CE=25、风险溢价25。",
+    "confusion": "效用差不是财富风险溢价；风险溢价也不是总保险保费。",
+    "lessonIds": [
+      "M10-A"
+    ],
+    "relatedIds": [
+      "expected-value",
+      "expected-utility",
+      "risk-aversion"
+    ]
+  },
+  {
+    "id": "adverse-selection",
+    "term": "逆向选择",
+    "english": "adverse selection",
+    "object": "合同前隐藏类型及类型相关的参与",
+    "definition": "各方无法观察某些已有类型，统一条款使不同类型选择参与或退出，进而改变交易池构成。",
+    "example": "平均报价6低于高质量保留价值8，高质量退出，参与池报价更新为4。",
+    "confusion": "不是所有质量下降，也不是签约后努力改变；市场不一定完全消失。",
+    "lessonIds": [
+      "M10-B"
+    ],
+    "relatedIds": [
+      "moral-hazard",
+      "signaling",
+      "incentive-compatibility"
+    ]
+  },
+  {
+    "id": "moral-hazard",
+    "term": "道德风险",
+    "english": "moral hazard",
+    "object": "合同后难以观察或约定的行动",
+    "definition": "合同改变行动收益，而行动或努力不可充分观察，导致行为选择与委托方目标偏离的机制。",
+    "example": "全额保险后维护努力可能减少，改变事故概率。",
+    "confusion": "术语不直接评价人格；隐藏行动与事前隐藏类型需要不同模型。",
+    "lessonIds": [
+      "M10-A",
+      "M10-B"
+    ],
+    "relatedIds": [
+      "adverse-selection",
+      "incentive-compatibility"
+    ]
+  },
+  {
+    "id": "signaling",
+    "term": "信号与认证",
+    "english": "signaling / certification",
+    "object": "知情者行动及可验证的类型信息",
+    "definition": "信号通过类型相关的成本收益让行动揭示信息；认证直接依赖可靠验证。都需检查模仿、费用与执行条件。",
+    "example": "可信认证让买方分类型出价，卖方从成交收益中扣认证费。",
+    "confusion": "一张可伪造或人人无成本获得的声明不必有区分信息；信号不等于无成本事实验证。",
+    "lessonIds": [
+      "M10-B"
+    ],
+    "relatedIds": [
+      "adverse-selection",
+      "incentive-compatibility"
+    ]
+  },
+  {
+    "id": "incentive-compatibility",
+    "term": "参与约束与激励相容",
+    "english": "participation constraint / incentive compatibility",
+    "object": "合同下的进入与行动选择",
+    "definition": "参与约束要求接受合同不差于退出；激励相容要求目标行动或报告在合同下为最优。",
+    "example": "认证后vt−f须不低于保留价值；分离信号还需低类型不愿模仿。",
+    "confusion": "愿意签约不等于签后采取期望努力，两项约束要分别检验。",
+    "lessonIds": [
+      "M10-B"
+    ],
+    "relatedIds": [
+      "moral-hazard",
+      "signaling"
+    ]
+  },
+  {
+    "id": "leisure-choice",
+    "term": "劳动—闲暇选择",
+    "english": "labor–leisure choice",
+    "object": "有限时间在工作与其他用途之间分配",
+    "definition": "时间n+ℓ=T，消费c≤wn+V；工资是闲暇的消费机会成本，工时由偏好和约束共同决定。",
+    "example": "T24、w10、V40、λ.5得到闲暇14、劳动10、消费140。",
+    "confusion": "工资上升有替代与收入作用；个人模型不自动决定市场工资或社会就业。",
+    "lessonIds": [
+      "M11-A"
+    ],
+    "relatedIds": [
+      "opportunity-cost",
+      "budget-line",
+      "monopsony"
+    ]
+  },
+  {
+    "id": "monopsony",
+    "term": "买方市场力量",
+    "english": "monopsony power",
+    "object": "能影响投入价格的买方",
+    "definition": "买方面对上升供给关系时，增加购买会提高支付价格；统一价格下边际支出可高于当前价格。",
+    "example": "统一工资w(n)=a+bn，总工资an+bn²，边际支出a+2bn。",
+    "confusion": "它不同于产品卖方垄断，也不意味着每个现实雇主具有相同程度力量；需明确供给与支付制度。",
+    "lessonIds": [
+      "M11-A"
+    ],
+    "relatedIds": [
+      "leisure-choice",
+      "incentive-compatibility"
+    ]
+  },
+  {
+    "id": "intertemporal-budget",
+    "term": "跨期预算",
+    "english": "intertemporal budget constraint",
+    "object": "不同日期的消费与资产转移",
+    "definition": "两期同利率借贷下，c1+c2/(1+r)≤y1+y2/(1+r)，来自每期资源预算消去储蓄。",
+    "example": "20/180、零利率、自由借贷可消费100/100，本期借80。",
+    "confusion": "收入时序与总收入不同，资产头寸不是当期收入；个人借贷不解释银行创造存款。",
+    "lessonIds": [
+      "M11-B"
+    ],
+    "relatedIds": [
+      "discounting",
+      "borrowing-constraint",
+      "budget-line"
+    ]
+  },
+  {
+    "id": "discounting",
+    "term": "现值与偏好贴现",
+    "english": "present value / preference discounting",
+    "object": "不同日期的市场交换与效用权重",
+    "definition": "现值以1/(1+r)把未来资源折算到今天；β是在目标函数中对未来消费的相对评价，两者概念不同。",
+    "example": "r进入跨期预算，β进入log c1+βlog c2，可独立改变。",
+    "confusion": "不能把市场利率与耐心当成同一个参数，也不能忽略风险后将现值当保证回报。",
+    "lessonIds": [
+      "M11-B"
+    ],
+    "relatedIds": [
+      "intertemporal-budget",
+      "expected-value"
+    ]
+  },
+  {
+    "id": "borrowing-constraint",
+    "term": "借贷约束",
+    "english": "borrowing constraint",
+    "object": "可获得信用对消费可行集的限制",
+    "definition": "禁止借款时c1≤y1；它削减跨期可行方案，需要在新可行域重求最优。",
+    "example": "收入20/180、β1、r0自由解100/100，禁借款解20/180。",
+    "confusion": "不能把借款显示成零但保留不可行消费；本期零收入时log效用域可能没有可行方案。",
+    "lessonIds": [
+      "M11-B"
+    ],
+    "relatedIds": [
+      "intertemporal-budget",
+      "feasible-set"
+    ]
+  },
+  {
+    "id": "comparative-advantage",
+    "term": "比较优势",
+    "english": "comparative advantage",
+    "object": "不同生产者的相对机会成本",
+    "definition": "生产某产品所放弃的另一产品更少，具有该产品的比较优势；不是同种商品绝对工时更少。",
+    "example": "A的x机会成本.5y，B为1y；A有x比较优势，B有y比较优势。",
+    "confusion": "一方可有两种绝对优势，仍不能有两种严格比较优势；资源利得不保证每个居民获益。",
+    "lessonIds": [
+      "M12-A",
+      "M12-B"
+    ],
+    "relatedIds": [
+      "opportunity-cost",
+      "relative-price",
+      "general-equilibrium"
+    ]
+  },
+  {
+    "id": "general-equilibrium",
+    "term": "一般均衡",
+    "english": "general equilibrium",
+    "object": "彼此联动的多个市场与主体",
+    "definition": "主体在预算内最优、企业在技术内选择，各市场计划同时兼容，价格收入与资源在市场间连接。",
+    "example": "贸易商品价改变行业用工和收入，又反馈其他商品需求。",
+    "confusion": "展示一个指定价格的贸易算例不等于求出整体均衡，更不证明存在、唯一、稳定或公平。",
+    "lessonIds": [
+      "M12-A",
+      "M12-B"
+    ],
+    "relatedIds": [
+      "comparative-advantage",
+      "comparative-statics",
+      "causal-identification"
+    ]
+  },
+  {
+    "id": "causal-identification",
+    "term": "因果识别",
+    "english": "causal identification",
+    "object": "改变相对于可信无改变反事实的效果",
+    "definition": "利用研究设计及明确假设，把某因素作用与混杂、选择和同期变化区别；观察相关不自动识别原因。",
+    "example": "工资在开放后上涨，还需考虑需求、技术、人群构成与合适对照。",
+    "confusion": "模型反事实来自结构假设，参数敏感性不等于现实因果证据；随机或自然实验也有适用条件。",
+    "lessonIds": [
+      "M12-B"
+    ],
+    "relatedIds": [
+      "comparative-statics",
+      "general-equilibrium"
+    ]
+  }
+]
